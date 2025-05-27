@@ -34,3 +34,8 @@ explanation.
 We are comparing PTP to the CoT prompts in [BBH
 dataset](https://github.com/suzgunmirac/BIG-Bench-Hard)
 
+
+## Semi-Structured Reasoning Models (SSRMs)
+
+Please refer to the `training` directory for how to train Semi-Structured Reasoning Models (SSRMs).
+
