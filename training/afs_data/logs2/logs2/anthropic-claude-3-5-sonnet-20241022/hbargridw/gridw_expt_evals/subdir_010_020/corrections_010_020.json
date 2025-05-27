@@ -1,0 +1,1 @@
+{"possible_actions": [[[3, 2]], [[3, 2]], [[5, 4]], [[3, 0]], [[3, 6]]], "optimal_actions": [[[7, 1], ["north", "south", "west"], [2, 4]], [[2, 1], ["north", "south", "east", "west"], [7, 2]]]}

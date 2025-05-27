@@ -1,0 +1,58 @@
+data:
+  train_batch_size: 256
+  micro_batch_size: null # will be deprecated, use micro_batch_size_per_gpu
+  micro_batch_size_per_gpu: 4  # this is also val batch size
+  train_files: ~/data/gsm8k/train.parquet
+  val_files: ~/data/gsm8k/test.parquet
+  # Single-turn settings
+  prompt_key: question
+  response_key: answer
+  prompt_dict_keys: ['question']
+  response_dict_keys: ['answer']
+  # Multi-turn settings
+  multiturn:
+    enable: false  # Set to true to use multi-turn dataset
+    messages_key: messages  # Key for messages list in multi-turn mode
+  max_length: 1024
+  truncation: error
+  balance_dp_token: False
+  chat_template: null
+  custom_cls:
+    path: null
+    name: null
+model:
+  partial_pretrain: ~/models/gemma-1.1-7b-it
+  fsdp_config:
+    wrap_policy:
+      min_num_params: 0
+    cpu_offload: False
+    offload_params: False
+  external_lib: null
+  enable_gradient_checkpointing: False
+  trust_remote_code: False
+  lora_rank: 0  # Set to positive value to enable LoRA (e.g., 32)
+  lora_alpha: 16  # LoRA scaling factor
+  target_modules: all-linear  # Target modules for LoRA adaptation
+  use_liger: False
+  # chat_template: "{%- if tools %}\n    {{- '<|im_start|>system\\n' }}\n    {%- if messages[0]['role'] == 'system' %}\n        {{- messages[0]['content'] }}\n    {%- else %}\n        {{- 'A conversation between User and Assistant. The User asks a question, and the Assistant solves it. The assistant first reasons through the problem by generating high-level partial programs with key parts hidden using \"...\" markers. It then simulates programs trace based on the incomplete partial programs. The partial program must be general enough to solve all instances of the problem type, not just specific examples. The partial programs and traces are enclosed within <partial_program> </partial_program> and <program_trace> </program_trace> tags, while the overall reasoning process and final answer are enclosed within <think> </think> and <answer> </answer> tags, respectively. You should also wrap your final answer in $\\\\boxed{{ANSWER}}$ if it is a mathematical expression.\\n\\nFormat:\\n<think>\\n<partial_program>\\n[Partial Program here]\\n</partial_program>\\n<program_trace>\\n[Program Trace here]\\n</program_trace>\\n</think>\\n<answer>\\n[Final Answer here]\\n</answer>' }}\n    {%- endif %}\n    {{- \"\\n\\n# Tools\\n\\nYou may call one or more functions to assist with the user query.\\n\\nYou are provided with function signatures within <tools></tools> XML tags:\\n<tools>\" }}\n    {%- for tool in tools %}\n        {{- \"\\n\" }}\n        {{- tool | tojson }}\n    {%- endfor %}\n    {{- \"\\n</tools>\\n\\nFor each function call, return a json object with function name and arguments within <tool_call></tool_call> XML tags:\\n<tool_call>\\n{\\\"name\\\": <function-name>, \\\"arguments\\\": <args-json-object>}\\n</tool_call><|im_end|>\\n\" }}\n{%- else %}\n    {%- if messages[0]['role'] == 'system' %}\n        {{- '<|im_start|>system\\n' + messages[0]['content'] + '<|im_end|>\\n' }}\n    {%- else %}\n        {{- '<|im_start|>system\\nA conversation between User and Assistant. The User asks a question, and the Assistant solves it. The assistant first reasons through the problem by generating high-level partial programs with key parts hidden using \"...\" markers. It then simulates programs trace based on the incomplete partial programs. The partial program must be general enough to solve all instances of the problem type, not just specific examples. The partial programs and traces are enclosed within <partial_program> </partial_program> and <program_trace> </program_trace> tags, while the overall reasoning process and final answer are enclosed within <think> </think> and <answer> </answer> tags, respectively. You should also wrap your final answer in $\\\\boxed{{ANSWER}}$ if it is a mathematical expression.\\n\\nFormat:\\n<think>\\n<partial_program>\\n[Partial Program here]\\n</partial_program>\\n<program_trace>\\n[Program Trace here]\\n</program_trace>\\n</think>\\n<answer>\\n[Final Answer here]\\n</answer><|im_end|>\\n' }}\n    {%- endif %}\n{%- endif %}\n{%- for message in messages %}\n    {%- if (message.role == \"user\") or (message.role == \"system\" and not loop.first) or (message.role == \"assistant\" and not message.tool_calls) %}\n        {{- '<|im_start|>' + message.role + '\\n' + message.content + '<|im_end|>' + '\\n' }}\n    {%- elif message.role == \"assistant\" %}\n        {{- '<|im_start|>' + message.role }}\n        {%- if message.content %}\n            {{- '\\n' + message.content }}\n        {%- endif %}\n        {%- for tool_call in message.tool_calls %}\n            {%- if tool_call.function is defined %}\n                {%- set tool_call = tool_call.function %}\n            {%- endif %}\n            {{- '\\n<tool_call>\\n{\"name\": \"' }}\n            {{- tool_call.name }}\n            {{- '\", \"arguments\": ' }}\n            {{- tool_call.arguments | tojson }}\n            {{- '}\\n</tool_call>' }}\n        {%- endfor %}\n        {{- '<|im_end|>\\n' }}\n    {%- elif message.role == \"tool\" %}\n        {%- if (loop.index0 == 0) or (messages[loop.index0 - 1].role != \"tool\") %}\n            {{- '<|im_start|>user' }}\n        {%- endif %}\n        {{- '\\n<tool_response>\\n' }}\n        {{- message.content }}\n        {{- '\\n</tool_response>' }}\n        {%- if loop.last or (messages[loop.index0 + 1].role != \"tool\") %}\n            {{- '<|im_end|>\\n' }}\n        {%- endif %}\n    {%- endif %}\n{%- endfor %}\n{%- if add_generation_prompt %}\n    {{- '<|im_start|>assistant\\n' }}\n{%- endif %}\n"
+  chat_template: "{%- if tools %}\n    {{- '<|im_start|>system\\n' }}\n    {%- if messages[0]['role'] == 'system' %}\n        {{- messages[0]['content'] }}\n    {%- else %}\n        {{- 'You are Qwen, created by Alibaba Cloud. You are a helpful assistant.' }}\n    {%- endif %}\n    {{- \"\\n\\n# Tools\\n\\nYou may call one or more functions to assist with the user query.\\n\\nYou are provided with function signatures within <tools></tools> XML tags:\\n<tools>\" }}\n    {%- for tool in tools %}\n        {{- \"\\n\" }}\n        {{- tool | tojson }}\n    {%- endfor %}\n    {{- \"\\n</tools>\\n\\nFor each function call, return a json object with function name and arguments within <tool_call></tool_call> XML tags:\\n<tool_call>\\n{\\\"name\\\": <function-name>, \\\"arguments\\\": <args-json-object>}\\n</tool_call><|im_end|>\\n\" }}\n{%- else %}\n    {%- if messages[0]['role'] == 'system' %}\n        {{- '<|im_start|>system\\n' + messages[0]['content'] + '<|im_end|>\\n' }}\n    {%- else %}\n        {{- '<|im_start|>system\\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\\n' }}\n    {%- endif %}\n{%- endif %}\n{%- for message in messages %}\n    {%- if (message.role == \"user\") or (message.role == \"system\" and not loop.first) or (message.role == \"assistant\" and not message.tool_calls) %}\n        {{- '<|im_start|>' + message.role + '\\n' + message.content + '<|im_end|>' + '\\n' }}\n    {%- elif message.role == \"assistant\" %}\n        {{- '<|im_start|>' + message.role }}\n        {%- if message.content %}\n            {{- '\\n' + message.content }}\n        {%- endif %}\n        {%- for tool_call in message.tool_calls %}\n            {%- if tool_call.function is defined %}\n                {%- set tool_call = tool_call.function %}\n            {%- endif %}\n            {{- '\\n<tool_call>\\n{\"name\": \"' }}\n            {{- tool_call.name }}\n            {{- '\", \"arguments\": ' }}\n            {{- tool_call.arguments | tojson }}\n            {{- '}\\n</tool_call>' }}\n        {%- endfor %}\n        {{- '<|im_end|>\\n' }}\n    {%- elif message.role == \"tool\" %}\n        {%- if (loop.index0 == 0) or (messages[loop.index0 - 1].role != \"tool\") %}\n            {{- '<|im_start|>user' }}\n        {%- endif %}\n        {{- '\\n<tool_response>\\n' }}\n        {{- message.content }}\n        {{- '\\n</tool_response>' }}\n        {%- if loop.last or (messages[loop.index0 + 1].role != \"tool\") %}\n            {{- '<|im_end|>\\n' }}\n        {%- endif %}\n    {%- endif %}\n{%- endfor %}\n{%- if add_generation_prompt %}\n    {{- '<|im_start|>assistant\\n' }}\n{%- endif %}\n"
+optim:
+  lr: 1e-5
+  betas: [0.9, 0.95]
+  weight_decay: 0.01
+  warmup_steps_ratio: 0.1
+  clip_grad: 1.0
+  lr_scheduler: cosine
+ulysses_sequence_parallel_size: 1
+use_remove_padding: False
+trainer:
+  default_local_dir: /tmp/sft_model
+  default_hdfs_dir: hdfs://tmp/experiments/gsm8k/gemma-1.1-7b-it/ # change the hdfs path here
+  resume_path: null
+  project_name: gsm8k-sft
+  experiment_name: test
+  total_epochs: 4
+  total_training_steps: null
+  logger: ['console']
+  seed: 1
+

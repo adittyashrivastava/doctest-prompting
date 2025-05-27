@@ -1,0 +1,19 @@
+Filename Format Guide
+=====================
+
+The results are saved in JSON files with the following naming pattern:
+{suite}_{tasks}_{few_shot}_{temperature}_{in_task_learning_examples}_{test_time_scaling_repeats}
+
+Where:
+- suite: The evaluation suite (e.g., 'custom')
+- tasks: The list of tasks evaluated
+- few_shot: Number of few-shot examples used (0)
+- temperature: Sampling temperature (0)
+- in_task_learning_examples: Number of in-task learning examples (0)
+- in_task_learning_mode: In-task learning mode (0)
+- test_time_scaling_repeats: Number of test time repeats (0)
+
+Example for this run:
+custom_gsm8k,math_500,gpqa_diamond,aime24,mmlu_pro_health,mmlu_pro_biology,medqa,medcalc_bench_rules,medcalc_bench_formulas,pubmedqa_0_0_0_0_0
+
+Created: Fri May  9 01:36:17 EDT 2025

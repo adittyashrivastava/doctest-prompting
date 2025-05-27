@@ -1,0 +1,3 @@
+[submodule "/home/jixuanl/verl/afs_data/doctest-prompting"]
+	path = /home/jixuanl/verl/afs_data/doctest-prompting
+	url = https://github.com/wwcohen/doctest-prompting.git

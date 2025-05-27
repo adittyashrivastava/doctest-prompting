@@ -1,0 +1,15 @@
+Logs for a two-stage approach:
+
+(1) convert everything in dev to CNF => tocnf-dtp-dev.log
+     
+     % time py run_eval2.py --hi 30 formal_fallacies --variant _2cnf > ff_cnf.log
+
+(2) run resolution refutation on each derived CNF
+
+    % py reason_from_cnf.py
+
+ => Final totals: total=30 correct=10 errors={'syntax': 3, 'cnf': 2} ys={'valid': 19, 'invalid': 11}
+
+ = 3 syntax errors (python can't eval the supposed CNF)
+   2 cases of non-CNF generated
+   10/15 on the remaining cases

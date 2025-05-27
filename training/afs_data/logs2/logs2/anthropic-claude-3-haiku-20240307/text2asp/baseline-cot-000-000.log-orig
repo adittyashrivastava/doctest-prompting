@@ -1,0 +1,1236 @@
+Namespace(config=None, config1='conf.d/parsing.conf', config2='conf.d/haiku.conf', config3=None, config4=None, task='text2asp', variant='', example_dir='parsing/examples/train', test_example_dir='parsing/examples/test/', partial_program_dir='parsing/mocks/partialprograms', lo=0, hi=0, log_dir='../doctest-prompting-data/logs2', log_stem='', append_to_log=False, json_output=False, service='anthropic', model='claude-3-haiku-20240307', parallel=1, delay=0.5, template_file='parsing/cot-prompts/text2asp.txt', baseline_template_format=True, cot_prompt_dir='parsing/cot-prompts/', CoT=True, test_set=False)
+============================== prompt template ==============================
+Translate logical statements from natural language to Answer Set Programming notation.
+
+When you give your answer, follow the format of the examples below
+carefully.  In particular, you MUST end your answer with
+the line "Final answer: xxx" where xxx is the logical translation of the input.
+
+
+Q: Whoever is not a daughter of Margret and not a schoolmate of Anna is however a granddaughter of Ana. 
+Final answer: granddaughter_of_Ana(X) :- -daughter_of_Margret(X), -schoolmate_of_Anna(X).
+
+Q: Being a classmate of Shirley is necessary for being a granddaughter of Ana. 
+Final answer: classmate_of_Shirley(X) :- granddaughter_of_Ana(X).
+
+Q: Whoever is none of this: a daughter of Margret or schoolmate of Anna, is a classmate of Shirley. 
+Final answer: classmate_of_Shirley(X) :- -daughter_of_Margret(X), -schoolmate_of_Anna(X).
+
+Q: Being a ingredient of Wo-Man Up is necessary for being a ingredient of Eye Liner. 
+Final answer: ingredient_of_Wo_Man_Up(X) :- ingredient_of_Eye_Liner(X).
+
+Q: Not being a ingredient of Wo-Man Up is sufficient for not being a ingredient of Eye Liner. 
+Final answer: -ingredient_of_Eye_Liner(X) :- -ingredient_of_Wo_Man_Up(X).
+
+Q: Everyone who is neither a uncle of Kenneth nor a stepbrother of Elvis is a grandson of Jordon or a ancestor of Gordon. 
+Final answer: 1 {grandson_of_Jordon(X) ; ancestor_of_Gordon(X)} :- -uncle_of_Kenneth(X), -stepbrother_of_Elvis(X).
+
+Q: Being a uncle of Ricardo is necessary for being a grandson of Jordon. 
+Final answer: uncle_of_Ricardo(X) :- grandson_of_Jordon(X).
+
+Q: Being a uncle of Ricardo is necessary for being a ancestor of Gordon. 
+Final answer: uncle_of_Ricardo(X) :- ancestor_of_Gordon(X).
+
+Q: Someone who is not a uncle of Ricardo is a uncle of Kenneth or a stepbrother of Elvis. 
+Final answer: 1 {uncle_of_Kenneth(X) ; stepbrother_of_Elvis(X)} :- -uncle_of_Ricardo(X).
+
+
+Q: {input_str}
+============================== template with program ==============================
+Translate logical statements from natural language to Answer Set Programming notation.
+
+When you give your answer, follow the format of the examples below
+carefully.  In particular, you MUST end your answer with
+the line "Final answer: xxx" where xxx is the logical translation of the input.
+
+
+Q: Whoever is not a daughter of Margret and not a schoolmate of Anna is however a granddaughter of Ana. 
+Final answer: granddaughter_of_Ana(X) :- -daughter_of_Margret(X), -schoolmate_of_Anna(X).
+
+Q: Being a classmate of Shirley is necessary for being a granddaughter of Ana. 
+Final answer: classmate_of_Shirley(X) :- granddaughter_of_Ana(X).
+
+Q: Whoever is none of this: a daughter of Margret or schoolmate of Anna, is a classmate of Shirley. 
+Final answer: classmate_of_Shirley(X) :- -daughter_of_Margret(X), -schoolmate_of_Anna(X).
+
+Q: Being a ingredient of Wo-Man Up is necessary for being a ingredient of Eye Liner. 
+Final answer: ingredient_of_Wo_Man_Up(X) :- ingredient_of_Eye_Liner(X).
+
+Q: Not being a ingredient of Wo-Man Up is sufficient for not being a ingredient of Eye Liner. 
+Final answer: -ingredient_of_Eye_Liner(X) :- -ingredient_of_Wo_Man_Up(X).
+
+Q: Everyone who is neither a uncle of Kenneth nor a stepbrother of Elvis is a grandson of Jordon or a ancestor of Gordon. 
+Final answer: 1 {grandson_of_Jordon(X) ; ancestor_of_Gordon(X)} :- -uncle_of_Kenneth(X), -stepbrother_of_Elvis(X).
+
+Q: Being a uncle of Ricardo is necessary for being a grandson of Jordon. 
+Final answer: uncle_of_Ricardo(X) :- grandson_of_Jordon(X).
+
+Q: Being a uncle of Ricardo is necessary for being a ancestor of Gordon. 
+Final answer: uncle_of_Ricardo(X) :- ancestor_of_Gordon(X).
+
+Q: Someone who is not a uncle of Ricardo is a uncle of Kenneth or a stepbrother of Elvis. 
+Final answer: 1 {uncle_of_Kenneth(X) ; stepbrother_of_Elvis(X)} :- -uncle_of_Ricardo(X).
+
+
+Q: {input_str}
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Every regular consumer of Natural Bar soap is neither a owner of a KMS shampoo nor a regular user of Tocca soap. 
+------------------------------ output ------------------------------
+Final answer: -owner_of_KMS_shampoo(X) ; -regular_user_of_Tocca_soap(X) :- regular_consumer_of_Natural_Bar_soap(X).
+------------------------------ correct=1 total=1 parse_failures=0 prediction='-owner_of_KMS_shampoo(X) ; -regular_user_of_Tocca_soap(X) :- regular_consumer_of_Natural_Bar_soap(X).' y='{owner_of_a_KMS_shampoo(X) ; regular_user_of_Tocca_soap(X)} 0 :- regular_consumer_of_Natural_Bar_soap(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+No regular user of Tocca soap and no owner of a KMS shampoo is a regular consumer of Natural Bar soap. 
+------------------------------ output ------------------------------
+Final answer: -regular_consumer_of_Natural_Bar_soap(X) :- -regular_user_of_Tocca_soap(X), -owner_of_KMS_shampoo(X).
+------------------------------ correct=2 total=2 parse_failures=0 prediction='-regular_consumer_of_Natural_Bar_soap(X) :- -regular_user_of_Tocca_soap(X), -owner_of_KMS_shampoo(X).' y='-regular_consumer_of_Natural_Bar_soap(X) :- owner_of_a_KMS_shampoo(X). -regular_consumer_of_Natural_Bar_soap(X) :- regular_user_of_Tocca_soap(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Everyone who is a stepbrother of Ralph is a uncle of Lee, too. 
+------------------------------ output ------------------------------
+Final answer: uncle_of_Lee(X) :- stepbrother_of_Ralph(X).
+------------------------------ correct=3 total=3 parse_failures=0 prediction='uncle_of_Lee(X) :- stepbrother_of_Ralph(X).' y='uncle_of_Lee(X) :- stepbrother_of_Ralph(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Some schoolmate of Grant is a stepbrother of Ralph. 
+------------------------------ output ------------------------------
+Final answer: stepbrother_of_Ralph(X) :- schoolmate_of_Grant(X).
+------------------------------ correct=3 total=4 parse_failures=0 prediction='stepbrother_of_Ralph(X) :- schoolmate_of_Grant(X).' y='schoolmate_of_Grant(sk2). stepbrother_of_Ralph(sk2).' is_correct=False ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+There is somebody who is a schoolmate of Grant and a uncle of Lee. 
+------------------------------ output ------------------------------
+Final answer: 1 {schoolmate_of_Grant(X), uncle_of_Lee(X)}.
+------------------------------ correct=3 total=5 parse_failures=0 prediction='1 {schoolmate_of_Grant(X), uncle_of_Lee(X)}.' y='schoolmate_of_Grant(sk2). uncle_of_Lee(sk2).' is_correct=False ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+No ingredient of Rocket Science that is a ingredient of LIP GLOSS/LIP BALM is a ingredient of Ivory Mist. 
+------------------------------ output ------------------------------
+Final answer: -ingredient_of_Ivory_Mist(X) :- ingredient_of_Rocket_Science(X), ingredient_of_LIP_GLOSS_LIP_BALM(X).
+------------------------------ correct=4 total=6 parse_failures=0 prediction='-ingredient_of_Ivory_Mist(X) :- ingredient_of_Rocket_Science(X), ingredient_of_LIP_GLOSS_LIP_BALM(X).' y='-ingredient_of_Ivory_Mist(X) :- ingredient_of_LIP_GLOSS_LIP_BALM(X), ingredient_of_Rocket_Science(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Every ingredient of Ivory Mist is not a ingredient of LIP GLOSS/LIP BALM or not a ingredient of Rocket Science. 
+------------------------------ output ------------------------------
+Final answer: -ingredient_of_LIP_GLOSS_LIP_BALM(X) ; -ingredient_of_Rocket_Science(X) :- ingredient_of_Ivory_Mist(X).
+------------------------------ correct=5 total=7 parse_failures=0 prediction='-ingredient_of_LIP_GLOSS_LIP_BALM(X) ; -ingredient_of_Rocket_Science(X) :- ingredient_of_Ivory_Mist(X).' y='1 {-ingredient_of_LIP_GLOSS_LIP_BALM(X) ; -ingredient_of_Rocket_Science(X)} :- ingredient_of_Ivory_Mist(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Not being a brother of Tony is sufficient for not being a stepbrother of Bradford. 
+------------------------------ output ------------------------------
+Final answer: -stepbrother_of_Bradford(X) :- -brother_of_Tony(X).
+------------------------------ correct=6 total=8 parse_failures=0 prediction='-stepbrother_of_Bradford(X) :- -brother_of_Tony(X).' y='-stepbrother_of_Bradford(X) :- -brother_of_Tony(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Every stepbrother of Bradford is a brother of Tony. 
+------------------------------ output ------------------------------
+Final answer: brother_of_Tony(X) :- stepbrother_of_Bradford(X).
+------------------------------ correct=7 total=9 parse_failures=0 prediction='brother_of_Tony(X) :- stepbrother_of_Bradford(X).' y='brother_of_Tony(X) :- stepbrother_of_Bradford(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Everyone who is not both a son of Donald and a brother of Leo is a grandson of Jeffrey. 
+------------------------------ output ------------------------------
+Final answer: grandson_of_Jeffrey(X) :- -son_of_Donald(X); -brother_of_Leo(X).
+------------------------------ correct=8 total=10 parse_failures=0 prediction='grandson_of_Jeffrey(X) :- -son_of_Donald(X); -brother_of_Leo(X).' y='grandson_of_Jeffrey(X) :- -son_of_Donald(X). grandson_of_Jeffrey(X) :- -brother_of_Leo(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+It is not the case that Albert is a son of Donald. 
+------------------------------ output ------------------------------
+Final answer: -son_of_Donald(Albert).
+------------------------------ correct=8 total=11 parse_failures=0 prediction='-son_of_Donald(Albert).' y='-son_of_Donald("Albert").' is_correct=False ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Albert is a grandson of Jeffrey. 
+------------------------------ output ------------------------------
+Final answer: grandson_of_Jeffrey(albert).
+------------------------------ correct=8 total=12 parse_failures=0 prediction='grandson_of_Jeffrey(albert).' y='grandson_of_Jeffrey("Albert").' is_correct=False ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Whoever is grandson of Alan is at least one of these: a great-grandfather of Elvis, a brother of Abraham or a workmate of Peter. 
+------------------------------ output ------------------------------
+Final answer: 1 {great_grandfather_of_Elvis(X) ; brother_of_Abraham(X) ; workmate_of_Peter(X)} :- grandson_of_Alan(X).
+------------------------------ correct=9 total=13 parse_failures=0 prediction='1 {great_grandfather_of_Elvis(X) ; brother_of_Abraham(X) ; workmate_of_Peter(X)} :- grandson_of_Alan(X).' y='1 {great_grandfather_of_Elvis(X) ; brother_of_Abraham(X) ; workmate_of_Peter(X)}} :- grandson_of_Alan(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Being a grandson of Carmelo is necessary for being a great-grandfather of Elvis. 
+------------------------------ output ------------------------------
+Final answer: grandson_of_Carmelo(X) :- great-grandfather_of_Elvis(X).
+------------------------------ correct=10 total=14 parse_failures=0 prediction='grandson_of_Carmelo(X) :- great-grandfather_of_Elvis(X).' y='grandson_of_Carmelo(X) :- great_grandfather_of_Elvis(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Everyone who is a brother of Abraham is a grandson of Carmelo, too. 
+------------------------------ output ------------------------------
+Final answer: grandson_of_Carmelo(X) :- brother_of_Abraham(X).
+------------------------------ correct=11 total=15 parse_failures=0 prediction='grandson_of_Carmelo(X) :- brother_of_Abraham(X).' y='grandson_of_Carmelo(X) :- brother_of_Abraham(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+To be a grandson of Carmelo or a workmate of Peter is necessary for being a grandson of Alan. 
+------------------------------ output ------------------------------
+Final answer: 1 {grandson_of_Carmelo(X) ; workmate_of_Peter(X)} :- grandson_of_Alan(X).
+------------------------------ correct=12 total=16 parse_failures=0 prediction='1 {grandson_of_Carmelo(X) ; workmate_of_Peter(X)} :- grandson_of_Alan(X).' y='1 {grandson_of_Carmelo(X) ; workmate_of_Peter(X)} :- grandson_of_Alan(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Nobody is neither a backer of FC Zenit nor a ex-fan of FC Dnipro. 
+------------------------------ output ------------------------------
+Final answer: backer_of_FC_Zenit(X) v ex_fan_of_FC_Dnipro(X) :- true.
+------------------------------ correct=13 total=17 parse_failures=0 prediction='backer_of_FC_Zenit(X) v ex_fan_of_FC_Dnipro(X) :- true.' y='ex_fan_of_FC_Dnipro(X) :- -backer_of_FC_Zenit(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Not being a admirer of Leicester City FC is sufficient for not being a ex-fan of FC Dnipro. 
+------------------------------ output ------------------------------
+Final answer: -ex_fan_of_FC_Dnipro(X) :- -admirer_of_Leicester_City_FC(X).
+------------------------------ correct=14 total=18 parse_failures=0 prediction='-ex_fan_of_FC_Dnipro(X) :- -admirer_of_Leicester_City_FC(X).' y='-ex_fan_of_FC_Dnipro(X) :- -admirer_of_Leicester_City_FC(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Nobody is neither a backer of FC Zenit nor a admirer of Leicester City FC. 
+------------------------------ output ------------------------------
+Final answer: 1 {backer_of_FC_Zenit(X) ; admirer_of_Leicester_City_FC(X)} :- not -backer_of_FC_Zenit(X), not -admirer_of_Leicester_City_FC(X).
+------------------------------ correct=15 total=19 parse_failures=0 prediction='1 {backer_of_FC_Zenit(X) ; admirer_of_Leicester_City_FC(X)} :- not -backer_of_FC_Zenit(X), not -admirer_of_Leicester_City_FC(X).' y='admirer_of_Leicester_City_FC(X) :- -backer_of_FC_Zenit(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Every niece of Marcie is a daughter of Santina or a great-grandmother of Bertha or a sister of Myra. 
+------------------------------ output ------------------------------
+Final answer: 1 {daughter_of_Santina(X) ; great_grandmother_of_Bertha(X) ; sister_of_Myra(X)} :- niece_of_Marcie(X).
+------------------------------ correct=16 total=20 parse_failures=0 prediction='1 {daughter_of_Santina(X) ; great_grandmother_of_Bertha(X) ; sister_of_Myra(X)} :- niece_of_Marcie(X).' y='1 {daughter_of_Santina(X) ; great_grandmother_of_Bertha(X) ; sister_of_Myra(X)}} :- niece_of_Marcie(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Being a niece of Marcie is sufficient for not being a daughter of Santina. 
+------------------------------ output ------------------------------
+Final answer: -daughter_of_Santina(X) :- niece_of_Marcie(X).
+------------------------------ correct=17 total=21 parse_failures=0 prediction='-daughter_of_Santina(X) :- niece_of_Marcie(X).' y='-daughter_of_Santina(X) :- niece_of_Marcie(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Every niece of Marcie is a great-grandmother of Bertha or a sister of Myra. 
+------------------------------ output ------------------------------
+Final answer: 1 {great-grandmother_of_Bertha(X) ; sister_of_Myra(X)} :- niece_of_Marcie(X).
+------------------------------ correct=18 total=22 parse_failures=0 prediction='1 {great-grandmother_of_Bertha(X) ; sister_of_Myra(X)} :- niece_of_Marcie(X).' y='1 {great_grandmother_of_Bertha(X) ; sister_of_Myra(X)} :- niece_of_Marcie(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Being a ingredient of Over the Taupe is necessary for not being a ingredient of Yellow There!. 
+------------------------------ output ------------------------------
+Final answer: -ingredient_of_Yellow_There(X) :- ingredient_of_Over_the_Taupe(X).
+------------------------------ correct=19 total=23 parse_failures=0 prediction='-ingredient_of_Yellow_There(X) :- ingredient_of_Over_the_Taupe(X).' y='ingredient_of_Over_the_Taupe(X) :- -ingredient_of_Yellow_There_(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Cocamide is not a ingredient of Over the Taupe. 
+------------------------------ output ------------------------------
+Final answer: -ingredient_of_Over_the_Taupe(cocamide).
+------------------------------ correct=19 total=24 parse_failures=0 prediction='-ingredient_of_Over_the_Taupe(cocamide).' y='-ingredient_of_Over_the_Taupe("Cocamide").' is_correct=False ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Cocamide is a ingredient of Yellow There!. 
+------------------------------ output ------------------------------
+Final answer: ingredient_of_Yellow_There(cocamide).
+------------------------------ correct=19 total=25 parse_failures=0 prediction='ingredient_of_Yellow_There(cocamide).' y='ingredient_of_Yellow_There_("Cocamide").' is_correct=False ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Whoever is not a workmate of Marie is a cousin of Katie. 
+------------------------------ output ------------------------------
+Final answer: cousin_of_Katie(X) :- -workmate_of_Marie(X).
+------------------------------ correct=20 total=26 parse_failures=0 prediction='cousin_of_Katie(X) :- -workmate_of_Marie(X).' y='cousin_of_Katie(X) :- -workmate_of_Marie(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Being a great-grandmother of Doria is necessary for being a cousin of Katie. 
+------------------------------ output ------------------------------
+Final answer: great-grandmother_of_Doria(X) :- cousin_of_Katie(X).
+------------------------------ correct=21 total=27 parse_failures=0 prediction='great-grandmother_of_Doria(X) :- cousin_of_Katie(X).' y='great_grandmother_of_Doria(X) :- cousin_of_Katie(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Being a great-grandmother of Doria is necessary for not being a workmate of Marie. 
+------------------------------ output ------------------------------
+Final answer: -workmate_of_Marie(X) :- great-grandmother_of_Doria(X).
+------------------------------ correct=22 total=28 parse_failures=0 prediction='-workmate_of_Marie(X) :- great-grandmother_of_Doria(X).' y='great_grandmother_of_Doria(X) :- -workmate_of_Marie(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Everyone who is both a infrequent user of Proactiv soap and a occasional purchaser of Canus soap is not a regular user of Dial soap. 
+------------------------------ output ------------------------------
+Here is the translation of the given logical statement to Answer Set Programming notation:
+
+Final answer: -regular_user_of_Dial_soap(X) :- infrequent_user_of_Proactiv_soap(X), occasional_purchaser_of_Canus_soap(X).
+------------------------------ correct=23 total=29 parse_failures=0 prediction='-regular_user_of_Dial_soap(X) :- infrequent_user_of_Proactiv_soap(X), occasional_purchaser_of_Canus_soap(X).' y='-regular_user_of_Dial_soap(X) :- infrequent_user_of_Proactiv_soap(X), occasional_purchaser_of_Canus_soap(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+There is somebody who is a frequent consumer of Tom's of Maine soap and a regular user of Dial soap. 
+------------------------------ output ------------------------------
+Final answer: 1 {frequent_consumer_of_Tom's_of_Maine_soap(X), regular_user_of_Dial_soap(X)}.
+------------------------------ correct=23 total=30 parse_failures=0 prediction="1 {frequent_consumer_of_Tom's_of_Maine_soap(X), regular_user_of_Dial_soap(X)}." y='frequent_consumer_of_Toms_of_Maine_soap(sk2). regular_user_of_Dial_soap(sk2).' is_correct=False ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+There is somebody who is a frequent consumer of Tom's of Maine soap and, in addition, not a infrequent user of Proactiv soap or not a occasional purchaser of Canus soap. 
+------------------------------ output ------------------------------
+Final answer: 
+frequent_consumer_of_Tom's_of_Maine_soap(X) :- -infrequent_user_of_Proactiv_soap(X) ; -occasional_purchaser_of_Canus_soap(X).
+------------------------------ correct=23 total=31 parse_failures=1 prediction='**parse failed**' y='frequent_consumer_of_Toms_of_Maine_soap(sk3). 1 {-infrequent_user_of_Proactiv_soap(sk3) ; -occasional_purchaser_of_Canus_soap(sk3)}.' is_correct=False ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Being a ingredient of Shopkins Handsoap is necessary for being a ingredient of 03 CONCEALER. 
+------------------------------ output ------------------------------
+Final answer: ingredient_of_Shopkins_Handsoap(X) :- ingredient_of_03_CONCEALER(X).
+------------------------------ correct=24 total=32 parse_failures=1 prediction='ingredient_of_Shopkins_Handsoap(X) :- ingredient_of_03_CONCEALER(X).' y='ingredient_of_Shopkins_Handsoap(X) :- ingredient_of_03_CONCEALER(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+There is something that is a ingredient of French Bordeaux and not a ingredient of Shopkins Handsoap. 
+------------------------------ output ------------------------------
+Final answer: ingredient_of_French_Bordeaux(X), -ingredient_of_Shopkins_Handsoap(X).
+------------------------------ correct=24 total=33 parse_failures=1 prediction='ingredient_of_French_Bordeaux(X), -ingredient_of_Shopkins_Handsoap(X).' y='ingredient_of_French_Bordeaux(sk4). -ingredient_of_Shopkins_Handsoap(sk4).' is_correct=False ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Some ingredient of French Bordeaux is not a ingredient of 03 CONCEALER. 
+------------------------------ output ------------------------------
+Final answer: -ingredient_of_03_CONCEALER(X) :- ingredient_of_French_Bordeaux(X).
+------------------------------ correct=24 total=34 parse_failures=1 prediction='-ingredient_of_03_CONCEALER(X) :- ingredient_of_French_Bordeaux(X).' y='ingredient_of_French_Bordeaux(sk4). -ingredient_of_03_CONCEALER(sk4).' is_correct=False ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Every frequent consumer of Eucalyptus soap is a rare consumer of Biolage shampoo or, otherwise, neither a rare consumer of Biolage shampoo nor a regular consumer of Olay soap. 
+------------------------------ output ------------------------------
+Final answer:
+frequent_consumer_of_Eucalyptus_soap(X) :- rare_consumer_of_Biolage_shampoo(X) ; (-rare_consumer_of_Biolage_shampoo(X), -regular_consumer_of_Olay_soap(X)).
+------------------------------ correct=24 total=35 parse_failures=2 prediction='**parse failed**' y='1 {-regular_consumer_of_Olay_soap(X) ; rare_consumer_of_Biolage_shampoo(X)} :- frequent_consumer_of_Eucalyptus_soap(X).' is_correct=False ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Every frequent consumer of Eucalyptus soap is a regular consumer of Olay soap. 
+------------------------------ output ------------------------------
+Final answer: regular_consumer_of_Olay_soap(X) :- frequent_consumer_of_Eucalyptus_soap(X).
+------------------------------ correct=25 total=36 parse_failures=2 prediction='regular_consumer_of_Olay_soap(X) :- frequent_consumer_of_Eucalyptus_soap(X).' y='regular_consumer_of_Olay_soap(X) :- frequent_consumer_of_Eucalyptus_soap(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Being a rare consumer of Biolage shampoo is necessary for being a frequent consumer of Eucalyptus soap. 
+------------------------------ output ------------------------------
+Final answer: rare_consumer_of_Biolage_shampoo(X) :- frequent_consumer_of_Eucalyptus_soap(X).
+------------------------------ correct=26 total=37 parse_failures=2 prediction='rare_consumer_of_Biolage_shampoo(X) :- frequent_consumer_of_Eucalyptus_soap(X).' y='rare_consumer_of_Biolage_shampoo(X) :- frequent_consumer_of_Eucalyptus_soap(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Being a half-sister of Rhonda is necessary for not being a niece of Brandy. 
+------------------------------ output ------------------------------
+Final answer: -niece_of_Brandy(X) :- half_sister_of_Rhonda(X).
+------------------------------ correct=27 total=38 parse_failures=2 prediction='-niece_of_Brandy(X) :- half_sister_of_Rhonda(X).' y='half_sister_of_Rhonda(X) :- -niece_of_Brandy(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Being a niece of Brandy is necessary for not being a half-sister of Rhonda. 
+------------------------------ output ------------------------------
+Final answer: -half_sister_of_Rhonda(X) :- niece_of_Brandy(X).
+------------------------------ correct=28 total=39 parse_failures=2 prediction='-half_sister_of_Rhonda(X) :- niece_of_Brandy(X).' y='niece_of_Brandy(X) :- -half_sister_of_Rhonda(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Nobody is neither a schoolmate of Walter nor a cousin of Albert. 
+------------------------------ output ------------------------------
+Final answer: 1 {schoolmate_of_Walter(X) ; cousin_of_Albert(X)} :- true.
+------------------------------ correct=29 total=40 parse_failures=2 prediction='1 {schoolmate_of_Walter(X) ; cousin_of_Albert(X)} :- true.' y='cousin_of_Albert(X) :- -schoolmate_of_Walter(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Whoever is not a schoolmate of Walter is a nephew of Earl. 
+------------------------------ output ------------------------------
+Final answer: nephew_of_Earl(X) :- -schoolmate_of_Walter(X).
+------------------------------ correct=30 total=41 parse_failures=2 prediction='nephew_of_Earl(X) :- -schoolmate_of_Walter(X).' y='nephew_of_Earl(X) :- -schoolmate_of_Walter(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Whoever is not a grandson of Ramiro is not a nephew of Earl or not a cousin of Albert. 
+------------------------------ output ------------------------------
+Final answer: 1 {-nephew_of_Earl(X) ; -cousin_of_Albert(X)} :- -grandson_of_Ramiro(X).
+------------------------------ correct=31 total=42 parse_failures=2 prediction='1 {-nephew_of_Earl(X) ; -cousin_of_Albert(X)} :- -grandson_of_Ramiro(X).' y='1 {-cousin_of_Albert(X) ; -nephew_of_Earl(X)} :- -grandson_of_Ramiro(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Nobody is neither a schoolmate of Walter nor a grandson of Ramiro. 
+------------------------------ output ------------------------------
+Final answer: 1 {schoolmate_of_Walter(X) ; grandson_of_Ramiro(X)} :- true.
+------------------------------ correct=32 total=43 parse_failures=2 prediction='1 {schoolmate_of_Walter(X) ; grandson_of_Ramiro(X)} :- true.' y='grandson_of_Ramiro(X) :- -schoolmate_of_Walter(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Nobody is neither a ex-supporter of 1. FC Köln nor a expert of SK Rapid Wien. 
+------------------------------ output ------------------------------
+Final answer: ex_supporter_of_1_FC_Köln(X) ; expert_of_SK_Rapid_Wien(X).
+------------------------------ correct=33 total=44 parse_failures=2 prediction='ex_supporter_of_1_FC_Köln(X) ; expert_of_SK_Rapid_Wien(X).' y='expert_of_SK_Rapid_Wien(X) :- -ex_supporter_of_1__FC_Köln(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+It is false that Dominick is a expert of SK Rapid Wien. 
+------------------------------ output ------------------------------
+Final answer: -expert_of_SK_Rapid_Wien(Dominick).
+------------------------------ correct=33 total=45 parse_failures=2 prediction='-expert_of_SK_Rapid_Wien(Dominick).' y='-expert_of_SK_Rapid_Wien("Dominick").' is_correct=False ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Dominick is a ex-supporter of 1. FC Köln. 
+------------------------------ output ------------------------------
+Final answer: ex_supporter_of_1_FC_Köln(Dominick).
+------------------------------ correct=33 total=46 parse_failures=2 prediction='ex_supporter_of_1_FC_Köln(Dominick).' y='ex_supporter_of_1__FC_Köln("Dominick").' is_correct=False ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Every backer of Heracles Almelo is both a devotee of Atalanta BC and a critic of PFC CSKA Moskva. 
+------------------------------ output ------------------------------
+Final answer: devotee_of_Atalanta_BC(X) :- backer_of_Heracles_Almelo(X).
+critic_of_PFC_CSKA_Moskva(X) :- backer_of_Heracles_Almelo(X).
+------------------------------ correct=34 total=47 parse_failures=2 prediction='devotee_of_Atalanta_BC(X) :- backer_of_Heracles_Almelo(X).' y='devotee_of_Atalanta_BC(X) :- backer_of_Heracles_Almelo(X). critic_of_PFC_CSKA_Moskva(X) :- backer_of_Heracles_Almelo(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Warren is not a devotee of Atalanta BC or not a critic of PFC CSKA Moskva. 
+------------------------------ output ------------------------------
+Final answer: -devotee_of_Atalanta_BC(Warren) ; -critic_of_PFC_CSKA_Moskva(Warren).
+------------------------------ correct=34 total=48 parse_failures=2 prediction='-devotee_of_Atalanta_BC(Warren) ; -critic_of_PFC_CSKA_Moskva(Warren).' y='1 {-devotee_of_Atalanta_BC("Warren") ; -critic_of_PFC_CSKA_Moskva("Warren")}.' is_correct=False ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+It is not the case that Warren is a backer of Heracles Almelo. 
+------------------------------ output ------------------------------
+Final answer: -backer_of_Heracles_Almelo(Warren).
+------------------------------ correct=34 total=49 parse_failures=2 prediction='-backer_of_Heracles_Almelo(Warren).' y='-backer_of_Heracles_Almelo("Warren").' is_correct=False ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Whoever is not a regular user of Caress soap is a frequent consumer of KMS shampoo. 
+------------------------------ output ------------------------------
+Final answer: frequent_consumer_of_KMS_shampoo(X) :- -regular_user_of_Caress_soap(X).
+------------------------------ correct=35 total=50 parse_failures=2 prediction='frequent_consumer_of_KMS_shampoo(X) :- -regular_user_of_Caress_soap(X).' y='frequent_consumer_of_KMS_shampoo(X) :- -regular_user_of_Caress_soap(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Not being a rare consumer of Yardley London soap is sufficient for not being a frequent consumer of KMS shampoo. 
+------------------------------ output ------------------------------
+Final answer: -frequent_consumer_of_KMS_shampoo(X) :- -rare_consumer_of_Yardley_London_soap(X).
+------------------------------ correct=36 total=51 parse_failures=2 prediction='-frequent_consumer_of_KMS_shampoo(X) :- -rare_consumer_of_Yardley_London_soap(X).' y='-frequent_consumer_of_KMS_shampoo(X) :- -rare_consumer_of_Yardley_London_soap(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Whoever is not a regular user of Caress soap is a rare consumer of Yardley London soap. 
+------------------------------ output ------------------------------
+Final answer: rare_consumer_of_Yardley_London(X) :- -regular_user_of_Caress(X).
+------------------------------ correct=37 total=52 parse_failures=2 prediction='rare_consumer_of_Yardley_London(X) :- -regular_user_of_Caress(X).' y='rare_consumer_of_Yardley_London_soap(X) :- -regular_user_of_Caress_soap(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Being a ingredient of Long Wear Lipcolor is necessary for being a ingredient of Eye Shadow Quads. 
+------------------------------ output ------------------------------
+Final answer: ingredient_of_Long_Wear_Lipcolor(X) :- ingredient_of_Eye_Shadow_Quads(X).
+------------------------------ correct=38 total=53 parse_failures=2 prediction='ingredient_of_Long_Wear_Lipcolor(X) :- ingredient_of_Eye_Shadow_Quads(X).' y='ingredient_of_Long_Wear_Lipcolor(X) :- ingredient_of_Eye_Shadow_Quads(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Being a ingredient of Blue Orchid is necessary for being a ingredient of Long Wear Lipcolor. 
+------------------------------ output ------------------------------
+Final answer: ingredient_of_Blue_Orchid(X) :- ingredient_of_Long_Wear_Lipcolor(X).
+------------------------------ correct=39 total=54 parse_failures=2 prediction='ingredient_of_Blue_Orchid(X) :- ingredient_of_Long_Wear_Lipcolor(X).' y='ingredient_of_Blue_Orchid(X) :- ingredient_of_Long_Wear_Lipcolor(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Every ingredient of Eye Shadow Quads is a ingredient of Blue Orchid. 
+------------------------------ output ------------------------------
+Final answer: ingredient_of_Blue_Orchid(X) :- ingredient_of_Eye_Shadow_Quads(X).
+------------------------------ correct=40 total=55 parse_failures=2 prediction='ingredient_of_Blue_Orchid(X) :- ingredient_of_Eye_Shadow_Quads(X).' y='ingredient_of_Blue_Orchid(X) :- ingredient_of_Eye_Shadow_Quads(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Being a son of Chris is necessary for being a classmate of Jack. 
+------------------------------ output ------------------------------
+Final answer: son_of_Chris(X) :- classmate_of_Jack(X).
+------------------------------ correct=41 total=56 parse_failures=2 prediction='son_of_Chris(X) :- classmate_of_Jack(X).' y='son_of_Chris(X) :- classmate_of_Jack(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Being a son of Chris is sufficient for not being a ancestor of Randy. 
+------------------------------ output ------------------------------
+Final answer: -ancestor_of_Randy(X) :- son_of_Chris(X).
+------------------------------ correct=42 total=57 parse_failures=2 prediction='-ancestor_of_Randy(X) :- son_of_Chris(X).' y='-ancestor_of_Randy(X) :- son_of_Chris(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Being a classmate of Jack is sufficient for not being a ancestor of Randy. 
+------------------------------ output ------------------------------
+Final answer: -ancestor_of_Randy(X) :- classmate_of_Jack(X).
+------------------------------ correct=43 total=58 parse_failures=2 prediction='-ancestor_of_Randy(X) :- classmate_of_Jack(X).' y='-ancestor_of_Randy(X) :- classmate_of_Jack(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+There is no owner of a Fels-Naptha soap who is a rare consumer of Redken shampoo yet not a regular user of Dove shampoo. 
+------------------------------ output ------------------------------
+Final answer: 
+:- owner_of_Fels_Naptha_soap(X), rare_consumer_of_Redken_shampoo(X), -regular_user_of_Dove_shampoo(X).
+------------------------------ correct=43 total=59 parse_failures=3 prediction='**parse failed**' y='1 {-rare_consumer_of_Redken_shampoo(X) ; regular_user_of_Dove_shampoo(X)} :- owner_of_a_Fels_Naptha_soap(X).' is_correct=False ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Being a rare consumer of Redken shampoo is necessary for being a owner of a Fels-Naptha soap. 
+------------------------------ output ------------------------------
+Final answer: rare_consumer_of_Redken_shampoo(X) :- owner_of_Fels_Naptha_soap(X).
+------------------------------ correct=44 total=60 parse_failures=3 prediction='rare_consumer_of_Redken_shampoo(X) :- owner_of_Fels_Naptha_soap(X).' y='rare_consumer_of_Redken_shampoo(X) :- owner_of_a_Fels_Naptha_soap(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Everyone who is a owner of a Fels-Naptha soap is a regular user of Dove shampoo, too. 
+------------------------------ output ------------------------------
+Final answer: owner_of_Fels_Naptha_soap(X) :- regular_user_of_Dove_shampoo(X).
+------------------------------ correct=45 total=61 parse_failures=3 prediction='owner_of_Fels_Naptha_soap(X) :- regular_user_of_Dove_shampoo(X).' y='regular_user_of_Dove_shampoo(X) :- owner_of_a_Fels_Naptha_soap(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Whoever is not both a opponent to Dundalk FC and a opponent to FC Internazionale Milano is a expert of RCD Espanyol. 
+------------------------------ output ------------------------------
+Final answer: expert_of_RCD_Espanyol(X) :- -opponent_to_Dundalk_FC(X), -opponent_to_FC_Internazionale_Milano(X).
+------------------------------ correct=46 total=62 parse_failures=3 prediction='expert_of_RCD_Espanyol(X) :- -opponent_to_Dundalk_FC(X), -opponent_to_FC_Internazionale_Milano(X).' y='expert_of_RCD_Espanyol(X) :- -opponent_to_Dundalk_FC(X). expert_of_RCD_Espanyol(X) :- -opponent_to_FC_Internazionale_Milano(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Jose is not a opponent to Dundalk FC. 
+------------------------------ output ------------------------------
+Final answer: -opponent_to_Dundalk_FC(jose).
+------------------------------ correct=46 total=63 parse_failures=3 prediction='-opponent_to_Dundalk_FC(jose).' y='-opponent_to_Dundalk_FC("Jose").' is_correct=False ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Jose is a expert of RCD Espanyol. 
+------------------------------ output ------------------------------
+Final answer: expert_of_RCD_Espanyol(jose).
+------------------------------ correct=46 total=64 parse_failures=3 prediction='expert_of_RCD_Espanyol(jose).' y='expert_of_RCD_Espanyol("Jose").' is_correct=False ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+No occasional purchaser of Infusium shampoo is both a occasional purchaser of Paul Mitchell shampoo and a owner of a Alterna Haircare shampoo. 
+------------------------------ output ------------------------------
+Final answer: -occasional_purchaser_of_Infusium_shampoo(X) v -occasional_purchaser_of_Paul_Mitchell_shampoo(X) v -owner_of_Alterna_Haircare_shampoo(X).
+------------------------------ correct=47 total=65 parse_failures=3 prediction='-occasional_purchaser_of_Infusium_shampoo(X) v -occasional_purchaser_of_Paul_Mitchell_shampoo(X) v -owner_of_Alterna_Haircare_shampoo(X).' y='-occasional_purchaser_of_Paul_Mitchell_shampoo(X) :- occasional_purchaser_of_Infusium_shampoo(X). -owner_of_a_Alterna_Haircare_shampoo(X)} :- occasional_purchaser_of_Infusium_shampoo(X). ' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Whoever is not a occasional purchaser of Paul Mitchell shampoo is a infrequent user of Natural Bar soap. 
+------------------------------ output ------------------------------
+Final answer: infrequent_user_of_Natural_Bar_soap(X) :- -occasional_purchaser_of_Paul_Mitchell_shampoo(X).
+------------------------------ correct=48 total=66 parse_failures=3 prediction='infrequent_user_of_Natural_Bar_soap(X) :- -occasional_purchaser_of_Paul_Mitchell_shampoo(X).' y='infrequent_user_of_Natural_Bar_soap(X) :- -occasional_purchaser_of_Paul_Mitchell_shampoo(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Nobody is neither a owner of a Alterna Haircare shampoo nor a infrequent user of Natural Bar soap. 
+------------------------------ output ------------------------------
+Final answer: 1 {owner_of_Alterna_Haircare_shampoo(X) ; infrequent_user_of_Natural_Bar_soap(X)} :- true.
+------------------------------ correct=49 total=67 parse_failures=3 prediction='1 {owner_of_Alterna_Haircare_shampoo(X) ; infrequent_user_of_Natural_Bar_soap(X)} :- true.' y='infrequent_user_of_Natural_Bar_soap(X) :- -owner_of_a_Alterna_Haircare_shampoo(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Everyone who is a occasional purchaser of Infusium shampoo is a infrequent user of Natural Bar soap, too. 
+------------------------------ output ------------------------------
+Final answer: occasional_purchaser_of_Infusium_shampoo(X) :- infrequent_user_of_Natural_Bar_soap(X).
+------------------------------ correct=50 total=68 parse_failures=3 prediction='occasional_purchaser_of_Infusium_shampoo(X) :- infrequent_user_of_Natural_Bar_soap(X).' y='infrequent_user_of_Natural_Bar_soap(X) :- occasional_purchaser_of_Infusium_shampoo(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Every expert of Os Belenenses is a devotee of FCSB. 
+------------------------------ output ------------------------------
+Final answer: devotee_of_FCSB(X) :- expert_of_Os_Belenenses(X).
+------------------------------ correct=51 total=69 parse_failures=3 prediction='devotee_of_FCSB(X) :- expert_of_Os_Belenenses(X).' y='devotee_of_FCSB(X) :- expert_of_Os_Belenenses(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Being a backer of AS Trenčín is necessary for being a expert of Os Belenenses. 
+------------------------------ output ------------------------------
+Final answer: backer_of_AS_Trencin(X) :- expert_of_Os_Belenenses(X).
+------------------------------ correct=52 total=70 parse_failures=3 prediction='backer_of_AS_Trencin(X) :- expert_of_Os_Belenenses(X).' y='backer_of_AS_Trenčín(X) :- expert_of_Os_Belenenses(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Some supporter of SCR Altach is not a devotee of FCSB or not a backer of AS Trenčín. 
+------------------------------ output ------------------------------
+Final answer: -devotee_of_FCSB(X) ; -backer_of_AS_Trencin(X) :- supporter_of_SCR_Altach(X).
+------------------------------ correct=52 total=71 parse_failures=3 prediction='-devotee_of_FCSB(X) ; -backer_of_AS_Trencin(X) :- supporter_of_SCR_Altach(X).' y='supporter_of_SCR_Altach(sk3). 1 {-devotee_of_FCSB(sk3) ; -backer_of_AS_Trenčín(sk3)}.' is_correct=False ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Not every supporter of SCR Altach is a expert of Os Belenenses. 
+------------------------------ output ------------------------------
+Final answer: -expert_of_Os_Belenenses(X) :- supporter_of_SCR_Altach(X).
+------------------------------ correct=52 total=72 parse_failures=3 prediction='-expert_of_Os_Belenenses(X) :- supporter_of_SCR_Altach(X).' y='supporter_of_SCR_Altach(sk4). -expert_of_Os_Belenenses(sk4).' is_correct=False ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Everyone who is a cousin of Randi or a cousin of Kaye is also a close friend of Catherine. 
+------------------------------ output ------------------------------
+Final answer: close_friend_of_Catherine(X) :- cousin_of_Randi(X); cousin_of_Kaye(X).
+------------------------------ correct=53 total=73 parse_failures=3 prediction='close_friend_of_Catherine(X) :- cousin_of_Randi(X); cousin_of_Kaye(X).' y='close_friend_of_Catherine(X) :- cousin_of_Randi(X). close_friend_of_Catherine(X) :- cousin_of_Kaye(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+It is not the case that Rhoda is a close friend of Catherine. 
+------------------------------ output ------------------------------
+Final answer: -close_friend_of_Catherine(Rhoda).
+------------------------------ correct=53 total=74 parse_failures=3 prediction='-close_friend_of_Catherine(Rhoda).' y='-close_friend_of_Catherine("Rhoda").' is_correct=False ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Rhoda is neither a cousin of Randi nor a cousin of Kaye. 
+------------------------------ output ------------------------------
+Final answer: -cousin_of_Randi(Rhoda), -cousin_of_Kaye(Rhoda).
+------------------------------ correct=53 total=75 parse_failures=3 prediction='-cousin_of_Randi(Rhoda), -cousin_of_Kaye(Rhoda).' y='-cousin_of_Randi("Rhoda"). -cousin_of_Kaye("Rhoda").' is_correct=False ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Whoever is not a infrequent user of Organix Hair shampoo is a frequent consumer of Burt's Bees soap. 
+------------------------------ output ------------------------------
+Final answer: frequent_consumer_of_Burt's_Bees_soap(X) :- -infrequent_user_of_Organix_Hair_shampoo(X).
+------------------------------ correct=54 total=76 parse_failures=3 prediction="frequent_consumer_of_Burt's_Bees_soap(X) :- -infrequent_user_of_Organix_Hair_shampoo(X)." y='frequent_consumer_of_Burts_Bees_soap(X) :- -infrequent_user_of_Organix_Hair_shampoo(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+There is somebody who is a infrequent user of Clearly Natural soap and a loyal buyer of Sexy Hair shampoo but not a frequent consumer of Burt's Bees soap. 
+------------------------------ output ------------------------------
+Final answer: 1 {infrequent_user_of_Clearly_Natural_soap(X), loyal_buyer_of_Sexy_Hair_shampoo(X)} :- -frequent_consumer_of_Burt's_Bees_soap(X).
+------------------------------ correct=54 total=77 parse_failures=3 prediction="1 {infrequent_user_of_Clearly_Natural_soap(X), loyal_buyer_of_Sexy_Hair_shampoo(X)} :- -frequent_consumer_of_Burt's_Bees_soap(X)." y='infrequent_user_of_Clearly_Natural_soap(sk2). loyal_buyer_of_Sexy_Hair_shampoo(sk2). -frequent_consumer_of_Burts_Bees_soap(sk2).' is_correct=False ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Some infrequent user of Clearly Natural soap is a loyal buyer of Sexy Hair shampoo and a infrequent user of Organix Hair shampoo. 
+------------------------------ output ------------------------------
+Final answer: infrequent_user_of_Clearly_Natural(X) :- loyal_buyer_of_Sexy_Hair(X), infrequent_user_of_Organix_Hair(X).
+------------------------------ correct=54 total=78 parse_failures=3 prediction='infrequent_user_of_Clearly_Natural(X) :- loyal_buyer_of_Sexy_Hair(X), infrequent_user_of_Organix_Hair(X).' y='infrequent_user_of_Clearly_Natural_soap(sk3). loyal_buyer_of_Sexy_Hair_shampoo(sk3). infrequent_user_of_Organix_Hair_shampoo(sk3).' is_correct=False ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Every ingredient of Lumitone PC is a ingredient of 02 Body & Leg Shine and a ingredient of Curls & Pearls. 
+------------------------------ output ------------------------------
+Final answer: ingredient_of_Lumitone_PC(X) :- ingredient_of_02_Body_Leg_Shine(X), ingredient_of_Curls_Pearls(X).
+------------------------------ correct=55 total=79 parse_failures=3 prediction='ingredient_of_Lumitone_PC(X) :- ingredient_of_02_Body_Leg_Shine(X), ingredient_of_Curls_Pearls(X).' y='ingredient_of_02_Body_and_Leg_Shine(X) :- ingredient_of_Lumitone_PC(X). ingredient_of_Curls_and_Pearls(X) :- ingredient_of_Lumitone_PC(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Talc (powder) is not a ingredient of 02 Body & Leg Shine or not a ingredient of Curls & Pearls. 
+------------------------------ output ------------------------------
+Final answer: -ingredient_of_02_Body_Leg_Shine(talc) ; -ingredient_of_Curls_Pearls(talc).
+------------------------------ correct=55 total=80 parse_failures=3 prediction='-ingredient_of_02_Body_Leg_Shine(talc) ; -ingredient_of_Curls_Pearls(talc).' y='1 {-ingredient_of_02_Body_and_Leg_Shine("Talc (powder)") ; -ingredient_of_Curls_and_Pearls("Talc (powder)")}.' is_correct=False ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Talc (powder) is not a ingredient of Lumitone PC. 
+------------------------------ output ------------------------------
+Final answer: -ingredient_of_Lumitone_PC(talc).
+------------------------------ correct=55 total=81 parse_failures=3 prediction='-ingredient_of_Lumitone_PC(talc).' y='-ingredient_of_Lumitone_PC("Talc (powder)").' is_correct=False ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Everyone who is a frequent consumer of Organix Hair shampoo is a infrequent user of Canus soap, too. 
+------------------------------ output ------------------------------
+Final answer: infrequent_user_of_Canus_soap(X) :- frequent_consumer_of_Organix_Hair_shampoo(X).
+------------------------------ correct=56 total=82 parse_failures=3 prediction='infrequent_user_of_Canus_soap(X) :- frequent_consumer_of_Organix_Hair_shampoo(X).' y='infrequent_user_of_Canus_soap(X) :- frequent_consumer_of_Organix_Hair_shampoo(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Everyone who is a infrequent user of Canus soap is a infrequent user of Pre De Provence soap, too. 
+------------------------------ output ------------------------------
+Final answer: infrequent_user_of_Pre_De_Provence(X) :- infrequent_user_of_Canus(X).
+------------------------------ correct=57 total=83 parse_failures=3 prediction='infrequent_user_of_Pre_De_Provence(X) :- infrequent_user_of_Canus(X).' y='infrequent_user_of_Pre_De_Provence_soap(X) :- infrequent_user_of_Canus_soap(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Every frequent consumer of Organix Hair shampoo is a infrequent user of Pre De Provence soap. 
+------------------------------ output ------------------------------
+Final answer: infrequent_user_of_Pre_De_Provence_soap(X) :- frequent_consumer_of_Organix_Hair_shampoo(X).
+------------------------------ correct=58 total=84 parse_failures=3 prediction='infrequent_user_of_Pre_De_Provence_soap(X) :- frequent_consumer_of_Organix_Hair_shampoo(X).' y='infrequent_user_of_Pre_De_Provence_soap(X) :- frequent_consumer_of_Organix_Hair_shampoo(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Every ingredient of Lipstick Sheer is a ingredient of DAILY SHAMPOO or, otherwise, neither a ingredient of DAILY SHAMPOO nor a ingredient of Duo Eyeliner. 
+------------------------------ output ------------------------------
+Final answer:
+ingredient_of_Lipstick_Sheer(X) :- ingredient_of_DAILY_SHAMPOO(X).
+ingredient_of_Lipstick_Sheer(X) :- -ingredient_of_DAILY_SHAMPOO(X), -ingredient_of_Duo_Eyeliner(X).
+------------------------------ correct=58 total=85 parse_failures=4 prediction='**parse failed**' y='1 {-ingredient_of_Duo_Eyeliner(X) ; ingredient_of_DAILY_SHAMPOO(X)} :- ingredient_of_Lipstick_Sheer(X).' is_correct=False ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Being a ingredient of Duo Eyeliner is necessary for being a ingredient of Lipstick Sheer. 
+------------------------------ output ------------------------------
+Final answer: ingredient_of_Duo_Eyeliner(X) :- ingredient_of_Lipstick_Sheer(X).
+------------------------------ correct=59 total=86 parse_failures=4 prediction='ingredient_of_Duo_Eyeliner(X) :- ingredient_of_Lipstick_Sheer(X).' y='ingredient_of_Duo_Eyeliner(X) :- ingredient_of_Lipstick_Sheer(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Everything that is a ingredient of Lipstick Sheer is a ingredient of DAILY SHAMPOO, too. 
+------------------------------ output ------------------------------
+Final answer: ingredient_of_DAILY_SHAMPOO(X) :- ingredient_of_Lipstick_Sheer(X).
+------------------------------ correct=60 total=87 parse_failures=4 prediction='ingredient_of_DAILY_SHAMPOO(X) :- ingredient_of_Lipstick_Sheer(X).' y='ingredient_of_DAILY_SHAMPOO(X) :- ingredient_of_Lipstick_Sheer(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Whatever is ingredient of SUN DISK is at least one of these: a ingredient of Sweet Temptation, a ingredient of Get Luminous or a ingredient of blemish stick. 
+------------------------------ output ------------------------------
+Final answer: ingredient_of_SUN_DISK(X) :- ingredient_of_Sweet_Temptation(X) ; ingredient_of_Get_Luminous(X) ; ingredient_of_blemish_stick(X).
+------------------------------ correct=61 total=88 parse_failures=4 prediction='ingredient_of_SUN_DISK(X) :- ingredient_of_Sweet_Temptation(X) ; ingredient_of_Get_Luminous(X) ; ingredient_of_blemish_stick(X).' y='1 {ingredient_of_Sweet_Temptation(X) ; ingredient_of_Get_Luminous(X) ; ingredient_of_blemish_stick(X)}} :- ingredient_of_SUN_DISK(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Being a ingredient of EYE SOOTHER is necessary for being a ingredient of Sweet Temptation. 
+------------------------------ output ------------------------------
+Final answer: ingredient_of_EYE_SOOTHER(X) :- ingredient_of_Sweet_Temptation(X).
+------------------------------ correct=62 total=89 parse_failures=4 prediction='ingredient_of_EYE_SOOTHER(X) :- ingredient_of_Sweet_Temptation(X).' y='ingredient_of_EYE_SOOTHER(X) :- ingredient_of_Sweet_Temptation(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Every ingredient of Get Luminous is a ingredient of EYE SOOTHER. 
+------------------------------ output ------------------------------
+Final answer: ingredient_of_EYE_SOOTHER(X) :- ingredient_of_Get_Luminous(X).
+------------------------------ correct=63 total=90 parse_failures=4 prediction='ingredient_of_EYE_SOOTHER(X) :- ingredient_of_Get_Luminous(X).' y='ingredient_of_EYE_SOOTHER(X) :- ingredient_of_Get_Luminous(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Every ingredient of SUN DISK is a ingredient of EYE SOOTHER or a ingredient of blemish stick. 
+------------------------------ output ------------------------------
+Final answer: ingredient_of_EYE_SOOTHER(X) :- ingredient_of_SUN_DISK(X).
+ingredient_of_blemish_stick(X) :- ingredient_of_SUN_DISK(X).
+------------------------------ correct=64 total=91 parse_failures=4 prediction='ingredient_of_EYE_SOOTHER(X) :- ingredient_of_SUN_DISK(X).' y='1 {ingredient_of_EYE_SOOTHER(X) ; ingredient_of_blemish_stick(X)} :- ingredient_of_SUN_DISK(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Everyone who is not both a occasional purchaser of Alterna Haircare shampoo and a frequent consumer of Neutrogena soap is however a rare consumer of Pureology shampoo. 
+------------------------------ output ------------------------------
+Final answer: rare_consumer_of_Pureology_shampoo(X) :- -occasional_purchaser_of_Alterna_Haircare_shampoo(X), -frequent_consumer_of_Neutrogena_soap(X).
+------------------------------ correct=65 total=92 parse_failures=4 prediction='rare_consumer_of_Pureology_shampoo(X) :- -occasional_purchaser_of_Alterna_Haircare_shampoo(X), -frequent_consumer_of_Neutrogena_soap(X).' y='rare_consumer_of_Pureology_shampoo(X) :- -occasional_purchaser_of_Alterna_Haircare_shampoo(X). rare_consumer_of_Pureology_shampoo(X) :- -frequent_consumer_of_Neutrogena_soap(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+It is not the case that Kyle is a occasional purchaser of Alterna Haircare shampoo. 
+------------------------------ output ------------------------------
+Final answer: -occasional_purchaser_of_Alterna_Haircare_shampoo(kyle).
+------------------------------ correct=65 total=93 parse_failures=4 prediction='-occasional_purchaser_of_Alterna_Haircare_shampoo(kyle).' y='-occasional_purchaser_of_Alterna_Haircare_shampoo("Kyle").' is_correct=False ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Kyle is a rare consumer of Pureology shampoo. 
+------------------------------ output ------------------------------
+Final answer: rare_consumer_of_Pureology(kyle).
+------------------------------ correct=65 total=94 parse_failures=4 prediction='rare_consumer_of_Pureology(kyle).' y='rare_consumer_of_Pureology_shampoo("Kyle").' is_correct=False ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Every owner of a Bumble and bumble shampoo who is a loyal buyer of Giovanni shampoo is a rare consumer of Zest soap or a infrequent user of Celtic Sea Salt soap. 
+------------------------------ output ------------------------------
+Final answer: 1 {rare_consumer_of_Zest_soap(X) ; infrequent_user_of_Celtic_Sea_Salt_soap(X)} :- owner_of_Bumble_and_bumble_shampoo(X), loyal_buyer_of_Giovanni_shampoo(X).
+------------------------------ correct=66 total=95 parse_failures=4 prediction='1 {rare_consumer_of_Zest_soap(X) ; infrequent_user_of_Celtic_Sea_Salt_soap(X)} :- owner_of_Bumble_and_bumble_shampoo(X), loyal_buyer_of_Giovanni_shampoo(X).' y='1 {rare_consumer_of_Zest_soap(X) ; infrequent_user_of_Celtic_Sea_Salt_soap(X)} :- owner_of_a_Bumble_and_bumble_shampoo(X), loyal_buyer_of_Giovanni_shampoo(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Being a rare consumer of Zest soap is sufficient for being a owner of a Dove shampoo. 
+------------------------------ output ------------------------------
+Final answer: owner_of_Dove_shampoo(X) :- rare_consumer_of_Zest_soap(X).
+------------------------------ correct=67 total=96 parse_failures=4 prediction='owner_of_Dove_shampoo(X) :- rare_consumer_of_Zest_soap(X).' y='owner_of_a_Dove_shampoo(X) :- rare_consumer_of_Zest_soap(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Being a owner of a Dove shampoo is necessary for being a infrequent user of Celtic Sea Salt soap. 
+------------------------------ output ------------------------------
+Final answer: owner_of_Dove_shampoo(X) :- infrequent_user_of_Celtic_Sea_Salt_soap(X).
+------------------------------ correct=68 total=97 parse_failures=4 prediction='owner_of_Dove_shampoo(X) :- infrequent_user_of_Celtic_Sea_Salt_soap(X).' y='owner_of_a_Dove_shampoo(X) :- infrequent_user_of_Celtic_Sea_Salt_soap(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Everyone who is both a owner of a Bumble and bumble shampoo and a loyal buyer of Giovanni shampoo is a owner of a Dove shampoo, too. 
+------------------------------ output ------------------------------
+Final answer: owner_of_Dove_shampoo(X) :- owner_of_Bumble_and_bumble_shampoo(X), loyal_buyer_of_Giovanni_shampoo(X).
+------------------------------ correct=69 total=98 parse_failures=4 prediction='owner_of_Dove_shampoo(X) :- owner_of_Bumble_and_bumble_shampoo(X), loyal_buyer_of_Giovanni_shampoo(X).' y='owner_of_a_Dove_shampoo(X) :- owner_of_a_Bumble_and_bumble_shampoo(X), loyal_buyer_of_Giovanni_shampoo(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Every classmate of Chris is a nephew of Frank. 
+------------------------------ output ------------------------------
+Final answer: nephew_of_Frank(X) :- classmate_of_Chris(X).
+------------------------------ correct=70 total=99 parse_failures=4 prediction='nephew_of_Frank(X) :- classmate_of_Chris(X).' y='nephew_of_Frank(X) :- classmate_of_Chris(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Everyone who is a nephew of Frank is a classmate of Will, too. 
+------------------------------ output ------------------------------
+Final answer: classmate_of_Will(X) :- nephew_of_Frank(X).
+------------------------------ correct=71 total=100 parse_failures=4 prediction='classmate_of_Will(X) :- nephew_of_Frank(X).' y='classmate_of_Will(X) :- nephew_of_Frank(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Every classmate of Chris is a classmate of Will. 
+------------------------------ output ------------------------------
+Final answer: classmate_of_Will(X) :- classmate_of_Chris(X).
+------------------------------ correct=72 total=101 parse_failures=4 prediction='classmate_of_Will(X) :- classmate_of_Chris(X).' y='classmate_of_Will(X) :- classmate_of_Chris(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Whoever is a expert of FC Augsburg is not a fan of FC Dnipro. 
+------------------------------ output ------------------------------
+Final answer: -fan_of_FC_Dnipro(X) :- expert_of_FC_Augsburg(X).
+------------------------------ correct=73 total=102 parse_failures=4 prediction='-fan_of_FC_Dnipro(X) :- expert_of_FC_Augsburg(X).' y='-fan_of_FC_Dnipro(X) :- expert_of_FC_Augsburg(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Some critic of AIK is a fan of FC Dnipro. 
+------------------------------ output ------------------------------
+Final answer: critic_of_AIK(X) :- fan_of_FC_Dnipro(X).
+------------------------------ correct=73 total=103 parse_failures=4 prediction='critic_of_AIK(X) :- fan_of_FC_Dnipro(X).' y='critic_of_AIK(sk2). fan_of_FC_Dnipro(sk2).' is_correct=False ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Somebody is a critic of AIK and not a expert of FC Augsburg. 
+------------------------------ output ------------------------------
+Final answer: critic_of_AIK(X) :- -expert_of_FC_Augsburg(X).
+------------------------------ correct=73 total=104 parse_failures=4 prediction='critic_of_AIK(X) :- -expert_of_FC_Augsburg(X).' y='critic_of_AIK(sk4). -expert_of_FC_Augsburg(sk4).' is_correct=False ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Everything that is not both a ingredient of CFUN ESM CAPRIS and a ingredient of Unisex Healthy Glow is a ingredient of Shimmering Lipstick. 
+------------------------------ output ------------------------------
+Final answer: ingredient_of_Shimmering_Lipstick(X) :- -ingredient_of_CFUN_ESM_CAPRIS(X); -ingredient_of_Unisex_Healthy_Glow(X).
+------------------------------ correct=74 total=105 parse_failures=4 prediction='ingredient_of_Shimmering_Lipstick(X) :- -ingredient_of_CFUN_ESM_CAPRIS(X); -ingredient_of_Unisex_Healthy_Glow(X).' y='ingredient_of_Shimmering_Lipstick(X) :- -ingredient_of_Unisex_Healthy_Glow(X). ingredient_of_Shimmering_Lipstick(X) :- -ingredient_of_CFUN_ESM_CAPRIS(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Vitamin A is not a ingredient of Unisex Healthy Glow. 
+------------------------------ output ------------------------------
+Final answer: -ingredient_of_Unisex_Healthy_Glow(vitamin_a).
+------------------------------ correct=74 total=106 parse_failures=4 prediction='-ingredient_of_Unisex_Healthy_Glow(vitamin_a).' y='-ingredient_of_Unisex_Healthy_Glow("Vitamin A").' is_correct=False ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Vitamin A is a ingredient of Shimmering Lipstick. 
+------------------------------ output ------------------------------
+Final answer: ingredient_of_Shimmering_Lipstick(vitamin_a).
+------------------------------ correct=74 total=107 parse_failures=4 prediction='ingredient_of_Shimmering_Lipstick(vitamin_a).' y='ingredient_of_Shimmering_Lipstick("Vitamin A").' is_correct=False ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Being a ingredient of Shooting Stars is necessary for not being a ingredient of Cease Crease. 
+------------------------------ output ------------------------------
+Final answer: -ingredient_of_Cease_Crease(X) :- ingredient_of_Shooting_Stars(X).
+------------------------------ correct=75 total=108 parse_failures=4 prediction='-ingredient_of_Cease_Crease(X) :- ingredient_of_Shooting_Stars(X).' y='ingredient_of_Shooting_Stars(X) :- -ingredient_of_Cease_Crease(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Whatever is not a ingredient of Cease Crease is a ingredient of High Bridge. 
+------------------------------ output ------------------------------
+Final answer: ingredient_of_High_Bridge(X) :- -ingredient_of_Cease_Crease(X).
+------------------------------ correct=76 total=109 parse_failures=4 prediction='ingredient_of_High_Bridge(X) :- -ingredient_of_Cease_Crease(X).' y='ingredient_of_High_Bridge(X) :- -ingredient_of_Cease_Crease(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Whatever is not a ingredient of NP 100 PINK is not a ingredient of High Bridge or not a ingredient of Shooting Stars. 
+------------------------------ output ------------------------------
+Final answer: -ingredient_of_NP_100_PINK(X) :- -ingredient_of_High_Bridge(X); -ingredient_of_Shooting_Stars(X).
+------------------------------ correct=77 total=110 parse_failures=4 prediction='-ingredient_of_NP_100_PINK(X) :- -ingredient_of_High_Bridge(X); -ingredient_of_Shooting_Stars(X).' y='1 {-ingredient_of_Shooting_Stars(X) ; -ingredient_of_High_Bridge(X)} :- -ingredient_of_NP_100_PINK(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Nothing is neither a ingredient of Cease Crease nor a ingredient of NP 100 PINK. 
+------------------------------ output ------------------------------
+Final answer: ingredient_of_Cease_Crease(X) ; ingredient_of_NP_100_PINK(X).
+------------------------------ correct=78 total=111 parse_failures=4 prediction='ingredient_of_Cease_Crease(X) ; ingredient_of_NP_100_PINK(X).' y='ingredient_of_NP_100_PINK(X) :- -ingredient_of_Cease_Crease(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Whoever is a owner of a Infusium shampoo and a regular consumer of Pantene shampoo is not a regular consumer of Clearly Natural soap. 
+------------------------------ output ------------------------------
+Final answer: -regular_consumer_of_Clearly_Natural_soap(X) :- owner_of_Infusium_shampoo(X), regular_consumer_of_Pantene_shampoo(X).
+------------------------------ correct=79 total=112 parse_failures=4 prediction='-regular_consumer_of_Clearly_Natural_soap(X) :- owner_of_Infusium_shampoo(X), regular_consumer_of_Pantene_shampoo(X).' y='-regular_consumer_of_Clearly_Natural_soap(X) :- owner_of_a_Infusium_shampoo(X), regular_consumer_of_Pantene_shampoo(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Somebody is a occasional purchaser of CHI shampoo and a regular consumer of Clearly Natural soap. 
+------------------------------ output ------------------------------
+Final answer: occasional_purchaser_of_CHI_shampoo(X), regular_consumer_of_Clearly_Natural_soap(X).
+------------------------------ correct=79 total=113 parse_failures=4 prediction='occasional_purchaser_of_CHI_shampoo(X), regular_consumer_of_Clearly_Natural_soap(X).' y='occasional_purchaser_of_CHI_shampoo(sk2). regular_consumer_of_Clearly_Natural_soap(sk2).' is_correct=False ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+There exists a occasional purchaser of CHI shampoo who is not a owner of a Infusium shampoo or not a regular consumer of Pantene shampoo. 
+------------------------------ output ------------------------------
+Final answer: occasional_purchaser_of_CHI_shampoo(X) :- -owner_of_Infusium_shampoo(X), -regular_consumer_of_Pantene_shampoo(X).
+------------------------------ correct=79 total=114 parse_failures=4 prediction='occasional_purchaser_of_CHI_shampoo(X) :- -owner_of_Infusium_shampoo(X), -regular_consumer_of_Pantene_shampoo(X).' y='occasional_purchaser_of_CHI_shampoo(sk3). 1 {-owner_of_a_Infusium_shampoo(sk3) ; -regular_consumer_of_Pantene_shampoo(sk3)}.' is_correct=False ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Every close friend of Willie is a son of Efrain or a great-grandfather of Jerry. 
+------------------------------ output ------------------------------
+Final answer: 1 {son_of_Efrain(X) ; great_grandfather_of_Jerry(X)} :- close_friend_of_Willie(X).
+------------------------------ correct=80 total=115 parse_failures=4 prediction='1 {son_of_Efrain(X) ; great_grandfather_of_Jerry(X)} :- close_friend_of_Willie(X).' y='1 {son_of_Efrain(X) ; great_grandfather_of_Jerry(X)} :- close_friend_of_Willie(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Being a son of Efrain is sufficient for being a ancestor of Craig. 
+------------------------------ output ------------------------------
+Final answer: ancestor_of_Craig(X) :- son_of_Efrain(X).
+------------------------------ correct=81 total=116 parse_failures=4 prediction='ancestor_of_Craig(X) :- son_of_Efrain(X).' y='ancestor_of_Craig(X) :- son_of_Efrain(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Everyone who is a great-grandfather of Jerry is a ancestor of Craig, too. 
+------------------------------ output ------------------------------
+Final answer: ancestor_of_Craig(X) :- great-grandfather_of_Jerry(X).
+------------------------------ correct=82 total=117 parse_failures=4 prediction='ancestor_of_Craig(X) :- great-grandfather_of_Jerry(X).' y='ancestor_of_Craig(X) :- great_grandfather_of_Jerry(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Being a ancestor of Craig is necessary for being a close friend of Willie. 
+------------------------------ output ------------------------------
+Final answer: ancestor_of_Craig(X) :- close_friend_of_Willie(X).
+------------------------------ correct=83 total=118 parse_failures=4 prediction='ancestor_of_Craig(X) :- close_friend_of_Willie(X).' y='ancestor_of_Craig(X) :- close_friend_of_Willie(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+There is no ingredient of Powder Cheek Stain who is a ingredient of Micro Pigments yet not a ingredient of Modern Love. 
+------------------------------ output ------------------------------
+Final answer: :- ingredient_of_Powder_Cheek_Stain(X), ingredient_of_Micro_Pigments(X), -ingredient_of_Modern_Love(X).
+------------------------------ correct=84 total=119 parse_failures=4 prediction=':- ingredient_of_Powder_Cheek_Stain(X), ingredient_of_Micro_Pigments(X), -ingredient_of_Modern_Love(X).' y='1 {-ingredient_of_Micro_Pigments(X) ; ingredient_of_Modern_Love(X)} :- ingredient_of_Powder_Cheek_Stain(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Every ingredient of Powder Cheek Stain is a ingredient of Micro Pigments. 
+------------------------------ output ------------------------------
+Final answer: ingredient_of_Micro_Pigments(X) :- ingredient_of_Powder_Cheek_Stain(X).
+------------------------------ correct=85 total=120 parse_failures=4 prediction='ingredient_of_Micro_Pigments(X) :- ingredient_of_Powder_Cheek_Stain(X).' y='ingredient_of_Micro_Pigments(X) :- ingredient_of_Powder_Cheek_Stain(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Everything that is a ingredient of Powder Cheek Stain is a ingredient of Modern Love, too. 
+------------------------------ output ------------------------------
+Here is the translation of the given statement to Answer Set Programming notation:
+
+Final answer: ingredient_of_Modern_Love(X) :- ingredient_of_Powder_Cheek_Stain(X).
+------------------------------ correct=86 total=121 parse_failures=4 prediction='ingredient_of_Modern_Love(X) :- ingredient_of_Powder_Cheek_Stain(X).' y='ingredient_of_Modern_Love(X) :- ingredient_of_Powder_Cheek_Stain(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Every ingredient of Double Soap is a ingredient of Ginger Cream. 
+------------------------------ output ------------------------------
+Final answer: ingredient_of_Ginger_Cream(X) :- ingredient_of_Double_Soap(X).
+------------------------------ correct=87 total=122 parse_failures=4 prediction='ingredient_of_Ginger_Cream(X) :- ingredient_of_Double_Soap(X).' y='ingredient_of_Ginger_Cream(X) :- ingredient_of_Double_Soap(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Being a ingredient of Double Soap is sufficient for being a ingredient of real fluid rouge  1. 
+------------------------------ output ------------------------------
+Final answer: ingredient_of_real_fluid_rouge_1(X) :- ingredient_of_Double_Soap(X).
+------------------------------ correct=88 total=123 parse_failures=4 prediction='ingredient_of_real_fluid_rouge_1(X) :- ingredient_of_Double_Soap(X).' y='ingredient_of_real_fluid_rouge__1(X) :- ingredient_of_Double_Soap(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+There exists a ingredient of QUICK LIFT 02 that is not a ingredient of Ginger Cream or not a ingredient of real fluid rouge  1. 
+------------------------------ output ------------------------------
+Final answer: exists(X) :- ingredient_of_QUICK_LIFT_02(X), -ingredient_of_Ginger_Cream(X); -ingredient_of_real_fluid_rouge_1(X).
+------------------------------ correct=88 total=124 parse_failures=4 prediction='exists(X) :- ingredient_of_QUICK_LIFT_02(X), -ingredient_of_Ginger_Cream(X); -ingredient_of_real_fluid_rouge_1(X).' y='ingredient_of_QUICK_LIFT_02(sk3). 1 {-ingredient_of_Ginger_Cream(sk3) ; -ingredient_of_real_fluid_rouge__1(sk3)}.' is_correct=False ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+There is something that is a ingredient of QUICK LIFT 02 and not a ingredient of Double Soap. 
+------------------------------ output ------------------------------
+Final answer: ingredient_of_QUICK_LIFT_02(X), -ingredient_of_Double_Soap(X).
+------------------------------ correct=88 total=125 parse_failures=4 prediction='ingredient_of_QUICK_LIFT_02(X), -ingredient_of_Double_Soap(X).' y='ingredient_of_QUICK_LIFT_02(sk4). -ingredient_of_Double_Soap(sk4).' is_correct=False ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Every follower of RSC Anderlecht is a critic of FC Arouca or a backer of VfL Borussia Mönchengladbach. 
+------------------------------ output ------------------------------
+Final answer: 1 {critic_of_FC_Arouca(X) ; backer_of_VfL_Borussia_Monchengladbach(X)} :- follower_of_RSC_Anderlecht(X).
+------------------------------ correct=89 total=126 parse_failures=4 prediction='1 {critic_of_FC_Arouca(X) ; backer_of_VfL_Borussia_Monchengladbach(X)} :- follower_of_RSC_Anderlecht(X).' y='1 {backer_of_VfL_Borussia_Mönchengladbach(X) ; critic_of_FC_Arouca(X)} :- follower_of_RSC_Anderlecht(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Being a supporter of HNK Hajduk Split is sufficient for not being a backer of VfL Borussia Mönchengladbach. 
+------------------------------ output ------------------------------
+Final answer: -backer_of_VfL_Borussia_Monchengladbach(X) :- supporter_of_HNK_Hajduk_Split(X).
+------------------------------ correct=90 total=127 parse_failures=4 prediction='-backer_of_VfL_Borussia_Monchengladbach(X) :- supporter_of_HNK_Hajduk_Split(X).' y='-backer_of_VfL_Borussia_Mönchengladbach(X) :- supporter_of_HNK_Hajduk_Split(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Whoever is a supporter of HNK Hajduk Split is not a critic of FC Arouca. 
+------------------------------ output ------------------------------
+Final answer: -critic_of_FC_Arouca(X) :- supporter_of_HNK_Hajduk_Split(X).
+------------------------------ correct=91 total=128 parse_failures=4 prediction='-critic_of_FC_Arouca(X) :- supporter_of_HNK_Hajduk_Split(X).' y='-critic_of_FC_Arouca(X) :- supporter_of_HNK_Hajduk_Split(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Whoever is a follower of RSC Anderlecht is not a supporter of HNK Hajduk Split. 
+------------------------------ output ------------------------------
+Final answer: -supporter_of_HNK_Hajduk_Split(X) :- follower_of_RSC_Anderlecht(X).
+------------------------------ correct=92 total=129 parse_failures=4 prediction='-supporter_of_HNK_Hajduk_Split(X) :- follower_of_RSC_Anderlecht(X).' y='-supporter_of_HNK_Hajduk_Split(X) :- follower_of_RSC_Anderlecht(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Being a ingredient of Secret Soiree is sufficient for being a ingredient of Skin optimizer. 
+------------------------------ output ------------------------------
+Final answer: ingredient_of_Skin_optimizer(X) :- ingredient_of_Secret_Soiree(X).
+------------------------------ correct=93 total=130 parse_failures=4 prediction='ingredient_of_Skin_optimizer(X) :- ingredient_of_Secret_Soiree(X).' y='ingredient_of_Skin_optimizer(X) :- ingredient_of_Secret_Soiree(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+It is not the case that Formaldehyde (gas) is a ingredient of Skin optimizer. 
+------------------------------ output ------------------------------
+Final answer: -ingredient_of_Skin_optimizer(Formaldehyde(gas)).
+------------------------------ correct=93 total=131 parse_failures=4 prediction='-ingredient_of_Skin_optimizer(Formaldehyde(gas)).' y='-ingredient_of_Skin_optimizer("Formaldehyde (gas)").' is_correct=False ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+It is not the case that Formaldehyde (gas) is a ingredient of Secret Soiree. 
+------------------------------ output ------------------------------
+Final answer: -ingredient_of_Secret_Soiree(Formaldehyde(gas)).
+------------------------------ correct=93 total=132 parse_failures=4 prediction='-ingredient_of_Secret_Soiree(Formaldehyde(gas)).' y='-ingredient_of_Secret_Soiree("Formaldehyde (gas)").' is_correct=False ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Every infrequent user of Burt's Bees shampoo is a occasional purchaser of Camay soap or, otherwise, neither a occasional purchaser of Camay soap nor a regular consumer of Caress soap. 
+------------------------------ output ------------------------------
+Final answer:
+occasional_purchaser_of_Camay_soap(X) v -occasional_purchaser_of_Camay_soap(X), -regular_consumer_of_Caress_soap(X) :- infrequent_user_of_Burt's_Bees_shampoo(X).
+------------------------------ correct=93 total=133 parse_failures=5 prediction='**parse failed**' y='1 {-regular_consumer_of_Caress_soap(X) ; occasional_purchaser_of_Camay_soap(X)} :- infrequent_user_of_Burts_Bees_shampoo(X).' is_correct=False ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Everyone who is a infrequent user of Burt's Bees shampoo is a regular consumer of Caress soap, too. 
+------------------------------ output ------------------------------
+Final answer: infrequent_user_of_Burt's_Bees_shampoo(X) :- regular_consumer_of_Caress_soap(X).
+------------------------------ correct=94 total=134 parse_failures=5 prediction="infrequent_user_of_Burt's_Bees_shampoo(X) :- regular_consumer_of_Caress_soap(X)." y='regular_consumer_of_Caress_soap(X) :- infrequent_user_of_Burts_Bees_shampoo(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Being a infrequent user of Burt's Bees shampoo is sufficient for being a occasional purchaser of Camay soap. 
+------------------------------ output ------------------------------
+Final answer: occasional_purchaser_of_Camay_soap(X) :- infrequent_user_of_Burt's_Bees_shampoo(X).
+------------------------------ correct=95 total=135 parse_failures=5 prediction="occasional_purchaser_of_Camay_soap(X) :- infrequent_user_of_Burt's_Bees_shampoo(X)." y='occasional_purchaser_of_Camay_soap(X) :- infrequent_user_of_Burts_Bees_shampoo(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Being a ingredient of COCONUT SOAP is necessary for being a ingredient of Thanks Dad Soap. 
+------------------------------ output ------------------------------
+Final answer: ingredient_of_COCONUT_SOAP(X) :- ingredient_of_Thanks_Dad_Soap(X).
+------------------------------ correct=96 total=136 parse_failures=5 prediction='ingredient_of_COCONUT_SOAP(X) :- ingredient_of_Thanks_Dad_Soap(X).' y='ingredient_of_COCONUT_SOAP(X) :- ingredient_of_Thanks_Dad_Soap(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Not being a ingredient of Loose pearls is sufficient for not being a ingredient of COCONUT SOAP. 
+------------------------------ output ------------------------------
+Final answer: -ingredient_of_COCONUT_SOAP(X) :- -ingredient_of_Loose_pearls(X).
+------------------------------ correct=97 total=137 parse_failures=5 prediction='-ingredient_of_COCONUT_SOAP(X) :- -ingredient_of_Loose_pearls(X).' y='-ingredient_of_COCONUT_SOAP(X) :- -ingredient_of_Loose_pearls(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Being a ingredient of Thanks Dad Soap is sufficient for being a ingredient of Loose pearls. 
+------------------------------ output ------------------------------
+Final answer: ingredient_of_Loose_pearls(X) :- ingredient_of_Thanks_Dad_Soap(X).
+------------------------------ correct=98 total=138 parse_failures=5 prediction='ingredient_of_Loose_pearls(X) :- ingredient_of_Thanks_Dad_Soap(X).' y='ingredient_of_Loose_pearls(X) :- ingredient_of_Thanks_Dad_Soap(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+No schoolmate of Sanford is a nephew of Adam or a grandson of Gary. 
+------------------------------ output ------------------------------
+Final answer: -nephew_of_Adam(X) :- schoolmate_of_Sanford(X).
+-grandson_of_Gary(X) :- schoolmate_of_Sanford(X).
+------------------------------ correct=99 total=139 parse_failures=5 prediction='-nephew_of_Adam(X) :- schoolmate_of_Sanford(X).' y='{nephew_of_Adam(X) ; grandson_of_Gary(X)} 0 :- schoolmate_of_Sanford(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Douglas is a nephew of Adam. 
+------------------------------ output ------------------------------
+Final answer: nephew_of_Adam(douglas).
+------------------------------ correct=99 total=140 parse_failures=5 prediction='nephew_of_Adam(douglas).' y='nephew_of_Adam("Douglas").' is_correct=False ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+It is not the case that Douglas is a schoolmate of Sanford. 
+------------------------------ output ------------------------------
+Final answer: -schoolmate_of_Sanford(Douglas).
+------------------------------ correct=99 total=141 parse_failures=5 prediction='-schoolmate_of_Sanford(Douglas).' y='-schoolmate_of_Sanford("Douglas").' is_correct=False ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+To be a occasional purchaser of Bio Ionic shampoo or a owner of a Garnier shampoo is necessary for being a regular user of Caress soap. 
+------------------------------ output ------------------------------
+Final answer: 1 {occasional_purchaser_of_Bio_Ionic_shampoo(X) ; owner_of_a_Garnier_shampoo(X)} :- regular_user_of_Caress_soap(X).
+------------------------------ correct=100 total=142 parse_failures=5 prediction='1 {occasional_purchaser_of_Bio_Ionic_shampoo(X) ; owner_of_a_Garnier_shampoo(X)} :- regular_user_of_Caress_soap(X).' y='1 {occasional_purchaser_of_Bio_Ionic_shampoo(X) ; owner_of_a_Garnier_shampoo(X)} :- regular_user_of_Caress_soap(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+No occasional purchaser of Bio Ionic shampoo is a regular user of Aussie shampoo. 
+------------------------------ output ------------------------------
+Final answer: -regular_user_of_Aussie_shampoo(X) :- occasional_purchaser_of_Bio_Ionic_shampoo(X).
+------------------------------ correct=101 total=143 parse_failures=5 prediction='-regular_user_of_Aussie_shampoo(X) :- occasional_purchaser_of_Bio_Ionic_shampoo(X).' y='-regular_user_of_Aussie_shampoo(X) :- occasional_purchaser_of_Bio_Ionic_shampoo(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+No owner of a Garnier shampoo is a regular user of Aussie shampoo. 
+------------------------------ output ------------------------------
+Final answer: -regular_user_of_Aussie_shampoo(X) :- owner_of_Garnier_shampoo(X).
+------------------------------ correct=102 total=144 parse_failures=5 prediction='-regular_user_of_Aussie_shampoo(X) :- owner_of_Garnier_shampoo(X).' y='-regular_user_of_Aussie_shampoo(X) :- owner_of_a_Garnier_shampoo(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Whoever is a regular user of Caress soap is not a regular user of Aussie shampoo. 
+------------------------------ output ------------------------------
+Final answer: -regular_user_of_Aussie_shampoo(X) :- regular_user_of_Caress_soap(X).
+------------------------------ correct=103 total=145 parse_failures=5 prediction='-regular_user_of_Aussie_shampoo(X) :- regular_user_of_Caress_soap(X).' y='-regular_user_of_Aussie_shampoo(X) :- regular_user_of_Caress_soap(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Whatever is both a ingredient of Boing Curling Cream and a ingredient of eyeshadow trio is a ingredient of Scarlet or a ingredient of Concealer Pencil.
+------------------------------ output ------------------------------
+Final answer: 1 {ingredient_of_Scarlet(X) ; ingredient_of_Concealer_Pencil(X)} :- ingredient_of_Boing_Curling_Cream(X), ingredient_of_eyeshadow_trio(X).
+------------------------------ correct=104 total=146 parse_failures=5 prediction='1 {ingredient_of_Scarlet(X) ; ingredient_of_Concealer_Pencil(X)} :- ingredient_of_Boing_Curling_Cream(X), ingredient_of_eyeshadow_trio(X).' y='1 {ingredient_of_Scarlet(X) ; ingredient_of_Concealer_Pencil(X)} :- ingredient_of_Boing_Curling_Cream(X), ingredient_of_eyeshadow_trio(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Every ingredient of Scarlet is a ingredient of Archive Shampoo. 
+------------------------------ output ------------------------------
+Final answer: ingredient_of_Archive_Shampoo(X) :- ingredient_of_Scarlet(X).
+------------------------------ correct=105 total=147 parse_failures=5 prediction='ingredient_of_Archive_Shampoo(X) :- ingredient_of_Scarlet(X).' y='ingredient_of_Archive_Shampoo(X) :- ingredient_of_Scarlet(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Every ingredient of Concealer Pencil is a ingredient of Archive Shampoo. 
+------------------------------ output ------------------------------
+Final answer: ingredient_of_Archive_Shampoo(X) :- ingredient_of_Concealer_Pencil(X).
+------------------------------ correct=106 total=148 parse_failures=5 prediction='ingredient_of_Archive_Shampoo(X) :- ingredient_of_Concealer_Pencil(X).' y='ingredient_of_Archive_Shampoo(X) :- ingredient_of_Concealer_Pencil(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Whatever is a ingredient of Boing Curling Cream and a ingredient of eyeshadow trio is also a ingredient of Archive Shampoo.
+------------------------------ output ------------------------------
+Final answer: ingredient_of_Archive_Shampoo(X) :- ingredient_of_Boing_Curling_Cream(X), ingredient_of_eyeshadow_trio(X).
+------------------------------ correct=107 total=149 parse_failures=5 prediction='ingredient_of_Archive_Shampoo(X) :- ingredient_of_Boing_Curling_Cream(X), ingredient_of_eyeshadow_trio(X).' y='ingredient_of_Archive_Shampoo(X) :- ingredient_of_Boing_Curling_Cream(X), ingredient_of_eyeshadow_trio(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Every ingredient of Bashful is a ingredient of I Should Coco Soap or a ingredient of Sienna Blush Powder or a ingredient of LashGrip Clear. 
+------------------------------ output ------------------------------
+Final answer: ingredient_of_Bashful(X) :- ingredient_of_I_Should_Coco_Soap(X) ; ingredient_of_Sienna_Blush_Powder(X) ; ingredient_of_LashGrip_Clear(X).
+------------------------------ correct=108 total=150 parse_failures=5 prediction='ingredient_of_Bashful(X) :- ingredient_of_I_Should_Coco_Soap(X) ; ingredient_of_Sienna_Blush_Powder(X) ; ingredient_of_LashGrip_Clear(X).' y='1 {ingredient_of_I_Should_Coco_Soap(X) ; ingredient_of_Sienna_Blush_Powder(X) ; ingredient_of_LashGrip_Clear(X)}} :- ingredient_of_Bashful(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Being a ingredient of Bashful is sufficient for not being a ingredient of I Should Coco Soap. 
+------------------------------ output ------------------------------
+Final answer: -ingredient_of_I_Should_Coco_Soap(X) :- ingredient_of_Bashful(X).
+------------------------------ correct=109 total=151 parse_failures=5 prediction='-ingredient_of_I_Should_Coco_Soap(X) :- ingredient_of_Bashful(X).' y='-ingredient_of_I_Should_Coco_Soap(X) :- ingredient_of_Bashful(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Whatever is a ingredient of Bashful is not a ingredient of LashGrip Clear. 
+------------------------------ output ------------------------------
+Final answer: -ingredient_of_LashGrip_Clear(X) :- ingredient_of_Bashful(X).
+------------------------------ correct=110 total=152 parse_failures=5 prediction='-ingredient_of_LashGrip_Clear(X) :- ingredient_of_Bashful(X).' y='-ingredient_of_LashGrip_Clear(X) :- ingredient_of_Bashful(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Being a ingredient of Bashful is sufficient for being a ingredient of Sienna Blush Powder. 
+------------------------------ output ------------------------------
+Final answer: ingredient_of_Sienna_Blush_Powder(X) :- ingredient_of_Bashful(X).
+------------------------------ correct=111 total=153 parse_failures=5 prediction='ingredient_of_Sienna_Blush_Powder(X) :- ingredient_of_Bashful(X).' y='ingredient_of_Sienna_Blush_Powder(X) :- ingredient_of_Bashful(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Every ingredient of AIR CUSHION_MATTE is not a ingredient of EYE SHADOW No104 and not a ingredient of Turtles Bubble bath. 
+------------------------------ output ------------------------------
+Final answer: -ingredient_of_EYE_SHADOW_No104(X) :- ingredient_of_AIR_CUSHION_MATTE(X).
+-ingredient_of_Turtles_Bubble_bath(X) :- ingredient_of_AIR_CUSHION_MATTE(X).
+------------------------------ correct=112 total=154 parse_failures=5 prediction='-ingredient_of_EYE_SHADOW_No104(X) :- ingredient_of_AIR_CUSHION_MATTE(X).' y='-ingredient_of_Turtles_Bubble_bath(X)  :- ingredient_of_AIR_CUSHION_MATTE(X). -ingredient_of_EYE_SHADOW_No104(X) :- ingredient_of_AIR_CUSHION_MATTE(X)' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+No ingredient of EYE SHADOW No104 and no ingredient of Turtles Bubble bath is a ingredient of AIR CUSHION_MATTE. 
+------------------------------ output ------------------------------
+Final answer: -ingredient_of_AIR_CUSHION_MATTE(X) :- ingredient_of_EYE_SHADOW_No104(X); ingredient_of_Turtles_Bubble_bath(X).
+------------------------------ correct=113 total=155 parse_failures=5 prediction='-ingredient_of_AIR_CUSHION_MATTE(X) :- ingredient_of_EYE_SHADOW_No104(X); ingredient_of_Turtles_Bubble_bath(X).' y='-ingredient_of_AIR_CUSHION_MATTE(X) :- ingredient_of_Turtles_Bubble_bath(X). -ingredient_of_AIR_CUSHION_MATTE(X) :- ingredient_of_EYE_SHADOW_No104(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Every ingredient of SIGNATURE LIPGLOSS is a ingredient of Champagne Spritzer. 
+------------------------------ output ------------------------------
+Final answer: ingredient_of_Champagne_Spritzer(X) :- ingredient_of_SIGNATURE_LIPGLOSS(X).
+------------------------------ correct=114 total=156 parse_failures=5 prediction='ingredient_of_Champagne_Spritzer(X) :- ingredient_of_SIGNATURE_LIPGLOSS(X).' y='ingredient_of_Champagne_Spritzer(X) :- ingredient_of_SIGNATURE_LIPGLOSS(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+No ingredient of Blue Orchid is a ingredient of Champagne Spritzer. 
+------------------------------ output ------------------------------
+Final answer: -ingredient_of_Champagne_Spritzer(X) :- ingredient_of_Blue_Orchid(X).
+------------------------------ correct=115 total=157 parse_failures=5 prediction='-ingredient_of_Champagne_Spritzer(X) :- ingredient_of_Blue_Orchid(X).' y='-ingredient_of_Champagne_Spritzer(X) :- ingredient_of_Blue_Orchid(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+No ingredient of SIGNATURE LIPGLOSS is a ingredient of Blue Orchid. 
+------------------------------ output ------------------------------
+Final answer: -ingredient_of_SIGNATURE_LIPGLOSS(X) :- ingredient_of_Blue_Orchid(X).
+------------------------------ correct=116 total=158 parse_failures=5 prediction='-ingredient_of_SIGNATURE_LIPGLOSS(X) :- ingredient_of_Blue_Orchid(X).' y='-ingredient_of_Blue_Orchid(X) :- ingredient_of_SIGNATURE_LIPGLOSS(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Every close friend of Tasha is a stepsister of Marjorie or a niece of Pamela. 
+------------------------------ output ------------------------------
+Final answer: 1 {stepsister_of_Marjorie(X) ; niece_of_Pamela(X)} :- close_friend_of_Tasha(X).
+------------------------------ correct=117 total=159 parse_failures=5 prediction='1 {stepsister_of_Marjorie(X) ; niece_of_Pamela(X)} :- close_friend_of_Tasha(X).' y='1 {niece_of_Pamela(X) ; stepsister_of_Marjorie(X)} :- close_friend_of_Tasha(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Being a niece of Pamela is sufficient for being a classmate of Sarah. 
+------------------------------ output ------------------------------
+Final answer: classmate_of_Sarah(X) :- niece_of_Pamela(X).
+------------------------------ correct=118 total=160 parse_failures=5 prediction='classmate_of_Sarah(X) :- niece_of_Pamela(X).' y='classmate_of_Sarah(X) :- niece_of_Pamela(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Being a stepsister of Marjorie is sufficient for being a classmate of Sarah. 
+------------------------------ output ------------------------------
+Final answer: classmate_of_Sarah(X) :- stepsister_of_Marjorie(X).
+------------------------------ correct=119 total=161 parse_failures=5 prediction='classmate_of_Sarah(X) :- stepsister_of_Marjorie(X).' y='classmate_of_Sarah(X) :- stepsister_of_Marjorie(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Being a classmate of Sarah is necessary for being a close friend of Tasha. 
+------------------------------ output ------------------------------
+Final answer: classmate_of_Sarah(X) :- close_friend_of_Tasha(X).
+------------------------------ correct=120 total=162 parse_failures=5 prediction='classmate_of_Sarah(X) :- close_friend_of_Tasha(X).' y='classmate_of_Sarah(X) :- close_friend_of_Tasha(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Whoever is not a close friend of Craig is a half-brother of Alan. 
+------------------------------ output ------------------------------
+Final answer: half_brother_of_Alan(X) :- -close_friend_of_Craig(X).
+------------------------------ correct=121 total=163 parse_failures=5 prediction='half_brother_of_Alan(X) :- -close_friend_of_Craig(X).' y='half_brother_of_Alan(X) :- -close_friend_of_Craig(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Some uncle of Troy is a brother of Emmett yet not a half-brother of Alan. 
+------------------------------ output ------------------------------
+Final answer: brother_of_Emmett(X) :- uncle_of_Troy(X), -half_brother_of_Alan(X).
+------------------------------ correct=121 total=164 parse_failures=5 prediction='brother_of_Emmett(X) :- uncle_of_Troy(X), -half_brother_of_Alan(X).' y='uncle_of_Troy(sk2). brother_of_Emmett(sk2). -half_brother_of_Alan(sk2).' is_correct=False ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+There exists a brother of Emmett who is a uncle of Troy and a close friend of Craig. 
+------------------------------ output ------------------------------
+Here is the translation of the given natural language statement to Answer Set Programming notation:
+
+Final answer: 1 { brother_of_Emmett(X), uncle_of_Troy(X), close_friend_of_Craig(X) }.
+------------------------------ correct=121 total=165 parse_failures=5 prediction='1 { brother_of_Emmett(X), uncle_of_Troy(X), close_friend_of_Craig(X) }.' y='uncle_of_Troy(sk3). brother_of_Emmett(sk3). close_friend_of_Craig(sk3).' is_correct=False ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Being a schoolmate of Beverly or a niece of Janet is sufficient for being a great-grandmother of Alexandra. 
+------------------------------ output ------------------------------
+Final answer: great-grandmother_of_Alexandra(X) :- schoolmate_of_Beverly(X); niece_of_Janet(X).
+------------------------------ correct=122 total=166 parse_failures=5 prediction='great-grandmother_of_Alexandra(X) :- schoolmate_of_Beverly(X); niece_of_Janet(X).' y='great_grandmother_of_Alexandra(X) :- schoolmate_of_Beverly(X). great_grandmother_of_Alexandra(X) :- niece_of_Janet(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Jessi is a niece of Janet. 
+------------------------------ output ------------------------------
+Final answer: niece_of_Janet(jessi).
+------------------------------ correct=122 total=167 parse_failures=5 prediction='niece_of_Janet(jessi).' y='niece_of_Janet("Jessi").' is_correct=False ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Jessi is a great-grandmother of Alexandra. 
+------------------------------ output ------------------------------
+Final answer: great-grandmother_of(Jessi, Alexandra).
+------------------------------ correct=122 total=168 parse_failures=5 prediction='great-grandmother_of(Jessi, Alexandra).' y='great_grandmother_of_Alexandra("Jessi").' is_correct=False ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Being a expert of SV Zulte Waregem or a opponent to FC Zenit is sufficient for being a expert of FC Schalke 04. 
+------------------------------ output ------------------------------
+Final answer: expert_of_FC_Schalke_04(X) :- expert_of_SV_Zulte_Waregem(X); opponent_to_FC_Zenit(X).
+------------------------------ correct=123 total=169 parse_failures=5 prediction='expert_of_FC_Schalke_04(X) :- expert_of_SV_Zulte_Waregem(X); opponent_to_FC_Zenit(X).' y='expert_of_FC_Schalke_04(X) :- expert_of_SV_Zulte_Waregem(X). expert_of_FC_Schalke_04(X) :- opponent_to_FC_Zenit(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Stephen is a opponent to FC Zenit. 
+------------------------------ output ------------------------------
+Final answer: opponent_to_FC_Zenit(stephen).
+------------------------------ correct=123 total=170 parse_failures=5 prediction='opponent_to_FC_Zenit(stephen).' y='opponent_to_FC_Zenit("Stephen").' is_correct=False ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Stephen is a expert of FC Schalke 04. 
+------------------------------ output ------------------------------
+Final answer: expert_of_FC_Schalke_04(stephen).
+------------------------------ correct=123 total=171 parse_failures=5 prediction='expert_of_FC_Schalke_04(stephen).' y='expert_of_FC_Schalke_04("Stephen").' is_correct=False ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Everyone who is a niece of Meredith is also a workmate of Judith and a half-sister of Gladys. 
+------------------------------ output ------------------------------
+Here is the logical translation of the statement in Answer Set Programming notation:
+
+Final answer: workmate_of_Judith(X) :- niece_of_Meredith(X).
+             half_sister_of_Gladys(X) :- niece_of_Meredith(X).
+------------------------------ correct=124 total=172 parse_failures=5 prediction='workmate_of_Judith(X) :- niece_of_Meredith(X).' y='workmate_of_Judith(X) :- niece_of_Meredith(X). half_sister_of_Gladys(X) :- niece_of_Meredith(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+It is not the case that Rosetta is a workmate of Judith. 
+------------------------------ output ------------------------------
+Final answer: -workmate_of_Judith(Rosetta).
+------------------------------ correct=124 total=173 parse_failures=5 prediction='-workmate_of_Judith(Rosetta).' y='-workmate_of_Judith("Rosetta").' is_correct=False ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Rosetta is not a niece of Meredith. 
+------------------------------ output ------------------------------
+Final answer: -niece_of_Meredith(Rosetta).
+------------------------------ correct=124 total=174 parse_failures=5 prediction='-niece_of_Meredith(Rosetta).' y='-niece_of_Meredith("Rosetta").' is_correct=False ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Every follower of Rangers FC is a critic of Royal Antwerp FC or a expert of Galatasaray AŞ. 
+------------------------------ output ------------------------------
+Final answer: 1 {critic_of_Royal_Antwerp_FC(X) ; expert_of_Galatasaray_AS(X)} :- follower_of_Rangers_FC(X).
+------------------------------ correct=125 total=175 parse_failures=5 prediction='1 {critic_of_Royal_Antwerp_FC(X) ; expert_of_Galatasaray_AS(X)} :- follower_of_Rangers_FC(X).' y='1 {critic_of_Royal_Antwerp_FC(X) ; expert_of_Galatasaray_AŞ(X)} :- follower_of_Rangers_FC(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Bruce is not a critic of Royal Antwerp FC. 
+------------------------------ output ------------------------------
+Final answer: -critic_of_Royal_Antwerp_FC(bruce).
+------------------------------ correct=125 total=176 parse_failures=5 prediction='-critic_of_Royal_Antwerp_FC(bruce).' y='-critic_of_Royal_Antwerp_FC("Bruce").' is_correct=False ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Bruce is not a expert of Galatasaray AŞ. 
+------------------------------ output ------------------------------
+Final answer: -expert_of_Galatasaray_AS(bruce).
+------------------------------ correct=125 total=177 parse_failures=5 prediction='-expert_of_Galatasaray_AS(bruce).' y='-expert_of_Galatasaray_AŞ("Bruce").' is_correct=False ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+It is not the case that Bruce is a follower of Rangers FC. 
+------------------------------ output ------------------------------
+Final answer: -follower_of_Rangers_FC(Bruce).
+------------------------------ correct=125 total=178 parse_failures=5 prediction='-follower_of_Rangers_FC(Bruce).' y='-follower_of_Rangers_FC("Bruce").' is_correct=False ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+No ingredient of 05 FRUITY LIPSTICK is a ingredient of Wonder Glow Primer or a ingredient of Rolly Lip Smacker. 
+------------------------------ output ------------------------------
+Final answer: -ingredient_of_05_FRUITY_LIPSTICK(X) :- ingredient_of_Wonder_Glow_Primer(X); ingredient_of_Rolly_Lip_Smacker(X).
+------------------------------ correct=126 total=179 parse_failures=5 prediction='-ingredient_of_05_FRUITY_LIPSTICK(X) :- ingredient_of_Wonder_Glow_Primer(X); ingredient_of_Rolly_Lip_Smacker(X).' y='{ingredient_of_Wonder_Glow_Primer(X) ; ingredient_of_Rolly_Lip_Smacker(X)} 0 :- ingredient_of_05_FRUITY_LIPSTICK(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Cocamide DEA is a ingredient of Wonder Glow Primer. 
+------------------------------ output ------------------------------
+Final answer: ingredient_of_Wonder_Glow_Primer(cocamide_dea).
+------------------------------ correct=126 total=180 parse_failures=5 prediction='ingredient_of_Wonder_Glow_Primer(cocamide_dea).' y='ingredient_of_Wonder_Glow_Primer("Cocamide DEA").' is_correct=False ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+It is false that Cocamide DEA is a ingredient of 05 FRUITY LIPSTICK. 
+------------------------------ output ------------------------------
+Final answer: -ingredient_of_05_FRUITY_LIPSTICK(Cocamide_DEA).
+------------------------------ correct=126 total=181 parse_failures=5 prediction='A' y='-ingredient_of_05_FRUITY_LIPSTICK("Cocamide DEA").' is_correct=False ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Everything that is a ingredient of my blusher 8 is a ingredient of Serendipity Soap, too. 
+------------------------------ output ------------------------------
+Final answer: ingredient_of_Serendipity_Soap(X) :- ingredient_of_my_blusher_8(X).
+------------------------------ correct=127 total=182 parse_failures=5 prediction='ingredient_of_Serendipity_Soap(X) :- ingredient_of_my_blusher_8(X).' y='ingredient_of_Serendipity_Soap(X) :- ingredient_of_my_blusher_8(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Some ingredient of Simple Sheer is not a ingredient of Serendipity Soap. 
+------------------------------ output ------------------------------
+Final answer: -ingredient_of_Serendipity_Soap(X) :- ingredient_of_Simple_Sheer(X).
+------------------------------ correct=127 total=183 parse_failures=5 prediction='-ingredient_of_Serendipity_Soap(X) :- ingredient_of_Simple_Sheer(X).' y='ingredient_of_Simple_Sheer(sk4). -ingredient_of_Serendipity_Soap(sk4).' is_correct=False ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+There is something that is a ingredient of Simple Sheer and not a ingredient of my blusher 8. 
+------------------------------ output ------------------------------
+Final answer: ingredient_of_Simple_Sheer(X), -ingredient_of_my_blusher_8(X).
+------------------------------ correct=127 total=184 parse_failures=5 prediction='ingredient_of_Simple_Sheer(X), -ingredient_of_my_blusher_8(X).' y='ingredient_of_Simple_Sheer(sk4). -ingredient_of_my_blusher_8(sk4).' is_correct=False ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Every ingredient of Two A Penny that is a ingredient of PENCIL R-MATIC 55 is a ingredient of Lily Savon Soap or a ingredient of Up To Snow Good. 
+------------------------------ output ------------------------------
+Final answer: ingredient_of_Two_A_Penny(X), ingredient_of_PENCIL_R_MATIC_55(X) :- ingredient_of_Lily_Savon_Soap(X) ; ingredient_of_Up_To_Snow_Good(X).
+------------------------------ correct=128 total=185 parse_failures=5 prediction='ingredient_of_Two_A_Penny(X), ingredient_of_PENCIL_R_MATIC_55(X) :- ingredient_of_Lily_Savon_Soap(X) ; ingredient_of_Up_To_Snow_Good(X).' y='1 {ingredient_of_Lily_Savon_Soap(X) ; ingredient_of_Up_To_Snow_Good(X)} :- ingredient_of_PENCIL_R_MATIC_55(X), ingredient_of_Two_A_Penny(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+No ingredient of Lily Savon Soap is a ingredient of PENCIL R-MATIC 55 and, in the same time, a ingredient of Two A Penny. 
+------------------------------ output ------------------------------
+Final answer: -ingredient_of_Lily_Savon_Soap(X) :- ingredient_of_PENCIL_R_MATIC_55(X), ingredient_of_Two_A_Penny(X).
+------------------------------ correct=129 total=186 parse_failures=5 prediction='-ingredient_of_Lily_Savon_Soap(X) :- ingredient_of_PENCIL_R_MATIC_55(X), ingredient_of_Two_A_Penny(X).' y='-ingredient_of_PENCIL_R_MATIC_55(X) :- ingredient_of_Lily_Savon_Soap(X). -ingredient_of_Two_A_Penny(X)} :- ingredient_of_Lily_Savon_Soap(X). ' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Every ingredient of Two A Penny that is a ingredient of PENCIL R-MATIC 55 is also a ingredient of Up To Snow Good. 
+------------------------------ output ------------------------------
+Final answer: ingredient_of_Up_To_Snow_Good(X) :- ingredient_of_Two_A_Penny(X), ingredient_of_PENCIL_R_MATIC_55(X).
+------------------------------ correct=130 total=187 parse_failures=5 prediction='ingredient_of_Up_To_Snow_Good(X) :- ingredient_of_Two_A_Penny(X), ingredient_of_PENCIL_R_MATIC_55(X).' y='ingredient_of_Up_To_Snow_Good(X) :- ingredient_of_PENCIL_R_MATIC_55(X), ingredient_of_Two_A_Penny(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Everyone who is both a rare consumer of The Body Shop soap and a regular user of Pantene shampoo is a loyal buyer of Aveda shampoo or a occasional purchaser of Purpose soap. 
+------------------------------ output ------------------------------
+Final answer: 1 {loyal_buyer_of_Aveda_shampoo(X) ; occasional_purchaser_of_Purpose_soap(X)} :- rare_consumer_of_The_Body_Shop_soap(X), regular_user_of_Pantene_shampoo(X).
+------------------------------ correct=131 total=188 parse_failures=5 prediction='1 {loyal_buyer_of_Aveda_shampoo(X) ; occasional_purchaser_of_Purpose_soap(X)} :- rare_consumer_of_The_Body_Shop_soap(X), regular_user_of_Pantene_shampoo(X).' y='1 {loyal_buyer_of_Aveda_shampoo(X) ; occasional_purchaser_of_Purpose_soap(X)} :- rare_consumer_of_The_Body_Shop_soap(X), regular_user_of_Pantene_shampoo(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Every loyal buyer of Aveda shampoo is not a regular user of Pantene shampoo or not a rare consumer of The Body Shop soap. 
+------------------------------ output ------------------------------
+Final answer: -regular_user_of_Pantene_shampoo(X) ; -rare_consumer_of_The_Body_Shop_soap(X) :- loyal_buyer_of_Aveda_shampoo(X).
+------------------------------ correct=132 total=189 parse_failures=5 prediction='-regular_user_of_Pantene_shampoo(X) ; -rare_consumer_of_The_Body_Shop_soap(X) :- loyal_buyer_of_Aveda_shampoo(X).' y='1 {-rare_consumer_of_The_Body_Shop_soap(X) ; -regular_user_of_Pantene_shampoo(X)} :- loyal_buyer_of_Aveda_shampoo(X).' is_correct=True ------------------------------
+prompting anthropic:claude-3-haiku-20240307
+------------------------------ input ------------------------------
+Every rare consumer of The Body Shop soap who is a regular user of Pantene shampoo is also a occasional purchaser of Purpose soap. 
+------------------------------ output ------------------------------
+Final answer: occasional_purchaser_of_Purpose_soap(X) :- rare_consumer_of_The_Body_Shop_soap(X), regular_user_of_Pantene_shampoo(X).
+------------------------------ correct=133 total=190 parse_failures=5 prediction='occasional_purchaser_of_Purpose_soap(X) :- rare_consumer_of_The_Body_Shop_soap(X), regular_user_of_Pantene_shampoo(X).' y='occasional_purchaser_of_Purpose_soap(X) :- rare_consumer_of_The_Body_Shop_soap(X), regular_user_of_Pantene_shampoo(X).' is_correct=True ------------------------------
+Final totals (ignoring parse failures) correct=133 parsed=185 acc=0.7189189189189189
+Final totals correct=133 total=190 acc=0.7

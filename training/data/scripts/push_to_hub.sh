@@ -1,0 +1,1 @@
+python data/push_to_hub.py --data_files ./data/data/claude_3_bbh_clean.json ./data/data/claude_3_gsm_clean.json ./data/data/claude_3_math_clean.json ./data/data/claude_3_medcalc_clean.json --repo_id YOUR_REPO
