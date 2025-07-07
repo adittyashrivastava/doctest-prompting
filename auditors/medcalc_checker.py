@@ -4,7 +4,7 @@ import sys
 import os
 import re
 
-import auditors.util
+import auditors.util as util
 
 # reference: https://github.com/ncbi-nlp/MedCalc-Bench/blob/main/evaluation/evaluate.py
 # via jixuan PTP_R1/src/open_r1/evaluate.py
@@ -24,7 +24,7 @@ class MedCalcChecker:
             with open(MedCalcChecker.EVAL_HELPER_FILE, 'r') as fp:
                 eval_helper = json.load(fp)
         self.eval_helper = eval_helper
-    
+
 
     def is_correct(self, prediction, target):
 
@@ -33,7 +33,7 @@ class MedCalcChecker:
         except KeyError:
             print(f'missing target {target}')
             return 0
-        
+
         calid = specifics['calid']
         # output_type = specifics['output_type']
         lower_limit = specifics['lower_limit']

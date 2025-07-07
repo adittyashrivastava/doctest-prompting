@@ -1,0 +1,23 @@
+[
+    {
+        "input": "Calculate the QTc (Bazett) for a patient with QT interval of 330 msec and heart rate of 75 bpm",
+        "output": [
+            "Calling analyze_input()...",
+            "...analyze_input returned ('Calculate QTc using Bazett formula', ['QT interval', 'Heart Rate'], 'QTc_bazett')",
+            "Calling get_data(['QT interval', 'Heart Rate'])...",
+            "...get_data returned [('QT interval', 330, 'msec'), ('Heart Rate', 75, 'beats per minute')]",
+            "Calling insert_variables('QTc = QT / sqrt(RR)', [('QT interval', 330, 'msec'), ('Heart Rate', 75, 'beats per minute')])...",
+            "...insert_variables returned 'QTc = 330 / sqrt(60/75)'",
+            "Calling solve_formula('QTc = 330 / sqrt(60/75)')...",
+            "...solve_formula returned 'QTc = 330 / sqrt(0.8)'",
+            "Calling solve_formula('QTc = 330 / sqrt(0.8)')...",
+            "...solve_formula returned 'QTc = 330 / 0.894'",
+            "Calling solve_formula('QTc = 330 / 0.894')...",
+            "...solve_formula returned 'QTc = 368.951'",
+            "Final answer: 368.951"
+        ],
+        "y_hat": "368.951",
+        "y": "368.951",
+        "is_correct": true
+    }
+]

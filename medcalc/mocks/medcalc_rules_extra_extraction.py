@@ -1,3 +1,6 @@
+import sys
+import os
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..'))
 import mock
 
 INPUT1 = "A 70-year-old male presented with dizziness to the emergency department. His wife reports that he has been very compliant with his antihypertensive medication but over the last few days, he has been feeling progressively weak and off balance. It is revealed that he had a recent change in his medication regimen. On entering the room, he is sitting on the bed, alert, with eyes open and actively looking around. He immediately makes eye contact when acknowledged and is oriented to situation. He was able to recognize his treating physician and the emergency ward, spontaneously stating that he is in the hospital for dizziness. During neurological examination, he follows two step commands. His blood pressure is 90/60 mmHg with a heart rate of 58 bpm. Blood samples are taken for laboratory analysis, including a full blood count, renal function, electrolytes, and thyroid function tests. An EKG is ordered to rule out arrhythmias as the cause of his symptoms.\n\nWhat is the patient's Glasgow Coma Score?\n\nCalculate Glasgow Coma Score (GCS) by summing the results of the following rules:\n    Best Eye Response: Spontaneously = +4 points, To verbal command = +3 points, To pain = +2 points, No eye opening = +1 point\n    Best Verbal Response: Oriented = +5 points, Confused = +4 points, Inappropriate words = +3 points, Incomprehensible sounds = +2 points, No verbal response = +1 point\n    Best Motor Response: Obeys commands = +6 points, Localizes pain = +5 points, Withdrawal from pain = +4 points, Flexion to pain = +3 points, Extension to pain = +2 points, No motor response = +1 point"
@@ -20,10 +23,24 @@ analyze_input_mockdict = {
 	INPUT1 : (QUES1, RULES1, NOTE1)
 }
 
-def get_data_proxy(rule, patient_note):
+necessary_data_type_mockdict = {
+	RULES1[0] : "eye response",
+	RULES1[1] : "verbal response",
+	RULES1[2] : "motor response"
+}
+
+def necessary_data_type_proxy(rule):
 	for i in range(len(RULES1)):
 		if rule == RULES1[i]:
-			return DATAPOINTS1[i]
+			return ["eye response", "verbal response", "motor response"][i]
+
+def get_data_proxy(data_type, patient_note):
+	data_type_map = {
+		"eye response": DATAPOINTS1[0],
+		"verbal response": DATAPOINTS1[1],
+		"motor response": DATAPOINTS1[2]
+	}
+	return data_type_map.get(data_type)
 
 check_rule_mockdict = {
 	(RULES1[0], DATAPOINTS1[0]): 4,
@@ -42,9 +59,15 @@ def analyze_input(input_str: str) -> tuple[str, list[str], list[str]]:
 	"""
 	...
 
+@mock.dictmock(necessary_data_type_mockdict)
+def necessary_data_type(rule: str) -> str:
+	"""Accepts a rule and returns the type of data necessary to evaluate that rule.
+	"""
+	...
+
 @mock.proxymock(get_data_proxy)
-def get_data(rule: str, patient_note: str) -> str:
-	"""Accepts a rule and a patient note, and extracts the datapoint from the patient note required to evaluate the rule.
+def get_data(data_type: str, patient_note: str) -> str:
+	"""Accepts a data type and a patient note, and extracts the datapoint from the patient note required for that data type.
 	"""
 	...
 
