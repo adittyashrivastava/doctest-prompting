@@ -9,24 +9,14 @@ from run_eval import check_answer
 from run_eval import echo
 import arg_util
 import local_model_util
-import numpy as np
-from datetime import datetime
-
-# Add attention_viz to Python path if available
-attention_viz_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "attention_viz")
-if os.path.exists(attention_viz_path):
-    sys.path.insert(0, attention_viz_path)
-    print(f"📍 Added attention_viz path: {attention_viz_path}")
 
 # Import attention_viz for attention analysis and ATTRIEVAL
 try:
-    from attention_viz import AttentionVisualizer, AttentionExtractor, AttentionAnalyzer, AttrievelRetriever, AttrievelConfig
-    from attention_viz.utils.helpers import load_model_and_tokenizer
+    from attention_viz import AttentionExtractor, AttrievelRetriever, AttrievelConfig
     ATTENTION_VIZ_AVAILABLE = True
-    print("✅ attention_viz module imported successfully")
+    print("✅ attention_viz module loaded successfully")
 except ImportError as e:
-    print(f"⚠️  attention_viz module not available: {e}")
-    print("Continuing without attention analysis...")
+    print(f"⚠️  attention_viz not available: {e}")
     ATTENTION_VIZ_AVAILABLE = False
 
 # TODO: doctests
@@ -39,10 +29,14 @@ CODELLAMA_PYTHON_PROMPT = "[INST]\n{prompt}\n[/INST]\nResponse:"
 def fetch_prompts(args):
     """Opens a properly-formatted json file and returns the information it contains.
     """
+    # Use variant if provided, otherwise use "baseline"
+    variant = getattr(args, 'variant', '') or ''
+    base_name = variant if variant else "baseline"
+
     if args.CoT:
-        filename = "baseline-cot"
+        filename = f"{base_name}-cot"
     else:
-        filename = "baseline-dpt"
+        filename = f"{base_name}-dpt"
     if args.lo == 30 and args.hi == 0:
         filename += "-tune.json"
     elif args.lo == 0 and args.hi == 30:
@@ -78,6 +72,114 @@ def fetch_prompts(args):
 
     return prompt_template, prompts, prompt_info
 
+def setup_attention_analysis(model, tokenizer, args):
+    """Setup attention analysis components if enabled"""
+    if not args.enable_attention_analysis or not ATTENTION_VIZ_AVAILABLE:
+        return None, None
+
+    try:
+        print("🔧 Setting up attention analysis...")
+
+        # Initialize attention extractor
+        extractor = AttentionExtractor(model, tokenizer)
+
+        # Initialize ATTRIEVAL with simple config
+        config = AttrievelConfig(
+            layer_fraction=0.25,      # Use last 25% of layers
+            top_k=10,                 # Top 10 tokens per CoT token
+            frequency_threshold=0.99, # Filter attention sinks
+            max_facts=10              # Retrieve top 10 facts
+        )
+        retriever = AttrievelRetriever(extractor, config)
+
+        # Setup output directory
+        log_file = arg_util.log_file(args)
+        log_dir = os.path.dirname(log_file)
+        output_dir = os.path.join(log_dir, "attention_analysis")
+        os.makedirs(output_dir, exist_ok=True)
+
+        print(f"✅ Attention analysis setup complete")
+        print(f"📁 Results will be saved to: {output_dir}")
+
+        return retriever, output_dir
+
+    except Exception as e:
+        print(f"❌ Failed to setup attention analysis: {e}")
+        return None, None
+
+def perform_attention_analysis(prompt, response, info, retriever, output_dir, example_idx, model_obj, tokenizer):
+    """Perform attention analysis for a single example using separate forward pass"""
+    try:
+        print(f"🔍 Analyzing example {example_idx}...")
+
+        # Step 1: Extract attention using separate forward pass
+        print(f"🔍 Step 1: Extracting attention weights via separate forward pass...")
+
+        # Combine prompt and response for attention extraction
+        full_text = prompt + response
+
+        # Tokenize the full text
+        inputs = tokenizer(full_text, return_tensors="pt", padding=True, truncation=True)
+        inputs = {k: v.to(model_obj.device) for k, v in inputs.items()}
+
+        # Forward pass with attention extraction
+        with torch.no_grad():
+            # Temporarily enable attention extraction
+            original_output_attentions = getattr(model_obj.config, 'output_attentions', False)
+            model_obj.config.output_attentions = True
+
+            # Use eager attention for extraction
+            original_attn_implementation = getattr(model_obj.config, '_attn_implementation', None)
+            model_obj.config._attn_implementation = 'eager'
+
+            outputs = model_obj(**inputs, output_attentions=True)
+
+            # Restore original settings
+            model_obj.config.output_attentions = original_output_attentions
+            if original_attn_implementation is not None:
+                model_obj.config._attn_implementation = original_attn_implementation
+            else:
+                # Remove the attribute if it wasn't set originally
+                if hasattr(model_obj.config, '_attn_implementation'):
+                    delattr(model_obj.config, '_attn_implementation')
+
+        # Step 2: Run ATTRIEVAL fact retrieval with extracted attention
+        context = info["input"]
+
+        # Create a modified retriever that uses the pre-extracted attention
+        retrieval_result = retriever.retrieve_facts(
+            context=context,
+            question=context,  # For doctest problems, question is same as context
+            cot_response=response,
+            use_cross_evaluation=True,
+            attention_weights=outputs.attentions if hasattr(outputs, 'attentions') else None,
+            input_ids=inputs['input_ids'],
+            tokenizer=tokenizer
+        )
+
+        # Save results
+        example_dir = os.path.join(output_dir, f"example_{example_idx:04d}")
+        os.makedirs(example_dir, exist_ok=True)
+
+        # Save top facts
+        top_facts = {
+            "example_idx": example_idx,
+            "input": context,
+            "response": response,
+            "retrieved_facts": retrieval_result['retrieved_facts'],
+            "num_facts": len(retrieval_result['retrieved_facts'])
+        }
+
+        with open(os.path.join(example_dir, "top_facts.json"), "w") as f:
+            json.dump(top_facts, f, indent=2)
+
+        print(f"✅ Analysis complete for example {example_idx} - {len(retrieval_result['retrieved_facts'])} facts retrieved")
+        return example_dir
+
+    except Exception as e:
+        print(f"❌ Analysis failed for example {example_idx}: {e}")
+        return None
+
 def main():
     parser = arg_util.baseparser()
     parser.add_argument(
@@ -90,13 +192,12 @@ def main():
         help='Enable attention analysis and ATTRIEVAL for each prompt-response pair')
     args = parser.parse_args()
 
-        model = args.model
+    model = args.model
     if "/" in model:
         args.service = args.model.split("/")[0]
         args.model = args.model.split("/")[-1]
 
     # Check if model is a local path (e.g., from huggingface folder)
-    original_model_name = model
     if os.path.exists(model):
         print(f"📁 Using local model path: {model}")
     else:
@@ -109,53 +210,32 @@ def main():
     # fetch information from a json file
     prompt_template, prompts, prompt_info = fetch_prompts(args)
 
-    # I believe this is where the actual generation gets submitted and done, so there will be a long hangtime here.
+    # Load model and tokenizer
     tokenizer = transformers.AutoTokenizer.from_pretrained(model)
-    pipeline = transformers.pipeline(
-        "text-generation",
-        model=model,
-        torch_dtype=torch.float16,
+
+    # Load model for generation (no attention extraction to save memory)
+    print("🔧 Loading model for generation...")
+    model_obj = transformers.AutoModelForCausalLM.from_pretrained(
+        model,
+        torch_dtype=torch.float32,
         device_map="auto",
     )
+    pipeline = transformers.pipeline(
+        "text-generation",
+        model=model_obj,
+        tokenizer=tokenizer,
+        torch_dtype=torch.float32,
+        device_map="auto",
+    )
+
     print(f"Pipeline loaded.")
 
-    # Initialize attention analysis components if enabled
-    attention_model = None
-    attention_tokenizer = None
-    shared_extractor = None
-    attention_visualizer = None
-    attention_analyzer = None
-    attrieval_retriever = None
-    top_k_output_dir = None
-
-    if args.enable_attention_analysis and ATTENTION_VIZ_AVAILABLE:
-        print("🔧 Setting up attention analysis...")
-
-        # Load model separately for attention analysis (use resolved model path)
-        attention_model, attention_tokenizer = load_model_for_attention_analysis(model)
-
-        if attention_model is not None and attention_tokenizer is not None:
-            # Initialize attention analysis components
-            shared_extractor, attention_visualizer, attention_analyzer, attrieval_retriever = setup_attention_analysis(
-                attention_model, attention_tokenizer
-            )
-
-            if shared_extractor is not None:
-                # Setup output directory for top-k facts in doctest-prompting-data structure
-                log_file = arg_util.log_file(args)
-                log_dir = os.path.dirname(log_file)
-                top_k_output_dir = os.path.join(log_dir, "top_k")
-                os.makedirs(top_k_output_dir, exist_ok=True)
-                print(f"📁 Top-k facts will be saved to: {top_k_output_dir}")
-            else:
-                print("❌ Failed to initialize attention analysis components")
-                args.enable_attention_analysis = False
-        else:
-            print("❌ Failed to load model for attention analysis")
-            args.enable_attention_analysis = False
-    elif args.enable_attention_analysis and not ATTENTION_VIZ_AVAILABLE:
-        print("⚠️  Attention analysis requested but attention_viz module not available")
-        args.enable_attention_analysis = False
+    # Setup attention analysis
+    retriever, attention_output_dir = setup_attention_analysis(
+        pipeline.model if hasattr(pipeline, 'model') else None,
+        tokenizer,
+        args
+    )
 
     new_tokens = [len(prompt) for prompt in prompts]
     if len(new_tokens) == 0:
@@ -164,6 +244,7 @@ def main():
         new_tokens = sum(new_tokens) // len(new_tokens)
     new_tokens = new_tokens // 6
     print(f"Generating {len(prompts)} prompts for {args.task} with a maximum of {new_tokens} new tokens each...")
+
     generations = pipeline(
         prompts,
         do_sample=True,
@@ -198,7 +279,7 @@ def main():
         acc_correct = 0
         acc_total = 0
         acc_parse_failures = 0
-        for example_idx, (info, generation, prompt) in enumerate(zip(prompt_info, generations, prompts)): #, prompt in zip(prompt_info, prompts)
+        for example_idx, (info, generation, prompt) in enumerate(zip(prompt_info, generations, prompts)):
             #Output is set as a variable because it gets used twice - in echo() and in check_answer()
             output = generation[0]["generated_text"]
 
@@ -220,22 +301,10 @@ def main():
 
             # Perform attention analysis if enabled
             attention_analysis_dir = None
-            if args.enable_attention_analysis and shared_extractor is not None:
-                try:
-                    attention_analysis_dir = perform_attention_analysis(
-                        prompt=prompt,
-                        response=output,
-                        info=info,
-                        shared_extractor=shared_extractor,
-                        attention_visualizer=attention_visualizer,
-                        attention_analyzer=attention_analyzer,
-                        attrieval_retriever=attrieval_retriever,
-                        output_dir=top_k_output_dir,
-                        example_idx=example_idx
-                    )
-                except Exception as e:
-                    print(f"❌ Attention analysis failed for example {example_idx}: {e}")
-                    attention_analysis_dir = None
+            if retriever is not None and attention_output_dir is not None:
+                attention_analysis_dir = perform_attention_analysis(
+                    prompt, output, info, retriever, attention_output_dir, example_idx, model_obj, tokenizer
+                )
 
             task = {
                 "input" : info["input"],
@@ -248,7 +317,7 @@ def main():
 
             # Add attention analysis info if available
             if attention_analysis_dir is not None:
-                task["attention_analysis_dir"] = os.path.relpath(attention_analysis_dir, os.path.dirname(arg_util.log_file(args)))
+                task["attention_analysis_dir"] = os.path.relpath(attention_analysis_dir, os.path.dirname(log_file))
                 task["has_attention_analysis"] = True
             else:
                 task["has_attention_analysis"] = False
@@ -274,273 +343,24 @@ def main():
         echo(log, f"parse_failures={str(acc_parse_failures)} adj_acc={str(adj_acc)}")
 
         # Report attention analysis summary
-        if args.enable_attention_analysis and shared_extractor is not None:
+        if retriever is not None:
             num_with_attention = sum(1 for task in tasks if task.get("has_attention_analysis", False))
             echo(log, "=" * 30 + "Attention Analysis Summary" + "=" * 30)
             echo(log, f"Attention analysis completed for {num_with_attention}/{len(tasks)} examples")
-            echo(log, f"Top-k facts saved to: {top_k_output_dir}")
+            echo(log, f"Results saved to: {attention_output_dir}")
 
     with open(log_file.replace(".log", ".json"), "w") as outfile:
         json.dump(json_log, outfile, indent = 4)
 
-    # Final summary
     print(f"\n{'='*50}")
-    print(f"Processing completed!")
-    print(f"📊 Results saved to: {log_file}")
-    print(f"📊 JSON data saved to: {log_file.replace('.log', '.json')}")
+    print(f"✅ Processing completed!")
+    print(f"📊 Results: {log_file}")
     print(f"📈 Accuracy: {acc:.3f} ({acc_correct}/{acc_total})")
-    if acc_parse_failures > 0:
-        print(f"📈 Adjusted accuracy (excluding parse failures): {adj_acc:.3f} ({acc_correct}/{acc_total - acc_parse_failures})")
-
-    if args.enable_attention_analysis:
-        if shared_extractor is not None:
-            num_with_attention = sum(1 for task in tasks if task.get("has_attention_analysis", False))
-            print(f"🔍 Attention analysis completed for {num_with_attention}/{len(tasks)} examples")
-            print(f"📁 Top-k facts saved to: {top_k_output_dir}")
-            print("   Generated files for each example:")
-            print("   - essential_attention_data.npz (compressed attention weights)")
-            print("   - attrieval_results.json (comprehensive retrieval results)")
-            print("   - attrieval_analysis_report.md (human-readable analysis)")
-            print("   - top_facts_summary.json (top retrieved facts)")
-            print("   - attrieval_attention_data.npz (attention weights and scores)")
-            print("   - analysis_summary.json (metadata and file list)")
-        else:
-            print("⚠️  Attention analysis was requested but failed to initialize")
-
-    # Clean up attention models to free memory
-    if attention_model is not None:
-        print("🧹 Cleaning up attention analysis models...")
-        del attention_model
-        del attention_tokenizer
-        del shared_extractor
-        del attention_visualizer
-        del attention_analyzer
-        del attrieval_retriever
-        import gc
-        gc.collect()
-        torch.cuda.empty_cache() if torch.cuda.is_available() else None
-        print("✅ Memory cleanup completed")
-
-    print(f"{'='*50}\n")
-
-def load_model_for_attention_analysis(model_name):
-    """Load model and tokenizer specifically for attention analysis"""
-    try:
-        print(f"🔧 Loading model for attention analysis: {model_name}")
-
-        # Load model and tokenizer separately (not as pipeline)
-        model = transformers.AutoModelForCausalLM.from_pretrained(
-            model_name,
-            torch_dtype=torch.float16,
-            device_map="auto",
-            output_attentions=True,  # Critical for attention analysis
-            trust_remote_code=True
-        )
-
-        tokenizer = transformers.AutoTokenizer.from_pretrained(
-            model_name,
-            trust_remote_code=True
-        )
-
-        # Set pad token if not present
-        if tokenizer.pad_token is None:
-            tokenizer.pad_token = tokenizer.eos_token
-
-        print(f"✅ Model loaded successfully for attention analysis")
-        return model, tokenizer
-    except Exception as e:
-        print(f"❌ Failed to load model for attention analysis: {e}")
-        return None, None
-
-def setup_attention_analysis(model, tokenizer):
-    """Initialize attention analysis components"""
-    try:
-        print("🔧 Initializing attention analysis components...")
-
-        # Initialize shared attention extractor
-        shared_extractor = AttentionExtractor(model, tokenizer)
-
-        # Initialize attention visualization components
-        attention_visualizer = AttentionVisualizer(model, tokenizer)
-        attention_analyzer = AttentionAnalyzer(shared_extractor)
-
-        # Initialize ATTRIEVAL components
-        attrieval_config = AttrievelConfig(
-            layer_fraction=0.25,      # Use last 25% of layers
-            top_k=10,                 # Top 10 tokens per CoT token
-            frequency_threshold=0.99, # Filter attention sinks
-            max_facts=10              # Retrieve top 10 facts
-        )
-        attrieval_retriever = AttrievelRetriever(shared_extractor, attrieval_config)
-
-        # Test basic functionality
-        print("🧪 Testing basic attention extraction...")
-        test_result = shared_extractor.extract_attention_weights("Hello world, this is a test.")
-        print(f"✅ Basic test passed - Model has {test_result['num_layers']} layers, {test_result['num_heads']} heads")
-
-        return shared_extractor, attention_visualizer, attention_analyzer, attrieval_retriever
-
-    except Exception as e:
-        print(f"❌ Failed to initialize attention analysis: {e}")
-        return None, None, None, None
-
-def perform_attention_analysis(prompt, response, info, shared_extractor, attention_visualizer, attention_analyzer, attrieval_retriever, output_dir, example_idx):
-    """Perform attention analysis and ATTRIEVAL for a single prompt-response pair"""
-    try:
-        print(f"🔍 Performing attention analysis for example {example_idx}...")
-
-        # Create organized output directory for this specific entry
-        entry_dir = os.path.join(output_dir, f"example_{example_idx:04d}")
-        os.makedirs(entry_dir, exist_ok=True)
-
-        # Combine the full input text for attention analysis
-        full_input_text = prompt
-        context = info["input"]  # The original problem/context
-        question = info["input"]  # Same as context in this case
-        cot_response = response  # The model's response
-
-        print(f"📝 Input text length: {len(full_input_text)} characters")
-        print(f"🧠 Response length: {len(cot_response)} characters")
-
-        # 1. Export essential attention data (memory-efficient format)
-        attention_data = {}
-        try:
-            print("💾 Exporting essential attention data...")
-            essential_data = shared_extractor.extract_attention_weights(full_input_text)
-
-            # Get model architecture info
-            num_layers = essential_data["num_layers"]
-            num_heads = essential_data["num_heads"]
-            target_layer = min(6, num_layers - 1)
-            target_head = min(4, num_heads - 1)
-
-            print(f"📊 Model has {num_layers} layers and {num_heads} heads per layer")
-            print(f"🎯 Using layer {target_layer} and head {target_head} for analysis")
-
-            # Only keep essential layers to save memory
-            essential_layers = [0, target_layer, num_layers-1]
-            filtered_attention = []
-            for i, layer_attn in enumerate(essential_data["attention_weights"]):
-                if i in essential_layers:
-                    max_heads_to_keep = min(8, layer_attn.shape[0])
-                    filtered_attention.append(layer_attn[:max_heads_to_keep])
-
-            # Create memory-efficient export
-            essential_export = {
-                "tokens": essential_data["tokens"],
-                "num_layers": len(essential_layers),
-                "num_heads": max_heads_to_keep,
-                "target_layer": target_layer,
-                "target_head": target_head,
-                "sequence_length": essential_data["sequence_length"],
-                "example_idx": example_idx
-            }
-
-            # Save as compressed numpy format
-            np.savez_compressed(
-                os.path.join(entry_dir, "essential_attention_data.npz"),
-                attention_weights=np.array(filtered_attention, dtype=object),
-                **essential_export
-            )
-            attention_data["essential_data"] = "essential_attention_data.npz"
-            print("✅ Essential attention data export completed")
-
-            # Clear memory
-            del essential_data, filtered_attention, essential_export
-            import gc
-            gc.collect()
-
-        except Exception as e:
-            print(f"❌ Essential attention data export failed: {e}")
-
-        # 2. Run ATTRIEVAL fact retrieval
-        attrieval_data = {}
-        try:
-            print("🎯 Running ATTRIEVAL fact retrieval...")
-            retrieval_result = attrieval_retriever.retrieve_facts(
-                context=context,
-                question=question,
-                cot_response=cot_response,
-                use_cross_evaluation=True
-            )
-
-            print(f"📊 Retrieved {len(retrieval_result['retrieved_facts'])} top facts")
-
-            # Save detailed ATTRIEVAL results
-            attrieval_retriever.export_retrieval_result(
-                retrieval_result,
-                os.path.join(entry_dir, "attrieval_results.json")
-            )
-            attrieval_data["results_json"] = "attrieval_results.json"
-
-            # Generate human-readable report
-            readable_report = attrieval_retriever.visualize_retrieved_facts(retrieval_result)
-            with open(os.path.join(entry_dir, "attrieval_analysis_report.md"), "w") as f:
-                f.write(readable_report)
-            attrieval_data["analysis_report"] = "attrieval_analysis_report.md"
-
-            # Save top facts summary
-            top_facts_summary = {
-                "example_idx": example_idx,
-                "input": context,
-                "response": cot_response,
-                "top_retrieved_facts": retrieval_result['retrieved_facts'],
-                "num_facts_retrieved": len(retrieval_result['retrieved_facts']),
-                "attrieval_config": retrieval_result['config'],
-                "context_length": len(context),
-                "response_length": len(cot_response),
-                "timestamp": datetime.now().isoformat()
-            }
-
-            with open(os.path.join(entry_dir, "top_facts_summary.json"), "w") as f:
-                json.dump(top_facts_summary, f, indent=2)
-            attrieval_data["top_facts"] = "top_facts_summary.json"
-
-            # Save aggregated attention data
-            np.savez_compressed(
-                os.path.join(entry_dir, "attrieval_attention_data.npz"),
-                aggregated_attention=retrieval_result['aggregated_attention'],
-                retriever_tokens=retrieval_result['retriever_tokens'],
-                fact_scores=retrieval_result['fact_scores']
-            )
-            attrieval_data["attention_data"] = "attrieval_attention_data.npz"
-
-            print("✅ ATTRIEVAL analysis completed")
-
-        except Exception as e:
-            print(f"❌ ATTRIEVAL analysis failed: {e}")
-            import traceback
-            print(f"Traceback:\n{traceback.format_exc()}")
-
-        # 3. Save analysis summary
-        try:
-            analysis_summary = {
-                "example_idx": example_idx,
-                "input": context,
-                "response": cot_response,
-                "input_length": len(full_input_text),
-                "response_length": len(cot_response),
-                "attention_files": attention_data,
-                "attrieval_files": attrieval_data,
-                "timestamp": datetime.now().isoformat()
-            }
-
-            with open(os.path.join(entry_dir, "analysis_summary.json"), "w") as f:
-                json.dump(analysis_summary, f, indent=2)
-
-            print(f"✅ Analysis completed for example {example_idx}")
-            print(f"📁 Files saved to: {entry_dir}")
-
-        except Exception as e:
-            print(f"❌ Analysis summary save failed: {e}")
-
-        return entry_dir
-
-    except Exception as e:
-        print(f"❌ Attention analysis failed for example {example_idx}: {e}")
-        import traceback
-        print(f"Traceback:\n{traceback.format_exc()}")
-        return None
+    if retriever is not None:
+        num_with_attention = sum(1 for task in tasks if task.get("has_attention_analysis", False))
+        print(f"🔍 Attention analysis: {num_with_attention}/{len(tasks)} examples")
+        print(f"📁 Attention results: {attention_output_dir}")
+    print(f"{'='*50}")
 
 if __name__ == "__main__":
     main()
