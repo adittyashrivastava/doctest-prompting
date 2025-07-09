@@ -1,0 +1,31 @@
+Consider the program fragment below.  This program fragament is
+incomplete, with key parts of the implementation hidden, by
+replacing them with "..." markers.
+
+PROGRAM:
+```python
+{partial_program}
+```
+
+QUESTION: Predict what the output of the program above will be, given
+the input shown below.  You must simulate the COMPLETE execution trace
+showing ALL function calls and their outputs step by step.
+
+For each mocked function call (functions decorated with @mock.proxymock, 
+@mock.dictmock, etc.), show:
+1. The function name and arguments being called
+2. The return value from that function
+
+Show the execution in this format:
+```
+function_name(arg1, arg2, ...) -> return_value
+```
+
+Then show any print statements or final outputs.
+
+Respond with the FULL simulation trace including all intermediate steps,
+function calls, and outputs. Do NOT skip any function calls or intermediate results.
+
+```
+>>> {task_name}({input_str})
+``` 
