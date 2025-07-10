@@ -100,6 +100,73 @@ class CheckPointer:
     self.flush(forced=False)
 
 
+def llm_with_model(prompt, service='groq', model=None):
+  """Use an LLM model and return response with model objects for attention analysis.
+  
+  For local service, returns (response, model_obj, tokenizer).
+  For other services, returns (response, None, None).
+  """
+  if service == 'local':
+    # Local model inference using transformers with model object return
+    if not model:
+      model = 'Qwen/Qwen2.5-7B-Instruct'
+    
+    try:
+      import torch
+      import transformers
+      from transformers import AutoTokenizer, AutoModelForCausalLM
+      
+      print(f'Loading local model {model}...')
+      
+      # Load tokenizer and model
+      tokenizer = AutoTokenizer.from_pretrained(model)
+      model_obj = AutoModelForCausalLM.from_pretrained(
+        model,
+        torch_dtype=torch.float16 if torch.cuda.is_available() else torch.float32,
+        device_map="auto" if torch.cuda.is_available() else None,
+        low_cpu_mem_usage=True
+      )
+      
+      # Format prompt using chat template if available
+      messages = [{"role": "user", "content": prompt}]
+      try:
+        formatted_prompt = tokenizer.apply_chat_template(
+          messages, 
+          tokenize=False, 
+          add_generation_prompt=True
+        )
+      except Exception:
+        # Fallback format for models without chat template
+        formatted_prompt = f"<|im_start|>user\n{prompt}<|im_end|>\n<|im_start|>assistant\n"
+      
+      # Generate response
+      inputs = tokenizer(formatted_prompt, return_tensors="pt")
+      if torch.cuda.is_available():
+        inputs = {k: v.to(model_obj.device) for k, v in inputs.items()}
+      
+      with torch.no_grad():
+        outputs = model_obj.generate(
+          **inputs,
+          max_new_tokens=2048,
+          do_sample=True,
+          temperature=0.7,
+          top_p=0.9,
+          pad_token_id=tokenizer.eos_token_id if tokenizer.eos_token_id else tokenizer.pad_token_id
+        )
+      
+      # Decode response (only the new tokens)
+      response = tokenizer.decode(outputs[0][inputs['input_ids'].shape[1]:], skip_special_tokens=True)
+      
+      # DON'T clean up model from memory - return it for attention analysis
+      return response.strip(), model_obj, tokenizer
+      
+    except Exception as e:
+      return f"Error in local inference: {str(e)}", None, None
+  else:
+    # For non-local services, use regular llm function and return None for model objects
+    response = llm(prompt, service=service, model=model)
+    return response, None, None
+
 def llm(prompt, service='groq', model=None):
   """Use an LLM model.
   """

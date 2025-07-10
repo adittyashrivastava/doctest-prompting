@@ -6,12 +6,24 @@ from contextlib import redirect_stdout
 import json
 import re
 import time
+import os
 
 # run a prompt on a set of examples and save the result in a log file
 
 import arg_util
 import llm_util
 import local_model_util
+
+# Import attention_viz for attention analysis and ATTRIEVAL
+try:
+    from attention_viz import AttentionExtractor, AttrievelRetriever, AttrievelConfig
+    import torch
+    import transformers
+    ATTENTION_VIZ_AVAILABLE = True
+    print("✅ attention_viz module loaded successfully")
+except ImportError as e:
+    print(f"⚠️  attention_viz not available: {e}")
+    ATTENTION_VIZ_AVAILABLE = False
 
 # helper functions
 
@@ -71,6 +83,79 @@ def check_answer(args, output, target):
     is_correct = (normalize_target(prediction) == normalize_target(target))
     return (prediction, is_correct, (prediction == '**parse failed**'))
 
+def setup_attention_analysis(args):
+    """Setup attention analysis components if enabled"""
+    if not getattr(args, 'enable_attention_analysis', False) or not ATTENTION_VIZ_AVAILABLE:
+        return None, None
+
+    try:
+        print("🔧 Setting up attention analysis...")
+
+        # Setup output directory
+        log_file = arg_util.log_file(args)
+        log_dir = os.path.dirname(log_file)
+        output_dir = os.path.join(log_dir, "attention_analysis")
+        os.makedirs(output_dir, exist_ok=True)
+
+        print(f"✅ Attention analysis setup complete")
+        print(f"📁 Results will be saved to: {output_dir}")
+
+        return output_dir, True
+
+    except Exception as e:
+        print(f"❌ Failed to setup attention analysis: {e}")
+        return None, None
+
+def perform_attention_analysis(prompt, response, input_context, target, output_dir, example_idx, model_obj, tokenizer):
+    """Perform attention analysis for a single example"""
+    if not ATTENTION_VIZ_AVAILABLE or model_obj is None:
+        return None
+
+    try:
+        print(f"🔍 Analyzing example {example_idx}...")
+
+        # Initialize attention extractor and retriever
+        extractor = AttentionExtractor(model_obj, tokenizer)
+        config = AttrievelConfig(
+            layer_fraction=0.25,      # Use last 25% of layers
+            top_k=10,                 # Top 10 tokens per CoT token
+            frequency_threshold=0.99, # Filter attention sinks
+            max_facts=10              # Retrieve top 10 facts
+        )
+        retriever = AttrievelRetriever(extractor, config)
+
+        # Run ATTRIEVAL fact retrieval
+        retrieval_result = retriever.retrieve_facts(
+            context=input_context,
+            question=input_context,  # For doctest problems, question is same as context
+            cot_response=response,
+            use_cross_evaluation=True
+        )
+
+        # Save results
+        example_dir = os.path.join(output_dir, f"example_{example_idx:04d}")
+        os.makedirs(example_dir, exist_ok=True)
+
+        # Save top facts
+        top_facts = {
+            "example_idx": example_idx,
+            "input": input_context,
+            "response": response,
+            "target": target,
+            "retrieved_facts": retrieval_result['retrieved_facts'],
+            "num_facts": len(retrieval_result['retrieved_facts'])
+        }
+
+        with open(os.path.join(example_dir, "top_facts.json"), "w") as f:
+            json.dump(top_facts, f, indent=2)
+
+        print(f"✅ Analysis complete for example {example_idx} - {len(retrieval_result['retrieved_facts'])} facts retrieved")
+        return example_dir
+
+    except Exception as e:
+        print(f"❌ Analysis failed for example {example_idx}: {e}")
+        return None
+
 #
 # main
 #
@@ -84,9 +169,16 @@ def main(args=None):
 
     if args is None:
         parser = arg_util.baseparser()
+        parser.add_argument(
+            '--enable_attention_analysis',
+            action='store_true',
+            help='Enable attention analysis and ATTRIEVAL for each prompt-response pair (only works with local service)')
         args = parser.parse_args()
         arg_util.apply_shortcuts(args)
     print(args)
+
+    # Setup attention analysis if enabled
+    attention_output_dir, attention_enabled = setup_attention_analysis(args)
 
     if args.json_output:
         local_model_util.build_json(args)
@@ -141,7 +233,9 @@ def main(args=None):
                 examples = json.loads(fp.read())['examples']
 
             parse_failures = correct = total = 0
-            for ex in arg_util.active_subset(args, examples):
+            attention_results = []
+            
+            for example_idx, ex in enumerate(arg_util.active_subset(args, examples)):
                 x = ex['input']
                 y = ex['target'] 
                 # do NOT use format here, since any empty sets written out in the program traces
@@ -153,13 +247,35 @@ def main(args=None):
                 echo(log_fp, x)    
                 if args.service is None:
                     raise ValueError('--service must be set')
-                output = llm_util.llm(prompt, service=args.service, model=args.model)
+                
+                # Get response and model objects for attention analysis
+                if args.service == 'local' and attention_enabled:
+                    output, model_obj, tokenizer = llm_util.llm_with_model(prompt, service=args.service, model=args.model)
+                else:
+                    output = llm_util.llm(prompt, service=args.service, model=args.model)
+                    model_obj, tokenizer = None, None
+                
                 echo(log_fp, '-' * 30 + ' output ' + '-' * 30)
                 echo(log_fp, output)
                 prediction, is_correct, parse_failed = check_answer(args, output, y)
                 total += 1
                 if is_correct: correct += 1
                 if parse_failed: parse_failures += 1
+                
+                # Perform attention analysis if enabled and model is available
+                attention_analysis_dir = None
+                if attention_enabled and model_obj is not None and tokenizer is not None:
+                    attention_analysis_dir = perform_attention_analysis(
+                        prompt, output, x, y, attention_output_dir, example_idx, model_obj, tokenizer
+                    )
+                
+                if attention_analysis_dir:
+                    attention_results.append({
+                        "example_idx": example_idx,
+                        "attention_analysis_dir": os.path.relpath(attention_analysis_dir, os.path.dirname(log_filename)),
+                        "has_attention_analysis": True
+                    })
+                
                 echo(log_fp, 
                     '-' * 30 + f' {correct=} {total=} {parse_failures=} {prediction=} {y=} {is_correct=} ' + '-' * 30)
                 time.sleep(args.delay)
@@ -169,7 +285,13 @@ def main(args=None):
                 acc = correct / parsed
                 echo(log_fp, f'Final totals (ignoring parse failures) {correct=} {parsed=} {acc=}') 
             acc = correct / total
-            echo(log_fp, f'Final totals {correct=} {total=} {acc=}') 
+            echo(log_fp, f'Final totals {correct=} {total=} {acc=}')
+            
+            # Report attention analysis summary
+            if attention_enabled and attention_results:
+                echo(log_fp, "=" * 30 + "Attention Analysis Summary" + "=" * 30)
+                echo(log_fp, f"Attention analysis completed for {len(attention_results)}/{total} examples")
+                echo(log_fp, f"Results saved to: {attention_output_dir}")
 
 if __name__ == "__main__":
     main(None)
