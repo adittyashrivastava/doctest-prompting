@@ -1,12 +1,12 @@
 #!/bin/bash
 
-# Simple bash script to run evaluation with PTP enabled for 2 examples
+# Simple bash script to run job_util.py with PTP and attention enabled for 2 examples
 # 
-# This script automatically chooses the right evaluation script:
-# - job_util.py for local models (with attention analysis)
-# - run_eval.py for API models (no attention analysis)
+# This script demonstrates running job_util.py with:
 # - PTP (Prompt Template Programming) enabled (default behavior)
+# - Attention analysis enabled 
 # - Processing 2 examples (indices 0-1)
+# - Local models support
 #
 # Usage: ./run_job_util.sh [TASK_NAME] [MODEL_CONFIG]
 # 
@@ -19,27 +19,21 @@ set -e  # Exit on any error
 
 # Default values
 TASK_NAME=${1:-"medcalc_rules"}      # Default task if none provided
-MODEL_CONFIG=${2:-"qwen2.5-1.5b"}       # Default to qwen2.5-1.5b model if none provided
+MODEL_CONFIG=${2:-"qwen2.5-7b"}         # Default to qwen2.5-7b model if none provided
 
 # Available tasks (from medcalc/examples/test/):
 # medcalc_formulas, medcalc_formulas_rel, medcalc_rules, medcalc_rules_rel
 
 # Available model configs (from conf.d/):
-# local models: qwen2.5-1.5b, qwen2.5-7b, qwen2.5-7b-together, coder, deepseekv3, deepseekR1
+# local models: qwen2.5-0.5b, qwen2.5-1.5b, qwen2.5-7b, qwen2.5-7b-together, coder, deepseekv3, deepseekR1
 # API models: sonnet3, sonnet3-5, haiku, haiku3-5, gpt4o, flash
 
-echo "🚀 Running evaluation with PTP enabled"
+echo "🚀 Running job_util.py with PTP and attention analysis"
 echo "📋 Task: $TASK_NAME"
 echo "🤖 Model config: $MODEL_CONFIG"
 echo "📊 Processing 2 examples (indices 0-1)"
+echo "🔍 Attention analysis: ENABLED"
 echo "🎯 PTP (Prompt Template Programming): ENABLED (default)"
-
-# Check model type and report capabilities
-if grep -q "service = local" "$CONFIG_FILE"; then
-    echo "🔍 Attention analysis: ENABLED (local model)"
-else
-    echo "🔍 Attention analysis: NOT AVAILABLE (API model)"
-fi
 echo ""
 
 # Check if config file exists
@@ -69,39 +63,25 @@ echo "🔧 Setting up environment..."
 source ~/miniconda3/etc/profile.d/conda.sh
 conda activate medCalcEnv
 
-# Try to fix multiprocessing issue by setting environment variables
-export OMP_NUM_THREADS=1
-export MKL_NUM_THREADS=1
+# Optimize for GPU usage
 export TOKENIZERS_PARALLELISM=false
+export CUDA_VISIBLE_DEVICES=0
 
 export PYTHONPATH="${PYTHONPATH}:."
 
 # Create output directory if it doesn't exist
 mkdir -p ../doctest-prompting-data/logs2
 
-# Check if this is a local model or API model
-if grep -q "service = local" "$CONFIG_FILE"; then
-    echo "🔧 Running job_util.py with local model..."
-    python job_util.py \
-        --config conf.d/medcalc.conf \
-        --config2 "$CONFIG_FILE" \
-        --lo 0 \
-        --hi 2 \
-        --enable_attention_analysis \
-        --task_dir tasks \
-        --variant _rel \
-        "$TASK_NAME"
-else
-    echo "🔧 Running run_eval.py with API model..."
-    echo "⚠️  Note: Attention analysis not available with API models"
-    python run_eval.py \
-        --config conf.d/medcalc.conf \
-        --config2 "$CONFIG_FILE" \
-        --lo 0 \
-        --hi 2 \
-        --variant _rel \
-        "$TASK_NAME"
-fi
+echo "🔧 Running job_util.py..."
+python job_util.py \
+    --config conf.d/medcalc.conf \
+    --config2 "$CONFIG_FILE" \
+    --lo 0 \
+    --hi 2 \
+    --enable_attention_analysis \
+    --task_dir tasks \
+    --variant _rel \
+    "$TASK_NAME"
 
 echo ""
 echo "✅ Job completed!"
