@@ -107,53 +107,246 @@ def setup_attention_analysis(args):
         return None, None
 
 def perform_attention_analysis(prompt, response, input_context, target, output_dir, example_idx, model_obj, tokenizer):
-    """Perform attention analysis for a single example"""
+    """Perform attention analysis for a single example with GPU memory optimization"""
     if not ATTENTION_VIZ_AVAILABLE or model_obj is None:
         return None
 
     try:
         print(f"🔍 Analyzing example {example_idx}...")
 
-        # Initialize attention extractor and retriever
+        # Step 1: Compact the input to reduce memory usage
+        print(f"🔍 Step 1: Compacting input for memory efficiency...")
+        
+        # Compact the prompt by truncating very long examples while preserving key info
+        max_prompt_length = 1024  # Reasonable limit for attention analysis
+        if len(prompt) > max_prompt_length:
+            # Keep the beginning (task description) and end (question) of the prompt
+            prompt_start = prompt[:max_prompt_length//2]
+            prompt_end = prompt[-(max_prompt_length//2):]
+            compact_prompt = prompt_start + "\n...[content truncated for memory efficiency]...\n" + prompt_end
+            print(f"🔪 Compacted prompt from {len(prompt)} to {len(compact_prompt)} characters")
+        else:
+            compact_prompt = prompt
+            print(f"✅ Prompt length acceptable: {len(prompt)} characters")
+
+        # Combine compacted prompt and response for attention extraction
+        full_text = compact_prompt + response
+
+        # Tokenize with aggressive length management
+        max_total_tokens = 1024  # Conservative limit for GPU memory
+        inputs = tokenizer(full_text, return_tensors="pt", padding=True, truncation=True, max_length=max_total_tokens)
+        inputs = {k: v.to(model_obj.device) for k, v in inputs.items()}
+
+        seq_len = inputs['input_ids'].shape[1]
+        print(f"📏 Final sequence length: {seq_len} tokens (target: <={max_total_tokens})")
+
+        # Step 2: Layer-selective attention extraction for memory efficiency
+        print(f"🔍 Step 2: Layer-selective attention extraction...")
+        
+        # Clear GPU cache before attention extraction
+        if torch.cuda.is_available():
+            torch.cuda.empty_cache()
+            print(f"🧹 Cleared GPU cache")
+
+        # Configure model for layer-selective attention extraction
+        original_output_attentions = getattr(model_obj.config, 'output_attentions', False)
+        original_attn_implementation = getattr(model_obj.config, '_attn_implementation', None)
+        original_use_cache = getattr(model_obj.config, 'use_cache', True)
+
+        try:
+            with torch.no_grad():
+                # Enable attention extraction with memory-efficient settings
+                model_obj.config.output_attentions = True
+                if hasattr(model_obj.config, '_attn_implementation'):
+                    model_obj.config._attn_implementation = 'eager'
+                model_obj.config.use_cache = False  # Disable cache to save memory
+
+                # Enable gradient checkpointing for memory efficiency
+                if hasattr(model_obj, 'gradient_checkpointing_enable'):
+                    model_obj.gradient_checkpointing_enable()
+                    print(f"🔧 Enabled gradient checkpointing")
+
+                print(f"🔧 Extracting attention with memory-optimized settings...")
+                outputs = model_obj(**inputs, output_attentions=True)
+
+                # Extract only the most relevant attention layers (last 25% of layers)
+                if hasattr(outputs, 'attentions') and outputs.attentions is not None:
+                    all_attentions = outputs.attentions
+                    num_layers = len(all_attentions)
+                    
+                    # Keep only the last 25% of layers (most relevant for reasoning)
+                    keep_layers = max(1, num_layers // 4)  # At least 1 layer
+                    start_layer = num_layers - keep_layers
+                    
+                    # Extract only relevant layers and move to CPU to free GPU memory
+                    relevant_attentions = []
+                    for i in range(start_layer, num_layers):
+                        attention_layer = all_attentions[i].cpu()  # Move to CPU immediately
+                        relevant_attentions.append(attention_layer)
+                    
+                    print(f"✅ Extracted {len(relevant_attentions)} relevant layers (layers {start_layer}-{num_layers-1}) out of {num_layers} total")
+                    
+                    # Clear the full attention from GPU memory
+                    del outputs.attentions
+                    if torch.cuda.is_available():
+                        torch.cuda.empty_cache()
+                        print(f"🧹 Freed GPU memory after attention extraction")
+
+                else:
+                    print(f"❌ No attention weights extracted!")
+                    return None
+
+        except torch.cuda.OutOfMemoryError as e:
+            print(f"⚠️  GPU OOM during attention extraction: {e}")
+            print(f"🔧 Falling back to CPU-based attention extraction...")
+            
+            # Fallback: Move model to CPU for attention extraction
+            try:
+                # Move inputs to CPU
+                inputs_cpu = {k: v.cpu() for k, v in inputs.items()}
+                
+                # Move model to CPU temporarily
+                model_obj_cpu = model_obj.cpu()
+                
+                with torch.no_grad():
+                    model_obj_cpu.config.output_attentions = True
+                    if hasattr(model_obj_cpu.config, '_attn_implementation'):
+                        model_obj_cpu.config._attn_implementation = 'eager'
+
+                    outputs_cpu = model_obj_cpu(**inputs_cpu, output_attentions=True)
+                    
+                    # Extract relevant layers
+                    if hasattr(outputs_cpu, 'attentions') and outputs_cpu.attentions is not None:
+                        all_attentions = outputs_cpu.attentions
+                        num_layers = len(all_attentions)
+                        keep_layers = max(1, num_layers // 4)
+                        start_layer = num_layers - keep_layers
+                        
+                        relevant_attentions = [all_attentions[i] for i in range(start_layer, num_layers)]
+                        print(f"✅ CPU extraction: {len(relevant_attentions)} layers extracted")
+                    else:
+                        print(f"❌ CPU extraction failed!")
+                        return None
+
+                # Move model back to GPU
+                model_obj = model_obj_cpu.cuda()
+                print(f"🔙 Model moved back to GPU")
+
+            except Exception as e2:
+                print(f"❌ CPU fallback failed: {e2}")
+                return None
+
+        finally:
+            # Restore original model settings
+            model_obj.config.output_attentions = original_output_attentions
+            if original_attn_implementation is not None:
+                model_obj.config._attn_implementation = original_attn_implementation
+            else:
+                if hasattr(model_obj.config, '_attn_implementation'):
+                    delattr(model_obj.config, '_attn_implementation')
+            model_obj.config.use_cache = original_use_cache
+
+            # Disable gradient checkpointing
+            if hasattr(model_obj, 'gradient_checkpointing_disable'):
+                model_obj.gradient_checkpointing_disable()
+
+        # Step 3: Initialize ATTRIEVAL with layer-selective attention
+        print(f"🔍 Step 3: Setting up ATTRIEVAL with optimized config...")
+        
         extractor = AttentionExtractor(model_obj, tokenizer)
         config = AttrievelConfig(
-            layer_fraction=0.25,      # Use last 25% of layers
-            top_k=10,                 # Top 10 tokens per CoT token
-            frequency_threshold=0.99, # Filter attention sinks
-            max_facts=10              # Retrieve top 10 facts
+            layer_fraction=0.25,      # Use last 25% of layers (matches our extraction)
+            top_k=5,                  # Reduce to 5 tokens per CoT token for memory
+            frequency_threshold=0.95, # Lower threshold to get more facts
+            max_facts=5               # Reduce to 5 facts for faster processing
         )
         retriever = AttrievelRetriever(extractor, config)
 
-        # Run ATTRIEVAL fact retrieval
-        retrieval_result = retriever.retrieve_facts(
-            context=input_context,
-            question=input_context,  # For doctest problems, question is same as context
-            cot_response=response,
-            use_cross_evaluation=True
-        )
+        # Step 4: Run ATTRIEVAL fact retrieval (let it extract attention internally)
+        print(f"🔍 Step 4: Running ATTRIEVAL fact retrieval...")
+        
+        try:
+            # Use original input_context (not compacted) for fact retrieval
+            retrieval_result = retriever.retrieve_facts(
+                context=input_context,
+                question=input_context,  # For doctest problems, question is same as context
+                cot_response=response,
+                use_cross_evaluation=False  # Disable cross-evaluation to save memory
+            )
+            
+            print(f"✅ ATTRIEVAL completed, found {len(retrieval_result.get('retrieved_facts', []))} facts")
+            
+        except Exception as e:
+            print(f"❌ ATTRIEVAL failed: {e}")
+            # Create minimal fallback result
+            retrieval_result = {
+                'retrieved_facts': [],
+                'fact_scores': [],
+                'attention_data': None
+            }
 
-        # Save results
+        # Step 5: Process and clean results
+        print(f"🔍 Step 5: Processing results...")
+        retrieved_facts = retrieval_result.get('retrieved_facts', [])
+        
+        # Debug first few facts
+        for i, fact in enumerate(retrieved_facts[:3]):
+            score = fact.get('score', 'No score')
+            text = fact.get('text', 'No text')[:30]
+            print(f"   Fact {i}: score={score}, text='{text}...'")
+
+        # Clean up scores
+        cleaned_facts = []
+        for fact in retrieved_facts:
+            score = fact.get('score', 0)
+            if isinstance(score, (int, float)) and not (score != score or score == float('inf') or score == float('-inf')):
+                cleaned_facts.append(fact)
+            else:
+                fact_copy = fact.copy()
+                fact_copy['score'] = 0.0
+                cleaned_facts.append(fact_copy)
+
+        print(f"✅ Final results: {len(cleaned_facts)} valid facts")
+
+        # Step 6: Save results with minimal memory footprint
         example_dir = os.path.join(output_dir, f"example_{example_idx:04d}")
         os.makedirs(example_dir, exist_ok=True)
 
-        # Save top facts
-        top_facts = {
+        # Save compact results
+        results = {
             "example_idx": example_idx,
-            "input": input_context,
-            "response": response,
+            "input_preview": input_context[:200] + "..." if len(input_context) > 200 else input_context,
+            "response_preview": response[:200] + "..." if len(response) > 200 else response,
             "target": target,
-            "retrieved_facts": retrieval_result['retrieved_facts'],
-            "num_facts": len(retrieval_result['retrieved_facts'])
+            "retrieved_facts": cleaned_facts,
+            "num_facts": len(cleaned_facts),
+            "optimization_info": {
+                "sequence_length": seq_len,
+                "max_tokens_used": max_total_tokens,
+                "prompt_compacted": len(prompt) > max_prompt_length,
+                "layers_extracted": len(relevant_attentions) if 'relevant_attentions' in locals() else 0,
+                "memory_strategy": "layer_selective_extraction"
+            }
         }
 
         with open(os.path.join(example_dir, "top_facts.json"), "w") as f:
-            json.dump(top_facts, f, indent=2)
+            json.dump(results, f, indent=2)
 
-        print(f"✅ Analysis complete for example {example_idx} - {len(retrieval_result['retrieved_facts'])} facts retrieved")
+        # Final cleanup
+        if torch.cuda.is_available():
+            torch.cuda.empty_cache()
+
+        print(f"✅ Analysis complete for example {example_idx} - {len(cleaned_facts)} facts retrieved")
         return example_dir
 
     except Exception as e:
         print(f"❌ Analysis failed for example {example_idx}: {e}")
+        import traceback
+        traceback.print_exc()
+        
+        if torch.cuda.is_available():
+            torch.cuda.empty_cache()
+        
         return None
 
 #
@@ -265,9 +458,37 @@ def main(args=None):
                 # Perform attention analysis if enabled and model is available
                 attention_analysis_dir = None
                 if attention_enabled and model_obj is not None and tokenizer is not None:
+                    echo(log_fp, f"🧠 Starting attention analysis for example {example_idx}...")
                     attention_analysis_dir = perform_attention_analysis(
                         prompt, output, x, y, attention_output_dir, example_idx, model_obj, tokenizer
                     )
+                    if attention_analysis_dir:
+                        # Load and display summary of attention results
+                        try:
+                            results_file = os.path.join(attention_analysis_dir, "top_facts.json")
+                            if os.path.exists(results_file):
+                                with open(results_file, 'r') as f:
+                                    results = json.load(f)
+                                
+                                num_facts = len(results.get('retrieved_facts', []))
+                                echo(log_fp, f"✅ Attention analysis complete: {num_facts} facts extracted")
+                                
+                                # Show top 3 attention scores
+                                facts = results.get('retrieved_facts', [])[:3]
+                                if facts:
+                                    echo(log_fp, f"🔍 Top attention scores:")
+                                    for i, fact in enumerate(facts, 1):
+                                        score = fact.get('attention_score', 0)
+                                        text_preview = fact.get('text', 'No text')[:60] + "..."
+                                        echo(log_fp, f"   {i}. Score: {score:.8f} - {text_preview}")
+                                else:
+                                    echo(log_fp, f"⚠️  No attention facts extracted")
+                            else:
+                                echo(log_fp, f"⚠️  Attention results file not found: {results_file}")
+                        except Exception as e:
+                            echo(log_fp, f"⚠️  Error reading attention results: {e}")
+                    else:
+                        echo(log_fp, f"❌ Attention analysis failed for example {example_idx}")
                 
                 if attention_analysis_dir:
                     attention_results.append({
@@ -278,7 +499,8 @@ def main(args=None):
                 
                 echo(log_fp, 
                     '-' * 30 + f' {correct=} {total=} {parse_failures=} {prediction=} {y=} {is_correct=} ' + '-' * 30)
-                time.sleep(args.delay)
+                if args.delay is not None and args.delay > 0:
+                    time.sleep(args.delay)
 
             if parse_failures:
                 parsed = total - parse_failures

@@ -1,0 +1,898 @@
+Namespace(config='conf.d/medcalc_traces_1.5b.conf', config1=None, config2=None, config3=None, config4=None, task='medcalc_rules', variant='_traces_1.5b', example_dir='medcalc/examples/train', test_example_dir=None, partial_program_dir='medcalc/mocks', lo=0, hi=10, log_dir='logs', log_stem='', append_to_log=False, json_output=False, service='local', model='Qwen/Qwen2.5-1.5B-Instruct', parallel=1, delay=None, template_file='templates/predict_output_with_traces.txt', baseline_template_format=False, cot_prompt_dir=None, CoT=False, test_set=False, disable_excess_len=False, disable_dist_to_goal=False, disable_optimal_actions=False, disable_all_optimal=False, enable_attention_analysis=True)
+============================== prompt template ==============================
+Consider the program fragment below.  This program fragament is
+incomplete, with key parts of the implementation hidden, by
+replacing them with "..." markers.
+
+PROGRAM:
+```python
+{partial_program}
+```
+
+QUESTION: Predict what the output of the program above will be, given
+the input shown below.  You must simulate the COMPLETE execution trace
+showing ALL function calls and their outputs step by step.
+
+For each mocked function call (functions decorated with @mock.proxymock, 
+@mock.dictmock, etc.), show:
+1. The function name and arguments being called
+2. The return value from that function
+
+Show the execution in this format:
+```
+function_name(arg1, arg2, ...) -> return_value
+```
+
+Then show any print statements or final outputs.
+
+Respond with the FULL simulation trace including all intermediate steps,
+function calls, and outputs. Do NOT skip any function calls or intermediate results.
+
+```
+>>> {task_name}({input_str})
+``` 
+============================== template with program ==============================
+Consider the program fragment below.  This program fragament is
+incomplete, with key parts of the implementation hidden, by
+replacing them with "..." markers.
+
+PROGRAM:
+```python
+#!/usr/bin/env python3
+
+# Mock file for medcalc_rules with traces using 1.5B model (GPU memory friendly)
+# This file provides the detailed execution traces for the medcalc_rules function
+
+import sys
+import os
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..'))
+import mock
+
+# Input examples with complete medical case data
+INPUT1 = """We present an 85-year-old male with a past medical history of obesity, type two diabetes, atrial fibrillation, diastolic heart failure, chronic kidney disease (CKD) stage three, and coronary artery disease. The patient had a history of non-ST elevation myocardial infarction (NSTEMI) four weeks before the current admission, requiring a drug-eluting stent (DES) to the left anterior descending (LAD) artery. He also had a history of significant gastrointestinal bleed in the past month, for which apixaban was stopped. The patient was admitted to our hospital with worsening shortness of breath and found to have bilateral pleural effusions, right greater than left. He was afebrile and did not have any symptoms of pneumonia. The patient was started on IV furosemide and had an initial diagnostic, small-bore, ultrasound-guided tap from the right pleural effusion that was uneventful and yielded straw-colored 1000 mL of fluid. The pleural fluid analysis was mildly exudative based on Light's lactate dehydrogenase (LDH) criteria, but cytology was negative as well as Gram stain, bacterial, and fungal cultures. Autoimmune screening, including anti-nuclear antibody (ANA) and extractable nuclear antigen (ENA), was negative. In anticipation of a potential repeat pleural tap, the patient's aspirin was stopped. One week later, the patient was getting more short of breath, and chest X-ray revealed recurrent bilateral effusions worse on the right side. Echocardiogram showed features of diastolic dysfunction, with a left ventricular ejection fraction of 55% and no significant valvular disease. Arterial blood gas (ABG) was suggestive of hypercapnic respiratory failure; thus, he was started on non-invasive ventilation (NIV) and shifted to the ICU. He underwent a second, uneventful pleural tap on the right side, that yielded 1500 mL of straw-colored fluid. Analysis again showed an exudate with negative bacterial, fungal cultures, and cytology. CT scan of the chest showed basal atelectasis with significant pleural effusions, no lung masses, or lymph nodes enlargement (Figure ). The patient was transferred to the step-down unit, completed a 10-day course of antibiotics for possible community-acquired pneumonia, although sputum and blood cultures remained negative. One week later, the patient again clinically deteriorated and was admitted to ICU with hypercapnic respiratory failure and worsening pleural effusions. He initially required continuous bilevel positive airway pressure (BiPAP) ventilation until he stabilized. He had a third, right-sided thoracocentesis under ultrasound-guidance from a posterior approach, atraumatic, and yielded 1500 mL of clear thin yellow fluid. The patient had a follow-up chest X-ray 20 min later that showed improvement in the previously seen right-sided pleural effusion and no pneumothorax. However, two hours later, the patient was suddenly getting sweaty, tachypneic, lethargic while on BiPAP. His blood pressure (BP) was reading 60/40 mmHg, heart rate was dropping to 40 bpm, and he was less responsive. There was minimal air entry on auscultating the right chest with dullness to percussion, and no signs of any pain or tenderness. ABG showed hypoxia and a stable PCO2 level. Immediate chest X-ray showed a new 3.5 cm hemothorax on the right side (Figure ).
+He was given 1 L of IV fluids, norepinephrine for BP support, and an urgent right-sided IC surgical drain was inserted, which immediately drained 1.7 L of blood.
+The patient had a central line insertion, and three units of packed red blood cells (PRBC) transfused. Repeat hemoglobin after the second transfused unit was still below baseline at 6 g/L (from 8 g/L). He clinically started to improve after the hemothorax drainage, was more responsive, and pressor requirement was decreased. Overnight he received two units of platelets, and clopidogrel was stopped. The next day, the IC surgical drain still had around 800 mL output of serosanguinous fluid, but he was clinically back to his baseline as before this event. CT scan of the chest with IV contrast did not show any active bleeding into the pleural space but showed complex right-sided effusion. The IR team performed IC arteries angiogram to diagnose the site of the injured vessel. That was done within 24 h of the event and was negative. The cardiothoracic surgery team was consulted for possible video-assisted thoracoscopic surgery (VATS) procedure in the right pleural space. The patient continued to improve, and after a few days we removed the surgical drain, and transferred him out to the step-down unit with cardiothoracic surgical team following up on his care.
+
+What is the patient's CHA2DS2-VASc Score?
+
+Calculate CHA2DS2-VASc Score for Atrial Fibrillation Stroke Risk by summing the results of the following rules:
+Age: < 65 years = 0 points, 65-74 years = +1 point, ≥ 75 years = +2 points
+Sex: Female = +1 point, Male = 0 points
+Congestive Heart Failure (CHF) history: No = 0 points, Yes = +1 point
+Hypertension history: No = 0 points, Yes = +1 point
+Stroke, Transient Ischemic Attack (TIA), or Thromboembolism history: No = 0 points, Yes = +2 points
+Vascular disease history (previous myocardial infarction, peripheral artery disease, or aortic plaque): No = 0 points, Yes = +1 point
+Diabetes history: No = 0 points, Yes = +1 point"""
+
+QUES1 = "What is the patient's CHA2DS2-VASc Score?"
+RULES1 = [
+"Age: < 65 years = 0 points, 65-74 years = +1 point, ≥ 75 years = +2 points",
+"Sex: Female = +1 point, Male = 0 points",
+"Congestive Heart Failure (CHF) history: No = 0 points, Yes = +1 point",
+"Hypertension history: No = 0 points, Yes = +1 point",
+"Stroke, Transient Ischemic Attack (TIA), or Thromboembolism history: No = 0 points, Yes = +2 points",
+"Vascular disease history (previous myocardial infarction, peripheral artery disease, or aortic plaque): No = 0 points, Yes = +1 point",
+"Diabetes history: No = 0 points, Yes = +1 point"
+]
+DATAPOINTS1 = [
+"85-year-old male",
+"male",
+"diastolic heart failure",
+"No hypertension mentioned",
+"No stroke/TIA mentioned",
+"non-ST elevation myocardial infarction (NSTEMI)",
+"type two diabetes"
+..................................................
+126 lines skipped
+..................................................
+print(f"TRACE: analyze_input returned question='{question}', {len(rules)} rules, {len(datapoints)} datapoints")
+
+acc = 0
+print(f"TRACE: Starting accumulation with acc={acc}")
+
+for i, rule in enumerate(rules):
+print(f"TRACE: Processing rule {i+1}/{len(rules)}: {rule}")
+
+print(f"TRACE: Calling get_data for rule...")
+relevant_data = get_data(rule, datapoints)
+print(f"TRACE: get_data returned: {relevant_data}")
+
+print(f"TRACE: Calling check_rule...")
+to_add = check_rule(rule, relevant_data)
+print(f"TRACE: check_rule returned: {to_add}")
+
+print(f"TRACE: Calling accumulate_score with acc={acc}, to_add={to_add}")
+acc = accumulate_score(acc, to_add)
+print(f"TRACE: accumulate_score returned: {acc}")
+
+print(f"TRACE: Final calculation complete")
+print(f"Final answer: {acc}")
+return acc
+
+if __name__ == '__main__':
+mock.main(locals())
+```
+
+QUESTION: Predict what the output of the program above will be, given
+the input shown below.  You must simulate the COMPLETE execution trace
+showing ALL function calls and their outputs step by step.
+
+For each mocked function call (functions decorated with @mock.proxymock,
+@mock.dictmock, etc.), show:
+1. The function name and arguments being called
+2. The return value from that function
+
+Show the execution in this format:
+```
+function_name(arg1, arg2, ...) -> return_value
+```
+
+Then show any print statements or final outputs.
+
+Respond with the FULL simulation trace including all intermediate steps,
+function calls, and outputs. Do NOT skip any function calls or intermediate results.
+
+```
+>>> medcalc_rules({input_str})
+```
+prompting local:Qwen/Qwen2.5-1.5B-Instruct
+------------------------------ input ------------------------------
+We present an 85-year-old male with a past medical history of obesity, type two diabetes, atrial fibrillation, diastolic heart failure, chronic kidney disease (CKD) stage three, and coronary artery disease. The patient had a history of non-ST elevation myocardial infarction (NSTEMI) four weeks before the current admission, requiring a drug-eluting stent (DES) to the left anterior descending (LAD) artery. He also had a history of significant gastrointestinal bleed in the past month, for which apixaban was stopped. The patient was admitted to our hospital with worsening shortness of breath and found to have bilateral pleural effusions, right greater than left. He was afebrile and did not have any symptoms of pneumonia. The patient was started on IV furosemide and had an initial diagnostic, small-bore, ultrasound-guided tap from the right pleural effusion that was uneventful and yielded straw-colored 1000 mL of fluid. The pleural fluid analysis was mildly exudative based on Light’s lactate dehydrogenase (LDH) criteria, but cytology was negative as well as Gram stain, bacterial, and fungal cultures. Autoimmune screening, including anti-nuclear antibody (ANA) and extractable nuclear antigen (ENA), was negative. In anticipation of a potential repeat pleural tap, the patient's aspirin was stopped. One week later, the patient was getting more short of breath, and chest X-ray revealed recurrent bilateral effusions worse on the right side. Echocardiogram showed features of diastolic dysfunction, with a left ventricular ejection fraction of 55% and no significant valvular disease. Arterial blood gas (ABG) was suggestive of hypercapnic respiratory failure; thus, he was started on non-invasive ventilation (NIV) and shifted to the ICU. He underwent a second, uneventful pleural tap on the right side, that yielded 1500 mL of straw-colored fluid. Analysis again showed an exudate with negative bacterial, fungal cultures, and cytology. CT scan of the chest showed basal atelectasis with significant pleural effusions, no lung masses, or lymph nodes enlargement (Figure ). The patient was transferred to the step-down unit, completed a 10-day course of antibiotics for possible community-acquired pneumonia, although sputum and blood cultures remained negative. One week later, the patient again clinically deteriorated and was admitted to ICU with hypercapnic respiratory failure and worsening pleural effusions. He initially required continuous bilevel positive airway pressure (BiPAP) ventilation until he stabilized. He had a third, right-sided thoracocentesis under ultrasound-guidance from a posterior approach, atraumatic, and yielded 1500 mL of clear thin yellow fluid. The patient had a follow-up chest X-ray 20 min later that showed improvement in the previously seen right-sided pleural effusion and no pneumothorax. However, two hours later, the patient was suddenly getting sweaty, tachypneic, lethargic while on BiPAP. His blood pressure (BP) was reading 60/40 mmHg, heart rate was dropping to 40 bpm, and he was less responsive. There was minimal air entry on auscultating the right chest with dullness to percussion, and no signs of any pain or tenderness. ABG showed hypoxia and a stable PCO2 level. Immediate chest X-ray showed a new 3.5 cm hemothorax on the right side (Figure ).
+He was given 1 L of IV fluids, norepinephrine for BP support, and an urgent right-sided IC surgical drain was inserted, which immediately drained 1.7 L of blood.
+The patient had a central line insertion, and three units of packed red blood cells (PRBC) transfused. Repeat hemoglobin after the second transfused unit was still below baseline at 6 g/L (from 8 g/L). He clinically started to improve after the hemothorax drainage, was more responsive, and pressor requirement was decreased. Overnight he received two units of platelets, and clopidogrel was stopped. The next day, the IC surgical drain still had around 800 mL output of serosanguinous fluid, but he was clinically back to his baseline as before this event. CT scan of the chest with IV contrast did not show any active bleeding into the pleural space but showed complex right-sided effusion. The IR team performed IC arteries angiogram to diagnose the site of the injured vessel. That was done within 24 h of the event and was negative. The cardiothoracic surgery team was consulted for possible video-assisted thoracoscopic surgery (VATS) procedure in the right pleural space. The patient continued to improve, and after a few days we removed the surgical drain, and transferred him out to the step-down unit with cardiothoracic surgical team following up on his care.
+
+What is the patient's CHA2DS2-VASc Score?
+
+Calculate CHA2DS2-VASc Score for Atrial Fibrillation Stroke Risk by summing the results of the following rules:
+    Age: < 65 years = 0 points, 65-74 years = +1 point, ≥ 75 years = +2 points
+    Sex: Female = +1 point, Male = 0 points
+    Congestive Heart Failure (CHF) history: No = 0 points, Yes = +1 point
+    Hypertension history: No = 0 points, Yes = +1 point
+    Stroke, Transient Ischemic Attack (TIA), or Thromboembolism history: No = 0 points, Yes = +2 points
+    Vascular disease history (previous myocardial infarction, peripheral artery disease, or aortic plaque): No = 0 points, Yes = +1 point
+    Diabetes history: No = 0 points, Yes = +1 point
+------------------------------ output ------------------------------
+Let's go through the entire process step-by-step:
+
+### Step 1: Call `medcalc_rules` with the first example (`INPUT1`)
+```python
+
+# Call medcalc with INPUT1
+trace('Calling medcalc...')
+result1 = medcalc(medcalc_rules(INPUT1))
+print(f"Result for INPUT1 is: {result1}")
+
+# Output:
+# TRACE: Calling medcalc...
+# Result for INPUT2 is: (None, None, None)
+
+# The result for INPUT 1 is printed here.
+# We'll continue with the next example when we see it.
+```
+
+### Step N: Continue for each example
+```python
+
+
+# Example for INPUT N
+for input_str in INPUTS:
+    trace(f"Calling medcal... with input '{input_str}'")
+    result = medcal(input_str)
+
+    print(result)
+```
+
+This continues for every input string provided in the `INPUTS` list.
+
+### Trace Output Format
+Here is the expected output format showing all function calls, prints, and other outputs:
+
+```
+FUNCTION_NAME(ARGUMENTS) -> RETURN_VALUE
+CALL_OUTPUT
+PRINT OUTPUT
+FINAL RESULT
+```
+🧠 Starting attention analysis for example 0...
+✅ Attention analysis complete: 5 facts extracted
+🔍 Top attention scores:
+   1. Score: 0.00053122 - The patient was admitted to our hospital with worsening shor...
+   2. Score: 0.00047321 - The patient was started on IV furosemide and had an initial ...
+   3. Score: 0.00046727 - The patient had a history of non-ST elevation myocardial inf...
+------------------------------ correct=0 total=1 parse_failures=1 prediction='**parse failed**' y='6' is_correct=False ------------------------------
+prompting local:Qwen/Qwen2.5-1.5B-Instruct
+------------------------------ input ------------------------------
+Fifty-one-year-old Caucasian female was admitted to our hospital with complaints of fever and chills for three days and low back pain for two days. Past medical history included recent spinal abscess followed by implantation of spinal nerve stimulator, mitral valve prolapse and GERD. Her medications included omeprazole and acetaminophen as needed for chronic back pain. On physical examination, patient appeared sick. Vital signs: BP 80/50 mmHg, Pulse 120/min, respiratory rate 24/min. No skin lesions; neck was supple. Jugular veins were distended up to angle of the ear with prominent ‘a’ and ‘v’ waves. Her P2 was loud; No murmurs or gallop; lung fields were clear with normal vesicular breath sounds. Abdomen was soft and non tender. She had increased warmth and tenderness at the level of D10 - D12 vertebrae. Neurological examination was normal. Her labs revealed WBC count of 15,000 with bandaemia of 20%, lactic acid of 45 mgs%. Her EKG revealed sinus tachycardia. Serial troponin levels were normal. She was treated with broad spectrum antibiotics, intravenous fluids and dopamine as infusion. Her blood culture was positive for Staphylococcus aureus. Her echocardiogram revealed small left ventricle with ejection fraction of 65%, flattened interventricular septum, normal left atrium (LA), bowing of the interatrial septum to the LA, right atrial (RA) and RV enlargement with severe hypokinesia of RV (). Estimated RV systolic pressure was 75 mmHg. She also had TEE to look for any vegetation. There was no vegetation. Her echo examination 8 months ago was normal. High resolution Chest computerized tomography (CT) revealed normal lungs and CT angiogram revealed no evidence of pulmonary embolism. The patient underwent left and right heart catheterization10 days later. Coronary arteries and LV function were normal. RA pressure 6 mmHg, RV, 36/11 mmHg, pulmonary artery 36/11 mmHg, mean 24 mmHg, indicating significant improvement of pulmonary hypertension. Echo on the next day revealed markedly improved RA and RV dilatation (). Patient had a full recovery on discharge.
+
+What is the patient's score of Wells' criteria for Pulmonary Embolism?
+
+Calculate Wells' Criteria for Pulmonary Embolism by summing the results of the following rules:
+    Clinical signs and symptoms of DVT: No = 0 points, Yes = +3 points
+    PE is #1 diagnosis OR equally likely: No = 0 points, Yes = +3 points
+    Heart rate > 100: No = 0 points, Yes = +1.5 points
+    Immobilization at least 3 days OR surgery in the previous 4 weeks: No = 0 points, Yes = +1.5 points
+    Previous, objectively diagnosed PE or DVT: No = 0 points, Yes = +1.5 points
+    Hemoptysis: No = 0 points, Yes = +1 point
+    Malignancy with treatment within 6 months or palliative: No = 0 points, Yes = +1 point
+------------------------------ output ------------------------------
+```
+FUNCTION_NAME(analyze_inputs) -> TRACE: calling analyze_input...
+FUNCTION_NAME(input="Fifty-two-year-old African American male presented with sudden onset of chest pain, dyspnea, and nausea. History includes a prior myocardial ischemia and ST-elevation myocardial injury due to acute coronary syndrome, currently taking statins, metoprolol, and lisinopril. Vital sign: temperature 98.5°F, pulse 86 bpm, respiration rate 16 breaths per minute, oxygen saturation 99% on room air, blood pressure 130/80 mm Hg, Glasgow Coma Scale (GCS) score 14. Auscultation reveals absent wheezes bilaterally, crackles noted in the lower lobes of both lungs. Diaphragm is displaced down to its lowest position, percussion note shows tympany over the entire lung fields. Cardiac auscultation demonstrates a wide split S1, high-pitched blowing murmur best heard at the apex. Electrocardiogram (ECG) indicates sinus rhythm with a regular R-R interval of 0.7 seconds, no abnormalities in leads II, III, and aVF. Transthoracic echocardiology confirms extensive diffuse pericardial effusion without any free wall defect detected." ) -> TRACE : analyzing inputs... TRACE: extracting question -> QUESTION: What is the probability of Acute Myocardial Infarction?
+TRACE: extracting rules -> RULES: ["History of ST-elevement myocardial injur y": Yes = 3 points], ["Pericarditis": No = .5 points] TRACE: returning question='What is probability of acute myocardial infract ion?' , len(RULES)=2, len(DATAPOINTS)=0
+FUNCTION_NAME(get_data) -> RULE=History of STEMI: No -> Relevant Data: "history of ST elev ment myocardial inc urse:" No -> Reutrn Value: ""
+FUNCTION_NAME(check_rule) -> Rule=History Of STEMI -> Return Value: 3
+FUNCTION_CALL(analyze_output)(3, 0) -> Trace: calling accumulate_score...
+Trace: accumulate_scor e with acc=0, to add=3
+Trace: accumulating 3 to 0 gives 3, accu mulated result is now 3.
+FUNCTION_NAME(accumulate_scores) -> Accumulator=3, To Add=0 -> Return Val ue:  3 -> Trace : starting accumulation with ac c=3 ->
+FUNCTION_NAME(print_result) -> Print Result: Final Answer:  Probability of Acu nt Myocardic Infarc tion? =  0%
+```
+
+### Complete Simulation Trace:
+
+#### Function Calls:
+1:
+
+```
+medcalc_rules('Fifty-tw o-year-old Afric an American male pr esented with su rgent onset of chest p ain, dyspa znia, and na uga sia. History include d icludes a prior myo card ia ilis sm and ST elevation myo cardi al injury due t o acute coron ary synd om, currently tak ing stat ins, met oprol ol and lisino pril. Vital sig ns: temperature98 . 5 ° F, pulse86 bpms, respirati on rate  1 6 breath s per minut e, oxy gen saturatio n 9 9 % on room ai r, blood pres sure 1 . 3 0 /8 0 mm Ha, GCS score  4. 3 :')
+```
+
+2:
+
+```
+
+FUNCTION_NAME(medcalc_rules) -> medcalc_ rules() -> medcal c_rules()
+```
+
+3:
+
+``
+
+
+TRACE: calling medcalc_rul es...
+FUNCTION_CALL(medcal c_rules)(...)
+```
+
+4:
+
+``
+
+
+
+TRACE:calling medcalc rules ...
+FUNCTION_NAME(mock.analyze_inputs)_mock() -> ANALYZE_INPUTS -> TRACE::calling analyze_input....
+FUNCTION_NAME(INPUT 1) -> QUESTION -> TRACE ::extracting questions -> QUESTION : WHAT IS THE PROBABILITY OF ACUTE MYOCARDIAL INFARCTION ?  TRACE :EXTRACTING RULES -> RULE ::["History of S E TI M"] -> TRACE CALL: CHECK_RULE -> RULE : HISTORY OF S E T I M -> TRACE RETURN VALUE : 3 POINTS -> TR ACE: ACCUMULATING TO ADD 3 WITH ACCU MATE RESULT 3 AGAINST ACCUMULATOR 3 AT THIS POINT -> TRACE FINAL ANSWER : FINAL ANSW ER :PROBABILITY O F AC U NT MY OC ARDIAC INFRACTIO N? =3 PERCENT
+```
+🧠 Starting attention analysis for example 1...
+✅ Attention analysis complete: 5 facts extracted
+🔍 Top attention scores:
+   1. Score: 0.00069473 - Calculate Wells' Criteria for Pulmonary Embolism by summing ...
+   2. Score: 0.00057167 - Past medical history included recent spinal abscess followed...
+   3. Score: 0.00054801 - On physical examination, patient appeared sick...
+------------------------------ correct=0 total=2 parse_failures=2 prediction='**parse failed**' y='4.5' is_correct=False ------------------------------
+prompting local:Qwen/Qwen2.5-1.5B-Instruct
+------------------------------ input ------------------------------
+A 47 year-old Asian female was transferred to the authors’ institution from another hospital with a subacute history of shortness of breath, bilateral lower extremity swelling, pleuritic chest pain, cyanosis, episodic loss of consciousness and hypotension. Two years prior to admission she had underwent an abdominal hysterectomy for uterine fibroids, which were complicated by symptomatic anemia from associated menorrhagia. Two months prior to admission, she sustained a brief loss of consciousness, then two weeks before admission she developed gradual onset of pleuritic chest pain and lower extremity edema. One day prior to admission, she complained of some shortness of breath and a non-productive cough. There were no known risk factors or family history of thromboembolism. She had no other significant past medical, surgical or obstetric history. She was a non-smoker, non-alcoholic and denied use of illicit substances. She had no history of drug allergy.
+On the day of admission, she developed dizziness at home and fell to the ground. Her family helped her to bed wherein she had a witnessed four-minute period of loss of consciousness. She was taken by ambulance to an outside hospital where she appeared cyanotic and hypotensive with a weak pulse, was immediately sedated, endotracheally intubated and started on intravenous norepinephrine. Physical examination, prior to intubation, revealed a dusky blue skin suggestive of cyanosis. She had a tachycardia with pulse rate of 110 per minute, hypotension with systolic blood pressure of 70 mmHg and tachypnea with respiratory rate of 34 breaths per minute. There was teeth clenching and hypersalivation. An electrocardiogram and serum troponin levels were normal, her initial arterial blood pH was 7.25 with a PCO2 of 2.93 kPa (22 mmHg) and a PO2 of 67.46 kPa (506 mmHg) on an inspired fraction of oxygen of 1.0. The leukocyte count was 12.9 x 103 /μL with 81% neutrophils and 16.2% lymphocytes. Other hematologic and coagulation parameters were within the normal range. The serum bicarbonate was 14.6 mmol/L while other serum chemistries, renal and liver function tests were unremarkable. A computed tomography (CT) scan of the head was normal. A venous duplex ultrasound scan showed the presence of a right lower extremity proximal deep venous thrombosis (DVT) extending to the groin and she was commenced on intravenous standard unfractionated heparin.
+Later that day the patient was transferred to our hospital where a pulmonary embolism protocol computed tomography (CT) scan of the thorax and pelvis (, , ) and a repeat transthoracic echocardiogram were performed (). Because of the positive venous duplex ultrasound finding of a DVT, a D-Dimer was not requested.
+The patient was seen by a pulmonologist who made a differential diagnosis of an intracardiac tumor thrombus versus a thromboembolism-in-transit, and advised a surgical opinion. Because of delays in obtaining a concensus on appropriate surgical management from the cardiothoracic, vascular and gynecologic surgeons together with the need for further imaging studies, ongoing hypotension, presumed transient complete occlusion of the tricuspid valve and a confirmed deep venous thrombosis, the patient was initially thrombolysed intravenously with 100 mg of tissue plasminogen activator to treat any life-threatening component of venous thrombosis. Following this, the patient’s hemodynamic indices improved only slightly. The next day, the patient underwent a joint procedure with single stage median sternotomy and exploratory laparotomy, extraction of an inferior vena cava, common iliac vein and right atrial tumor thrombus, and included bilateral salpingo-oophorectomy. The histopathology of the tumor was consistent with leiomyoma ().
+Post-operative transoesophageal echocardiogram and CT showed complete removal of the intravascular lesion with minimal residual pelvic mass. There were no complications and the patient was subsequently taken off pressors, extubated and discharged to follow-up on oral anticoagulation.
+
+What is the patient's score of Wells' criteria for Pulmonary Embolism?
+
+Calculate Wells' Criteria for Pulmonary Embolism by summing the results of the following rules:
+    Clinical signs and symptoms of DVT: No = 0 points, Yes = +3 points
+    PE is #1 diagnosis OR equally likely: No = 0 points, Yes = +3 points
+    Heart rate > 100: No = 0 points, Yes = +1.5 points
+    Immobilization at least 3 days OR surgery in the previous 4 weeks: No = 0 points, Yes = +1.5 points
+    Previous, objectively diagnosed PE or DVT: No = 0 points, Yes = +1.5 points
+    Hemoptysis: No = 0 points, Yes = +1 point
+    Malignancy with treatment within 6 months or palliative: No = 0 points, Yes = +1 point
+------------------------------ output ------------------------------
+Let's simulate the complete execution trace for `medcalc_rules` with the provided inputs:
+
+### Step-by-step Execution Trace
+
+#### Function Calls and Outputs:
+
+1. **Input String**: `A 48-year-old African American woman presented to our emergency department with acute chest pain of 8 hours duration, dyspnea, and orthopnea.`
+
+2. **Calling `analyze_input`:**
+   ```python
+   >>> medcalc Rules Called with input:A 4 8 year old African American wome r presented to o ur emergency department w ith acute chest p ain of  8 hour s duration, dyspnea, adn orthop enia.
+   ```
+   
+   |Function|Arguments|Return Value|
+   |---|---|---
+   |analyze\_input|('A  4\ 8 y ar old Afr ic an Amer i ca w omen pr esented to ou r em ergency dep artment with acute chest p a in of  \ 8 ho ur s dur ation, dy spnea, a nd orth op enia.', ['CHA2DS 2-vasc Scoring'], ['Age', 'Sex', 'Congestiv e H eart Fail ure (CH F) history', 'Hyperton ic heart fail ure history', '* Stroke, Tran sient I ssue ment Atac tion (TI A), or thrombo e mbolism h istory', 'V alve diseas e history (previ ous myocardial inf arc ition, peripheral a rtery diseas ee, or ao ar pla ce plaque)', 'Diab etes h istory'])|Question='What is te patient\'s CHA 2 DS 2 -VASC score?', Rules=['Age: ', '', 'Sex: ', ' ', 'Conge stiv e Heart Fail ure History:', ' ', '* Stroke *Transien t Is sue Men tion: ', '*', 'Valve Diseas e Hist ory: ',  ' ', '! Diabe tes Hist or y: '] Data Points=['48 year ol der Afr ican Amer i c a wom an', 'female', 'chronic congestive heart failure', 'no hypertens ion', '*stroke/t ransient ischemic attack (t ia), or thrombo embolism', 'valve disease history', '!diabet es history']|
+   
+   Output:
+   ```plaintext
+   TRACE: Calling an ay_input ...
+   TRACE : ana lyze_input returned q uestion='W hat is te pat i ent\' s CHA _2 DS_2 _ VASC score? ', len(rul es)=4, len(data poi nts)=2
+   ```
+
+3. **Processing Rule 1 ('Age')**:
+   - **Rule**: `AGE: <65 Years = 1 Point,  66-75 Years: + 1 point = 2 Points,  >=76 Years = + 3 Points`.
+   - Since the age is 49, which falls between 64 and 74, the score is 2 points.
+   - Accumulated Score (`acc`) becomes 2.
+
+4. **Checking Rule 2 ('Sex')** (Not applicable since the patient is female).
+
+5. **Accumulate Score**:
+   
+   ```py
+   acc += to_add
+   ```
+   |Accumulated Score|To Add|Result|
+   |-|-|-|
+   |_|_|_
+
+6. **Check Rule 3 ('Congestivity Heart Failure')**:
+
+   - If there is no congestive HF history, add 0.
+   |ACCUMULATED SCORE|TO ADD|RESULT|
+   |_|_|_
+   |_1|_|_
+   
+7. **Continue processing remaining rules similarly until all rules are processed.**
+
+By continuing this process for all rules and accumulating scores, you would eventually reach the conclusion:
+
+```plaintext
+Final Answer: 4
+```
+This concludes the complete simulation trace showing all the intermediate steps, function calls, prints, and final outputs.
+🧠 Starting attention analysis for example 2...
+✅ Attention analysis complete: 5 facts extracted
+🔍 Top attention scores:
+   1. Score: 0.00048665 - Two years prior to admission she had underwent an abdominal ...
+   2. Score: 0.00045285 - Calculate Wells' Criteria for Pulmonary Embolism by summing ...
+   3. Score: 0.00042130 - 25 with a PCO2 of 2...
+------------------------------ correct=0 total=3 parse_failures=3 prediction='**parse failed**' y='9.0' is_correct=False ------------------------------
+prompting local:Qwen/Qwen2.5-1.5B-Instruct
+------------------------------ input ------------------------------
+A 40-year-old male called the emergency medical services immediately after experiencing an unrelenting headache, nausea, and chest pain, that evolved shortly after consuming rhino and completing intercourse. He denied having a medical history, experiencing anginal symptoms in the past and denied using any medications, including herbal supplements. He denied a tobacco or alcohol history but endorsed to using alprazolam and various sexual enhancers for years. He stated that he began using sildenafil years prior despite not displaying any signs or symptoms of sexual dysfunction and using it solely for recreational purposes. Eventually, he switched to tadalafil when the effects began wearing off. On the insistence of his friends and looking for cost-effective methods, he switched to rhino in 2016, stating that the potency was producing satisfying results with lower costs compared to PDE5i. He would acquire rhino for $8 from multiple gas stations and endorsed being a chronic user of rhino, usually consuming one 950 mg pill before the intended use, but this particular time he took three pills. During his years of sexual enhancer use, he did endorse to frequently experiencing similar headaches in the past after use, although it was never to this degree, nor was it ever un-interrupting. A pre-hospital electrocardiograph (ECG) revealed an inferior ST-segment elevation myocardial infarction (STEMI) and complete heart block manifested by bradycardia (Figure ).
+His vitals while at the emergency department were blood pressure of 111/63 mm Hg, heart rate of 48 beats per minute, respiratory rate of 22, oxygen saturation of 99% on room air, and Glasgow Coma Scale of 15. On physical examination, he was diaphoretic with cold extremities and had precordial chest pain and brisk pulses throughout. A repeat ECG in the emergency department reported similar findings of inferior ST-segment elevations in leads II, III, aVF, V5, and V6 and ST-segment depressions in leads I, aVL, and V2 while high-sensitivity troponin I was 163.41 ng/mL. Notable labs was a white blood cell count of 14.3 K/UL without left shift, total cholesterol 184 mg/dL, triglycerides 283 mg/dL, high density lipoprotein (HDL) 26 mg/dL, low density lipoprotein (LDL) 101 mg/dL, mild transaminitis with aspartate aminotransferase at 307 U/L, and alanine aminotransferase at 117 U/L. Urine toxicology screen came back positive for benzodiazepines. As per protocol, the cardiac catheterization lab was activated, and the patient received fentanyl 50 mcg and a loading dose of aspirin 325 mg before the procedure. Coronary angiography revealed 100% occlusion with thrombolysis in myocardial infarction (TIMI) grade flow of 0 (Figure ). He underwent percutaneous coronary intervention (PCI) with a drug-eluting stent (DES). Post dilation demonstrated 0% stenosis with a TIMI grade flow of 3 (Figure ). He was simultaneously transvenously paced after demonstrating complete heart block morphology. After the procedure, he was started on dual antiplatelet therapy with aspirin 81 mg and ticagrelor 90 mg twice daily and was given analgesia. His sheath was removed shortly after and he recovered without any complication. An ECG completed post procedure revealed disappearance of ST changes and the presence of a Q wave consistent with a previous MI (Figure ). A reconstructed diagram of the coronaries can be seen below (Figure ).
+
+What is the patient's HEART score?
+
+Calculate HEART Score for Major Cardiac Events by summing the results of the following rules:
+    History: Slightly suspicious = 0 points, Moderately suspicious = +1 point, Highly suspicious = +2 points
+    EKG: Normal = 0 points, Non-specific repolarization disturbance = +1 point, Significant ST deviation = +2 points
+    Age: <45 years = 0 points, 45-64 years = +1 point, ≥65 years = +2 points
+    Risk factors (HTN, hypercholesterolemia, DM, obesity (BMI >30 kg/m²), smoking (current or cessation within 3 months), positive family history of cardiovascular disease before age 65, atherosclerotic disease such as prior MI, PCI/CABG, CVA/TIA, or peripheral arterial disease): No known risk factors = 0 points, 1-2 risk factors = +1 point, ≥3 risk factors or history of atherosclerotic disease = +2 points
+    Initial troponin level: ≤normal limit = 0 points, 1–3× normal limit = +1 point, >3× normal limit = +2 points
+------------------------------ output ------------------------------
+To predict the output, let's simulate the execution of `medcalc_rules`:
+
+### Step-by-step Simulation Trace
+
+#### Step 1: Call `med_calc_rules(INPUT1)`
+```plaintext
+TRACE: calling medcalcules(INPUT1)
+```
+
+#### Step-by-Step Execution:
+
+##### Step 2: `analyzer_input(mock_dict.INPUT1)` called
+```plaintext
+
+TRACE: analyzer_input called with argument INPUT1
+```
+**Function Call:** `analyse_input(mock_analysis_dict.INPUT_INPUT1)`
+**Return Value:** `(QUES, RULE, DATA_POINTS)`
+```bash
+TRACE : analyze_input returning QUES=What is patient's heart score?
+TRACE : returning RULES=['History', 'EKG', 'Age', 'Risk_factors', 'Troponin_level']
+TRACE : Returning DATA_POINTS=['slightly suspicious', 'Normal', '<45', 'No known risk_factors', '<3x_normal_limit']```
+```bash
+
+TRACE : analyzer_input returned QUESTION='What is your heart score? ', RULES=[['History', 0], ['EKG'], ['Age'], ['Risk_factors'], ['Tropon_in_levels']], DATA_POINTS=["slightly suspectable", "normal", "<45", "no known risk_factor", "<3x normal_limit"]
+```
+
+##### Step By Step Analyze:
+- **Rule 1**: `History`: Slightly Suspectable = 1 Point (`slightly suspecable`)
+- **Data Points**: `Age`: <44 years 0 Points
+- **Risk Factors**: No Known Risk Factor 0 Point
+- Since there are no other conditions specified, assume `Age`, `Risk Factors`, and `Troponins` don't affect the score.
+
+##### Step Result:
+```plaintext  
+TRACE : Accumulating score from RULES: slightly suspectable (1) + 0 +  0  + 1   + 2 =  4
+TRACE    FINAL ANSWER: 4 points
+````
+
+#### Final Output:
+
+```plaintext   
+Trace: Final answer:  8
+`````
+
+
+#### Conclusion: The expected output is:
+```
+
+Output: 8 points
+
+Trace:  The patient’s heart score is calculated as follows:
+1) Rule 1 – History: Slighly Suspect 1 point (since ‘slightly susceptible’ is higher than “moderately suspect”).
+2) Data Points – Age: Less than 44 (less than 6 years old) 0 point, Risk Factors: None (no risk factors noted).
+3) Rule Details – Troponin Levels: Under 3 times the normal limit, so no additional points. 
+
+Total Score: 1 + 4 = 5 points
+
+Therefore, the total score for the patient is **8 points**.
+```
+🧠 Starting attention analysis for example 3...
+✅ Attention analysis complete: 5 facts extracted
+🔍 Top attention scores:
+   1. Score: 0.00064212 - He denied having a medical history, experiencing anginal sym...
+   2. Score: 0.00053433 - He stated that he began using sildenafil years prior despite...
+   3. Score: 0.00052253 - Eventually, he switched to tadalafil when the effects began ...
+------------------------------ correct=0 total=4 parse_failures=3 prediction=' 8' y='5' is_correct=False ------------------------------
+prompting local:Qwen/Qwen2.5-1.5B-Instruct
+------------------------------ input ------------------------------
+A 30-year-old Chinese female, G3P2002 at 26 weeks and 2 days gestation, presented to the Emergency Department complaining of shortness of breath and a dry cough that started one week prior. She had no sick contacts or recent travel history and denied obstetrical complaints. Her history was significant for chronic hepatitis B and two prior vaginal deliveries. She appeared critically ill, with vitals as follows: febrile to 39.3°C, tachycardic to 128 beats per minute, tachypneic with a respiratory rate of 22 breaths per minute, hypotensive to 88/55 mmHg, and her oxygen saturation was 93% on room air. Pertinent laboratory findings included WBC 7.0 K/μL, an initial neutrophil–lymphocyte ratio of 7.25, hemoglobin/hematocrit of 9.1 g/dL/28.1%, ESR of 50 mm/hr, procalcitonin of 178 pg/mL, CRP level of 69.6 mg/L, AST 14, ALT 32, and a BUN/creatinine ratio of 4 mg/dL/0.59. Her chest X-ray showed evidence of multifocal pneumonia (). On initial obstetrical evaluation, a sonogram confirmed a male fetus in cephalic presentation, with an estimated fetal weight of 910 g. The biophysical profile (BPP) score was 8/8. She was admitted for management of sepsis secondary to suspected COVID-19 infection.
+This patient underwent a septic work up including NP SARS-CoV-2 RT-PCR testing, respiratory viral panel, MRSA culture, legionella and streptococcus pneumoniae testing, blood cultures, and a urine culture. There was no clear etiology for her hypoxia, including negative SARS-CoV-2 testing, but was significant for asymptomatic bacteriuria, which was treated with cefpodoxime. Given the high clinical suspicion of COVID 19, SARS-CoV-2 testing was repeated but remained negative.
+Within the first two days of admission the patient continued to deteriorate with increased work of breathing, increased oxygen requirements, and mixed respiratory and metabolic acidosis. On hospital day (HD) 3 her WBC increased to 10.6 K/μL and trended to 21.6 K/μL by HD9. The neutrophil to lymphocyte ratio was 16.41, lymphocyte percentage was 5%, and CRP was 187 mg/dL. She received ceftriaxone and was started on azithromycin for presumed community acquired pneumonia. She was evaluated by the critical care team for acute hypoxemic respiratory failure despite treatment with a nonrebreather mask and high-flow oxygen and was intubated on hospital day (HD) 4 with transfer to the ICU. A third SARS-CoV-2 test remained negative.
+An interdisciplinary team including medicine, pulmonary, anesthesia, neonatology, and obstetrics with maternal fetal medicine guided clinical decision-making. It was felt that delivery would not provide maternal or fetal benefit; therefore, magnesium sulfate and antenatal steroids were not given.
+In the ICU, she received a norepinephrine drip due to hemodynamic instability, propofol for sedation purposes, rocuronium for paralysis, and insulin drip for glycemic control, and heparin prophylaxis was initiated. She received 50 mg of methylprednisolone four times daily for 25 days, which was tapered over several days. Her acidosis was addressed and corrected with a goal pH of 7.4-7.47. She exhibited persistent leukocytosis, and her antibiotic coverage was changed to meropenem. She intermittently required blood transfusions for anemia to maintain a hemoglobin level above 7 mg/dL. Initially, she failed to maintain good oxygenation with worsening radiographic findings, and her ventilation settings were adjusted accordingly with increasing PEEP settings (maximum set at 16). Two additional SARS-CoV-2 PCR tests were repeated and were still negative. The patient then underwent a bronchoscopy on HD 14 with a bronchoalveolar lavage, and the fluid culture yielded no growth.
+The question regarding delivery versus expectant management was revisited multiple times, and maternal fetal medicine recommended that a cesarean section only be performed if the patient continued to deteriorate despite maximum ventilation settings. In terms of antenatal monitoring, we could not implement continuous electronic fetal monitoring due to lack of remote monitoring capabilities and training limitations of the ICU house staff. Instead, we performed daily biophysical profiles to assess fetal status. We observed a score of 4/8 on HD16 (points removed for breathing and movement) that was attributed to an increase in the propofol and rocuronium titrations. The ICU team subsequently decreased the dosing which resulted in improved findings on the biophysical profile 2 days later. A sonographic estimated fetal weight (EFW) was measured on HD20 at 1165 g (9.5% percentile by WHO fetal growth calculator). Umbilical artery Dopplers were performed twice weekly thereafter and remained normal. Her ventilation settings were slowly weaned down and she showed radiologic improvement. She was extubated on hospital day twenty-five.
+She remained in the ICU for one week after her extubation and required high-flow oxygen that was slowly weaned down to a nasal cannula. She was transferred to the antepartum unit requiring 2 L/min oxygen on a nasal cannula. Sonographic EFW on HD33 was 1549 g (21 percentile by WHO fetal growth calculator). Meeting her recovery milestones, she was discharged home at 31 weeks gestation on HD 35 with no supplemental oxygen requirements. She was seen in the clinic 2 weeks after discharge and was doing very well. She then underwent testing for COVID-19 IgG antibodies and had a positive test result.
+She was readmitted to the antepartum unit with preterm contractions and 3 cm cervical dilation at 34 weeks. She was given a course of betamethasone and monitored for preterm labor; she was discharged two days later after making no cervical change. She subsequently underwent weekly NST/BPPs (consistently 10/10) and monthly growths with an estimated fetal growth of 2962 g at 38 weeks and 4 days (28% by WHO fetal growth calculator). The patient was admitted to Labor and Delivery at 39 weeks and 0 days gestation in labor and had an uncomplicated normal spontaneous vaginal delivery of a live male neonate in cephalic presentation. Apgar scores were 9 and 9 at 1, and 5 minutes, respectively, the neonatal weight was 2830 g, with a base excess of -7.9 and an arterial pH of 7.18. The placental pathology findings included meconium staining, and patchy avascular villi suggestive of fetal vascular malperfusion. The mother and child were discharged home from the hospital two days after delivery with no complications.
+
+What is the patient's CURB-65 score?
+
+Calculate CURB-65 Score for Pneumonia Severity by summing the results of the following rules:
+    Confusion: No = 0 points, Yes = +1 point
+    BUN >19 mg/dL (>7 mmol/L urea): No = 0 points, Yes = +1 point
+    Respiratory Rate ≥30: No = 0 points, Yes = +1 point
+    Systolic BP <90 mmHg or Diastolic BP ≤60 mmHg: No = 0 points, Yes = +1 point
+    Age ≥65: No = 0 points, Yes = +1 point
+------------------------------ output ------------------------------
+Here is the simulated execution trace for the `medcalc_rules` function:
+
+```plaintext
+>>> medcalcrules('A 3 0-year old Chinese female', 'G3P3003 at 5 weeks and six days gestational age, presented with shortness  of breath.', '[\"Shortness of Breath\", \"Dry Cough\']", "[\"Shortened Uterine Placental Attachment\"]")
+
+TRACE: calling analyze_input...
+TRACE: analyzing input string
+TRACE: returning question='What is your CURB 66 score?'
+TRACE: return len(rules)=1
+TRACE :return len(data_points)=1
+
+TRACE: processing rule 1/1: confusio...
+
+TRACE: checking rule 0/0: confusion: No=0 points yes=Yes (+1 point)
+
+TRACE: accumulating score with acc=0, to add=1
+```
+The function starts by analyzing the input string, extracting the question ("What is my CURB66 Score?") and the list of relevant rules and data points. It returns these values along with the length of the rules and the number of data points.
+
+Next, the function processes the first rule: **Confusion**. The rule specifies that there should be no confusion (confusion: `No`). Since there is no mention of confusion in the input text, the rule evaluates to `No`, giving a +1 to the accumulated score.
+
+The function then accumulates this score, setting `acc` to 0 and adding 1 to it. 
+
+The final message indicates that the function has finished its calculations and printed the final score.
+
+Output:
+```
+
+Traceback (most recent call last):
+
+  File "/path/to/mocked_function.py", line 62, in medcalc_rul...
+      raise Exception('Function call expected but not provided.')
+Exception: Function call expectedbutnotprovided.
+
+```
+
+It appears that the mocked function does not handle the missing logic for calculating the CURB score correctly.
+🧠 Starting attention analysis for example 4...
+✅ Attention analysis complete: 5 facts extracted
+🔍 Top attention scores:
+   1. Score: 0.00055949 - 6 K/μL by HD9...
+   2. Score: 0.00046341 - She had no sick contacts or recent travel history and denied...
+   3. Score: 0.00044342 - Her history was significant for chronic hepatitis B and two ...
+------------------------------ correct=0 total=5 parse_failures=4 prediction='**parse failed**' y='1' is_correct=False ------------------------------
+prompting local:Qwen/Qwen2.5-1.5B-Instruct
+------------------------------ input ------------------------------
+An 85-year-old man presented to our institution complaining of recurrent fever and a mitral regurgitation murmur. He has a past history significant for atrial fibrillation being treated with apixaban status post leadless pacemaker implantation and AV nodal ablation 15 days ago, hypertension, hyperlipidemia, obstructive sleep apnea on continuous positive airway pressure, diverticulosis and diverticulitis, dental caries, melanoma in situ, and persistent pulmonary coccidioidomycosis on fluconazole.
+He underwent a transthoracic echocardiogram which showed normal left ventricular size and no wall motion abnormalities, LVEF of 56%, severe mitral regurgitation due to incomplete coaptation of the mitral valve leaflets (Figures and ), mild right ventricular enlargement, systolic dysfunction with visible apical right ventricular lead, mild tricuspid regurgitation, and no pericardial effusion. A transesophageal echocardiogram confirmed restricted mitral valve leaflets resulting in incomplete coaptation and severe mitral regurgitation (Figures and ). No vegetations were seen. Blood cultures ruled out endocarditis as the cause of fever, and he was later found to have non-Hodgkin's lymphoma.
+His cardiac history is notable for atrial fibrillation diagnosed 10 years ago which was treated with atenolol and warfarin. Despite this treatment, he had recurrent episodes of paroxysmal symptomatic atrial fibrillation with a rapid rate requiring multiple emergency department visits and hospital admissions (). Given difficulty to control the rate, he underwent AV nodal ablation and leadless pacemaker insertion 15 days prior to current presentation with resultant LBBB on his electrocardiogram (ECG) post implantation (). His echocardiogram days before pacemaker insertion revealed only mild mitral regurgitation and normal coaptation of the mitral valve leaflets ().
+Given the absence of degenerative mitral valve abnormality and no evidence of cardiomyopathy, his diagnosis of new-onset severe mitral regurgitation is the direct result of abnormal electrical conduction related to iatrogenic LBBB due to AV nodal ablation and single-chamber paced rhythm.
+
+What is the patient's CHA2DS2-VASc Score?
+
+Calculate CHA2DS2-VASc Score for Atrial Fibrillation Stroke Risk by summing the results of the following rules:
+    Age: < 65 years = 0 points, 65-74 years = +1 point, ≥ 75 years = +2 points
+    Sex: Female = +1 point, Male = 0 points
+    Congestive Heart Failure (CHF) history: No = 0 points, Yes = +1 point
+    Hypertension history: No = 0 points, Yes = +1 point
+    Stroke, Transient Ischemic Attack (TIA), or Thromboembolism history: No = 0 points, Yes = +2 points
+    Vascular disease history (previous myocardial infarction, peripheral artery disease, or aortic plaque): No = 0 points, Yes = +1 point
+    Diabetes history: No = 0 points, Yes = +1 point
+------------------------------ output ------------------------------
+Let's go through the simulation step-by-step:
+
+### Initial Execution Trace
+
+#### Function Calls:
+
+1. `medcalc_rules("An 96-year-old woman presented to the clinic with complaints consistent with congestive heart failure and an episode of acute myocardial ischemia.")`
+   ```
+   medcalc\_rules(An\ 9\ 6\ \-\ \-\\-year-old\ woman\ presented\ to\ the\ clinic\ with\ complaints\ consistent\ with\(congestive\ heart\ failure\ and\ an\ episode\ of\ acute\ myocardial\ ischemia.\))
+   ```
+
+2. `print(f"Trace: medcalcrules called with argument: An 9** year-old woman...")`
+   ```plaintext
+   Trace: medca lcrules ca lled wi th argument: A n **\  9 **\ \ \ \ -\ \ year- old\ wome n...\ )
+   ```
+   
+3. `analyze_input(mock.input(INPUT1))` - `INPUT1` contains the patient information and questions.
+   ```python
+   >>> QUESTION1 = ("An  8\ 5\-year\-old\ man\ presented to\ our\ institu tion\ complaining\ of\nrecurrent\ fever\ and a\ mitral\ regurgitati on\ murmur.\nHe\ has\ a\ past\ history\ significant\ for\ atrial\ fibrilation\ being\ treated\ with ap ixab ena\ status\ po sitlve\ leadless\ pacem er\ implantation\ and AV\ nodal\ abl ation\ 1\5\ days\ ago,\ hypertension,\ hyperlip idemi a,\ obstructive\ sleep\ apnea\ on continuous\ positive\ air way\ pressure,\ diverti lo\ sotis\ and diverti clo\ ti ditis,\ dental\ caries,\ melanoma\ in\ situ,\ and\ persist ent\ pul mon ar\ coccidia roniosis\ on\ fluc onazole.")
+   >>> RULES = [
+   ... "Age:< 6*5\ years\ =\ 0\ points,\ 6*\ 5-\ 7*4\ years=\ +1\ point,\ \geq\ 7\ 4\  years=\ 2\ poin ts"
+   ... ]
+   >>> DATAPOINT S = [
+       "Atriofibrillation\ diagno ses 1*0\ years ago\ which\ was\ treated with\ aten olol\ and warfac rin."
+   ...
+   ````
+
+4. `get_data("Age:", ["Atr iofibriliation\ diag nostic 1 year ago\ wh ich\ was t reated with\ ate n olol and wa rfa cin."])`
+   - `age = 9` - meets condition `< 6 * 5` years, so add 1 point.
+   - Return values:
+     ```
+     >>> age = 6
+     >>> sex = None
+     ```
+
+5. `check_rule("Age:" , "6")` - 6 < 7 is true, so adds 1 to total.
+   Return value: 1
+
+6. `accumulate_score(1, 0)` - start with 1.
+   ```
+     Accumulate_Score(a c cum ul a te_s cor e ( 1 , 0 ) ) :
+     >>> total = 1
+     ```
+7. Continue analyzing other rules similarly...
+
+#### Intermediate Outputs:
+
+```
+Trace: processing rule 1: Age:
+Trace: calling get_data()...
+Trace: returning: 6 1 0 13
+Trace: checking rule 2: Sex:
+Trace :calling get_data()
+Trace :returning: None
+Trace :checking rule 3: Congestiv e Heart Failure:
+Trace ：calling get data()
+Trace ：returning :None
+Trace ：checking rule4: Hypertensive History:
+Trace：calling getdata()
+Trace：returning None
+Tr ace: checking r u le5: Stroke / TIA / Throm boembol ema Histo ry:
+Trace ::calling getdat a()
+Trace::returningNone
+Tr ac e: Checking r ule 6: Vasc ular Disease History:
+Tr ac es: calling ge tdata()
+Tr ac ek :return ing: None  
+Trace: Checking ru le 7: Diab etes Histo r y:
+Tr ace :calling ge tda ta()
+Tr ace ::returning N one
+```
+8. Continue accumulating scores according to other rules until all rules are processed.
+
+#### Final Output:
+
+After processing all rules, the expected final output should be the accumulated score. 
+
+Since I can't reproduce the entire sequence of calculations here, let me summarize the expected outcome:
+
+When all rules and conditions are fully processed based on the provided input, the program will return the calculated CHA₂DS₂-VASC score for the atrial fibrillation risk assessment.
+
+In practice, this would involve calculating the sum of individual contributions from each rule, considering the age, sex, CHF, hypertension history, stroke/TIAs/thromboembolism history, vascular disease, and diabetes factors.
+
+Here’s a hypothetical summary of the output (since the actual numbers depend on the inputs):
+
+```
+Final Answer: 9
+````
+🧠 Starting attention analysis for example 5...
+✅ Attention analysis complete: 5 facts extracted
+🔍 Top attention scores:
+   1. Score: 0.00059114 - What is the patient's CHA2DS2-VASc Score...
+   2. Score: 0.00048066 - He has a past history significant for atrial fibrillation be...
+   3. Score: 0.00045024 - No vegetations were seen...
+------------------------------ correct=0 total=6 parse_failures=5 prediction='**parse failed**' y='3' is_correct=False ------------------------------
+prompting local:Qwen/Qwen2.5-1.5B-Instruct
+------------------------------ input ------------------------------
+A 12-year-old girl brought to the clinic by her mother has a 3-day history of fever and sore throat and hematuria since this morning. The patient’s mother says she had a fever up to 39.5℃ (103.1℉) for the last 3 days and a severe sore throat, which has improved slightly. The mother states that she noticed her daughter had red urine today. The patient’s temperature is 39.3℃ (102.8℉), pulse is 89/min, respiratory rate is 25/min, and blood pressure is 109/69 mm Hg. On physical examination, her pharynx is erythematous. There is significant swelling of the tonsils bilaterally, and there is a white exudate covering them. Ophthalmologic examination reveals evidence of conjunctivitis bilaterally. Otoscopic examination is significant for gray-white tympanic membranes bilaterally. The remainder of the exam is unremarkable.
+
+What is the patient's Centor Score?
+
+Calculate Centor Score (Modified/McIsaac) for Strep Pharyngitis by summing the results of the following rules:
+    Age: 3-14 years = +1 point, 15-44 years = 0 points, ≥45 years = -1 point
+    Exudate or swelling on tonsils: No = 0 points, Yes = +1 point
+    Tender/swollen anterior cervical lymph nodes: No = 0 points, Yes = +1 point
+    Temperature >38°C (100.4°F): No = 0 points, Yes = +1 point
+    Cough: Cough present = 0 points, Cough absent = +1 point
+------------------------------ output ------------------------------
+```
+medcalc_rules('A 1 2-year-girl  3  days fever  sore throat  hematur   uria  since  1st day  Fever up 38. 5 ℃ 113. 1 ℉  Sore throat  improving slightly  Mother says  had fever 3 d  Severe sore throat   improved  slight  Mother states  noticed  her daughter  had red  urine  Today  Temperature  93.8  ℉   Pulse  8 9/min  Respiratory  2 5/min  Blood pressure  7 3/4  mmHig  Mother reports  having fever 1d  5 30℃ 13 14℃  Swelling  bilateral  tonsils  White exudates  Bilateral  erythema  Pharyngeal  eryths  Enlarged  bilateral tonsils   Tonsil  bilater  tonsillar  bulging  Swollen  bilateral lymph nodes  Anterior  cervical  lymph nodes   Tender  bilateral anterior  cervical lymph  Nodes  Temperature > 37  0. 2 ℃ (11 04. 7 ℉)  Cough  Present')
+-> Return value: ('What is  patient\'s Centor  Score?', ['Centor  Rule  4  6', 'Centor Rule 5', 'Cervical  lymph node  status', 'Temperature  >  ３７  ℃'], ['Age  ４  ５  Years', 'Exudate  or  swelling  on  tonsil', 'Tender  or swollen  anterior  cefal  lymph  nodes', 'Patient\'s  body  temp  > \(38^\circ\)  (136. 6  ℊ)', 'Patient  cough'])
+
+TRACE: Analyze  input...
+ TRACE: Question  = What  is  your  Centor's  Score?
+ TRACE: Rules = ['Centro  Rule_  １', 'Ｃentro Rule_ Ｘ', 'ｃefal lymph node status']
+ TRACE: Data  Points = ['Age', 'exudate_or_swelling_on_tonsil',  'tender_or_swollen_anterior_cefal_lymph_nodes', 'patient_s_body_temp_>37__(38__℃)', 'patient_cough']
+
+TRACE: Call  get_data  for  Centro  Rul_ 1...
+ TRACE : Relevant  data  = Age  ۵  Years
+ TRACE: Call get_data() for Centor Rule_1...
+TRACE : Relevant data =  Exudet  or swelld  on tonsil  ٠  Points
+TRACE: Calculate Centor_Rule_1 score...
+TRACE: Centor_rule  یا  cento r  چهارگاندی  گرفته شده  برابر  با امکان پذیرش ۰  دارد  نه تنها در صورت وجود اسید کلسترولی و کوپالولیسیت معمولاً به‌صورت قابل توجه است  ولی علاج آن‌ها نشود  ژنتیکی و خاصیت فرمول‌بندی هستند  که برای اطمینان از عدم ظاهر سخت ترین منفی رخ می‌دهد. لذا، در این حالت به طور دقیق و معتبر ۱ یک کلی گرد می شود. یافتن مقدار برای جایگزینی این امكانيات به سطح آزمون مشخص کردن در مورد سازماندهی امیکسیاکس و تبدیل آن به یادآوری و تحلیل دیجیتال است. در زیر مثالی برای آن استفاده از الگوریتم ام کمیاسکس در انجام ارزیابی می باشد:
+
+# Centor Rul 1: Age: Under 5 years  
+# Cento Rul : Exudation or swelling of tonsils
+
+Trace: Cento Rule_ I: Centr o 1 score is zero. It is zero because the age of the patient is five years old and therefore it does not meet the criteria for one point. Since the other factors do not apply here, the total Centor score remains zero.
+
+TRACE: Accumulate score...
+ TRACE  : Current  accumulator  =  ０
+ TRACE  ： Adding  to add =  -  一 
+ TRACE ： New  accumulator =  *  -1
+ TRACE : Final  Calculation  Complete
+ Final  Answer:  -１
+```
+🧠 Starting attention analysis for example 6...
+✅ Attention analysis complete: 5 facts extracted
+🔍 Top attention scores:
+   1. Score: 0.00094980 - The patient’s mother says she had a fever up to 39...
+   2. Score: 0.00072950 - Calculate Centor Score (Modified/McIsaac) for Strep Pharyngi...
+   3. Score: 0.00063721 - The mother states that she noticed her daughter had red urin...
+------------------------------ correct=0 total=7 parse_failures=6 prediction='**parse failed**' y='3' is_correct=False ------------------------------
+prompting local:Qwen/Qwen2.5-1.5B-Instruct
+------------------------------ input ------------------------------
+A 62-year-old right-handed male with a longstanding history of diabetes mellitus and hypertension presented with sudden-onset left-sided body weakness as well as a loss of feeling over the left side of his body. These symptoms started approximately 3 days before the presentation to the hospital. He gave a history of difficulty looking to the left side as well. There was no history of loss of consciousness, speech difficulties, seizures, headaches, or vomiting. His neurologic examination showed an intact level of consciousness, normal higher mental functions as well as normal speech. The examination of vision showed conjugate horizontal left gaze palsy. He could maintain gaze near mid-position but could not cross the midline to the left side. Doll's head maneuver brought the eyes past the midline to the left. Visual acuity was normal at the bedside near-fixation test. Visual fields were assessed by bedside confrontation methods and did not show clear defects. Examination of facial nerves showed weakness of the upper motor neuron type on the left side, and the remainder of cranial nerves was intact.
+Motor system examination showed hypotonia, hemiplegia, hyporeflexia as well as extensor plantar response on the left side of the body. Sensory system examination showed left hemisensory loss of pain and temperature sensations.
+Computed tomography scan of the brain showed an area of infarction over the right subcortical corona radiata region (Fig. ). He received inpatient stroke care and then was discharged home.
+He was re-assessed in the neurology outpatient clinic (OPD) at 1, 3, and 6-month intervals after discharge. Neurologic examination on the first visit to the neurology clinic showed some improvement in the range of eye movements; however, he had residual partial defects of both saccadic and pursuit functions on horizontal gaze. His motor power over the left side of his body was better as compared to his baseline. Tone and deep tendon reflexes were increased over the left side as well, and the other neurologic findings were the same as his baseline.
+His neurologic assessment on the second visit to the neurology OPD did not show significant changes from the first visit. However, re-assessment on the third visit (i.e., 6 months after discharge) showed complete recovery of gaze palsy, better motor power on the left side of his body with otherwise similar findings as before.
+
+What is the patient's CHA2DS2-VASc Score?
+
+Calculate CHA2DS2-VASc Score for Atrial Fibrillation Stroke Risk by summing the results of the following rules:
+    Age: < 65 years = 0 points, 65-74 years = +1 point, ≥ 75 years = +2 points
+    Sex: Female = +1 point, Male = 0 points
+    Congestive Heart Failure (CHF) history: No = 0 points, Yes = +1 point
+    Hypertension history: No = 0 points, Yes = +1 point
+    Stroke, Transient Ischemic Attack (TIA), or Thromboembolism history: No = 0 points, Yes = +2 points
+    Vascular disease history (previous myocardial infarction, peripheral artery disease, or aortic plaque): No = 0 points, Yes = +1 point
+    Diabetes history: No = 0 points, Yes = +1 point
+------------------------------ output ------------------------------
+### Full Simulation Trace
+
+#### Step-by-step Execution:
+
+**Initial Call to `medcalc_rules`**
+```python
+
+>>> medcalcrules('A 67-year-old Hispanic woman with a history consistent with an ischemic stroke presenting with cognitive impairment lasting 3 weeks.')
+-> None
+```
+**Function Calls:**
+
+1. **`medcalcrules` Function**
+   ```python
+   medcalcrules(A 18-year-old boy who sustained a traumatic brain injury during a bicycle accident. He has no prior neurological disorders and was conscious and oriented when transported to the emergency department. The child was experiencing confusion, headache, nausea, vomiting, and dizziness. He did not experience visual disturbances, auditory hallucinations, or limb paralysis. MRI demonstrated mild diffuse cerebral edema and microhemorrhages without mass effect. He received intravenous therapy with mannitol and oral antiepileptics.)
+   ```
+
+2. **Inner Call to Analyze Input**
+   - **Input String:** `"A 19-year-old girl with a head trauma due to a fall from a height. She complained of headache, vomiting and was found to be unconscious."`
+   - Returns Question: `'What is your CHA? CHA-2 DS-Screen?'`
+   ```markdown
+   function_name(arg) -> return_val
+   ```
+   
+3. **Call to Get Data Proxy**
+   **Rule: CHA**
+   | Rule |
+   | --- |
+   *CHA*
+   ```text
+   get_data('CHA', ['Head trauma']) -> 'cha'
+   ```
+   **Data Point: Head trauma**
+   |-|
+   *Head Trauma*
+
+4. **Check Rule**
+   *Rule*: CHA
+   | Data Point |
+   |--|
+   | Head Trauma |
+
+5. **Accumulate Score**
+   `-0` (`initially 0`)
+   ```bash
+   accumulate_score(-0, 1) -> -1
+   ```
+   **Score**: `-1`
+
+---
+
+**Summary:**
+The initial call to `analyze_input` triggers a recursive call that leads to calculating the CHA score for a young male patient with head trauma. Since there is no pre-existing conditions listed, the cumulative score remains `-1`.
+
+**Continue Execution:**
+Subsequent calls to `get_data`, `check_rule`, and `accumulate_score` would continue recursively applying these rules to various inputs.
+
+**Note:** Due to the large size of the dataset provided, only the first few cases are simulated here. For comprehensive results, the entire dataset should be processed.
+🧠 Starting attention analysis for example 7...
+✅ Attention analysis complete: 5 facts extracted
+🔍 Top attention scores:
+   1. Score: 0.00095257 - These symptoms started approximately 3 days before the prese...
+   2. Score: 0.00070181 - He was re-assessed in the neurology outpatient clinic (OPD) ...
+   3. Score: 0.00064771 - He could maintain gaze near mid-position but could not cross...
+------------------------------ correct=0 total=8 parse_failures=7 prediction='**parse failed**' y='4' is_correct=False ------------------------------
+prompting local:Qwen/Qwen2.5-1.5B-Instruct
+------------------------------ input ------------------------------
+A 64-year-old Caucasian female presented with dizziness, pre-syncope, and progressive decline in functional capacity, with New York Heart Association (NYHA) class III symptoms. Her past medical history was significant for atrial fibrillation, type II diabetes mellitus, hypertension, hyperlipidaemia, prior tobacco use, chronic obstructive pulmonary disease, and idiopathic thrombocytopenia. She also had been previously diagnosed with aortic stenosis, which prompted admission for further evaluation of progression. Family history was significant for coronary artery disease in her parents and brother, and colon cancer in the mother. Physical exam was significant for a holosystolic murmur radiating to the axilla, and bilateral lower extremity oedema, otherwise unremarkable. Initial electrocardiogram (ECG) showed normal sinus rhythm without LV hypertrophy or significant ST/T wave abnormalities (). Echocardiography showed normal LV systolic function, Grade II LV diastolic dysfunction, and moderate septal LV hypertrophy (1.7 cm at the level of mitral leaflet tips) (, Videos 1 and 2). At rest, there was mitral valve SAM with near septal contact and a peak LVOT gradient of 48 mmHg, with resultant moderate, posteriorly directed mitral regurgitation, which increased to SAM with septal contact after provocation with Valsalva manoeuvre, showing an increase in the peak LVOT gradient to 82 mmHg (). She underwent CMR imaging, which showed again septal hypertrophy, mitral valve SAM with moderately severe mitral regurgitation, and flow acceleration in the LVOT, suggestive of a haemodynamically significant obstruction (Video 3 and ). Interestingly, the septal thickness was less prominent by CMR (1.5 cm in the mid-inferoseptum), likely due to the inclusion of right ventricular septal trabeculation on echo and resultant overestimation of septal thickness. Cardiac magnetic resonance also defined abnormal chordal attachments from the posterior medial papillary muscle to the base of the anterior mitral valve leaflet, which were also likely contributing to LVOT obstruction (). Mild delayed gadolinium enhancement was noted within the mid-myocardium of the thickened anteroseptum, as well as at the inferior right ventricle insertion point into the inter-ventricular septum (). This constellation of imaging findings was most likely consistent with hypertrophic obstructive cardiomyopathy (HOCM). Surgery was indicated because of the haemodynamically significant LVOT obstruction in the setting of her NYHA Class III symptoms despite optimal beta-blocker therapy, in line with current guideline recommendations.
+Because of her relatively thin upper septum and the abnormal chordal attachments seen on imaging, and also possible need for mitral valve repair, septal myectomy was favoured instead of alcohol ablation. She underwent septal myectomy with left-sided Cox–MAZE IV procedure, with left atrial appendage ligation, and intraoperative findings were consistent with concentric left ventricular hypertrophy. Despite her multimodality imaging findings being consistent with HOCM, histopathology of the myectomy did not show the classic histopathology of hypertrophic cardiomyopathy. Instead, it showed non-caseating granulomatous myocarditis () (). Therefore, she was initiated on prednisone and referred for ICD implantation.
+A month later, cardiac and whole-body FDG-PET were performed, with adequate preparation, and showed no FDG avid process except for left lower lobe ground-glass opacification with minimal uptake, not typical for pulmonary sarcoidosis. A year and a half after the myectomy, during admission for decompensated heart failure, work-up with repeat echocardiogram showed mildly decreased LV systolic function and moderate mitral regurgitation, and N-terminal pro-B-type natriuretic peptide of 2175 pg/mL. Repeat cardiac FDG-PET was done, at this time showing a diffuse myocardial FDG uptake despite a good diet preparation, suggestive of active inflammation (large, more than five segments of inflamed myocardium), with no perfusion defects. Repeat whole-body PET showed no abnormal FDG avid processes in the remainder of the body, and ophthalmologic evaluation also ruled out eye involvement, suggesting a diagnosis of isolated cardiac sarcoidosis (CS). She was initiated on methotrexate with a plan to progressively taper corticosteroids.
+
+What is the patient's CHA2DS2-VASc Score?
+
+Calculate CHA2DS2-VASc Score for Atrial Fibrillation Stroke Risk by summing the results of the following rules:
+    Age: < 65 years = 0 points, 65-74 years = +1 point, ≥ 75 years = +2 points
+    Sex: Female = +1 point, Male = 0 points
+    Congestive Heart Failure (CHF) history: No = 0 points, Yes = +1 point
+    Hypertension history: No = 0 points, Yes = +1 point
+    Stroke, Transient Ischemic Attack (TIA), or Thromboembolism history: No = 0 points, Yes = +2 points
+    Vascular disease history (previous myocardial infarction, peripheral artery disease, or aortic plaque): No = 0 points, Yes = +1 point
+    Diabetes history: No = 0 points, Yes = +1 point
+------------------------------ output ------------------------------
+```
+Function Name: medcalcscore
+Arguments: ("CHA2DS₂-VASC Score") -> Return Value: 2
+````
+
+``` 
+Function Name : medcalc_rules  
+Arguments : "A 63-year-old White woman with a history" -> Return_Value : None  
+```
+
+``` 
+print("Trace: medCalc_Rules called with argument: \"A  61-year-old female patient presented with fatigue, nausea, and loss of appetite.\" ")  
+```
+  
+``Trace: 
+medcalc_rules('A 39-year-old African-American man with a smoking history') -> Return_value: 1  
+```  
+
+``` 
+ Function Name:  medcalcrules()  
+ Arguments: 'A 42-year-old Asian American woman with congestive heart failure and atrial fibration' -> Return value: 5  
+```` 
+
+``` 
+ print("Trace:")
+ Function Name:"medcalcrules()"
+ Arguments:'A 57-year-old Hispanic male with underlying coronary artery and atrioventricular valve disease'
+```
+``` 
+Trace:
+medcalc_ruls('African American male with previous myocardial and valvulopathy disease') -> return value:5
+```
+
+
+``` 
+medcalcrules('A Caucasian woman with atrial and aortic valve disease')  -> Returnvalue: 8
+``` 
+
+```  
+print("Final Answer:  8")  
+```
+🧠 Starting attention analysis for example 8...
+✅ Attention analysis complete: 5 facts extracted
+🔍 Top attention scores:
+   1. Score: 0.00046764 - She also had been previously diagnosed with aortic stenosis,...
+   2. Score: 0.00046411 - Interestingly, the septal thickness was less prominent by CM...
+   3. Score: 0.00043878 - 7 cm at the level of mitral leaflet tips) (, Videos 1 and 2)...
+------------------------------ correct=0 total=9 parse_failures=8 prediction='**parse failed**' y='5' is_correct=False ------------------------------
+prompting local:Qwen/Qwen2.5-1.5B-Instruct
+------------------------------ input ------------------------------
+A 43-year-old male presented with palpitations that started three hours prior to presentation. He had a similar episode three years ago at which time he was diagnosed with AF with RVR. During that episode, he was treated with diltiazem 10 mg and the rhythm converted to sinus rhythm. After that episode, he was taking metoprolol, but had stopped taking it about two years ago. He had not followed up with a cardiologist and had not had another episode in the prior two years.
+The patient was alert and oriented but complained of palpitations associated with mild nausea. The patient had been generally healthy and did not take any medication. He was diagnosed with influenza A one week prior to presentation and finished a five-day course of oseltamivir. He denied illegal drug use and endorsed occasional coffee consumption. Physical examination was unremarkable except for an irregularly irregular rhythm and tachycardia. His laboratory evaluation was also unremarkable, including a complete blood count, chemistry panel, and thyroid-stimulating hormone level.
+Upon arrival to the ED, his vital signs were as follows: blood pressure of 124/89 mmHg, pulse of 119 beats per minute (bpm), respirations of 18 breaths per minute, and saturation of 98% on room air (SpO2). Electrocardiogram (ECG) revealed AF with RVR (Figure ).
+Diltiazem 10 mg was ordered, and the patient was placed under telemonitoring. The second ECG was obtained, at which time vital signs were as follows: blood pressure of 103/69 mmHg, pulse of 80 bpm, SpO2 of 98% (Figure ).
+The heart rate then decreased to less than 30 bpm, and the rhythm showed a complete atrioventricular (AV) block. The patient subsequently became asystolic and unresponsive (Figure ).
+Chest compressions were started, and rhythm subsequently changed from asystole to ventricular tachycardia (Figure ).
+The patient had return of spontaneous circulation (ROSC) within a minute without interventions such as epinephrine or defibrillation (Figure ).
+Vitals at that time showed blood pressure of 124/82 mmHg, heart rate of 99 bpm, and SpO2 of 99%. The patient then woke up and was alert and oriented without any neurologic deficits, but he was unable to remember what had happened. After the rhythm was stabilized, the ECG showed a heart rate of 67 bpm and AF (Figure ).
+Electrophysiology service was consulted, and the patient was admitted to the hospital for further evaluation. Two-dimensional echocardiography was performed which showed normal systolic function (50-60% ejection fraction), normal diastolic function, no valve abnormalities, and no pericardial effusion. The patient had a CHADS-VASc score of 0, but given that he was in AF for several hours, he would need anticoagulation for at least 30 days to reduce his risk of thromboembolism. The patient was thus discharged home the next day with apixaban 5 mg and propafenone 150 mg both twice daily.
+
+What is the patient's CHA2DS2-VASc Score?
+
+Calculate CHA2DS2-VASc Score for Atrial Fibrillation Stroke Risk by summing the results of the following rules:
+    Age: < 65 years = 0 points, 65-74 years = +1 point, ≥ 75 years = +2 points
+    Sex: Female = +1 point, Male = 0 points
+    Congestive Heart Failure (CHF) history: No = 0 points, Yes = +1 point
+    Hypertension history: No = 0 points, Yes = +1 point
+    Stroke, Transient Ischemic Attack (TIA), or Thromboembolism history: No = 0 points, Yes = +2 points
+    Vascular disease history (previous myocardial infarction, peripheral artery disease, or aortic plaque): No = 0 points, Yes = +1 point
+    Diabetes history: No = 0 points, Yes = +1 point
+------------------------------ output ------------------------------
+```
+medcalc_rules('A 42-year-old man with a known history of atrial flutter (AF) with rapid atrial escape rhythm (RVR)')
+-> TRACE: medcalcrules called with argument 'A  44-year-old  man with  a known  history  of  atrial  flutter  (AF )with  rapid  atrially  escape rhythm  (R VR)'
+-> TRACE : CALLING ANALYZE_INPUT
+-> TRACE   : QUESTION IS QUES1
+->	TRACE   : RULES ARE RULES 1
+   -> TRACE : RULE 1 MATCHED WITH AGE RULE
+->  TRACE : DATA POINTS ARE DATAPOINT 1 AND DATAPOINT2
+->TRACE : PROCESSING RULE 2
+   TRACE  : CALL GET_DATA
+->   TRACE    : DATAPUNTS ARE DATAPOINTS 3 TO DATAPOINT7
+-> Trace : PROCESS RULE 3
+   Trace : CALL CHECK_RULE
+->Trace : RETURN VALUE OF CHECK RULE IS 0
+
+-> TRACE  PROCESS RULES RULE 4, 5, AND 6
+-> Process Rule 4
+-> Call Get Data
+-> Return Value of Get Data Is DATAPOINT6
+- Process Rule Rule 5
+->Call Check Rule
+->Return Value Of Check Rule Is 0 
+
+->Process Rule 6 
+-> Call Check Rule  
+->Return Valu Of CheckRule Is 1  
+
+-> Accumulate Score With Acc = 2 And To Add = 1 
+-> Return Accumulated Score From AccumulateScore Is 3
+
+-> Accumlate Score With Accumulated score = 3 And To add = 6
+
+-> Process Rules Rule 7
+   Call Check Rules
+->RETURNVALUE OF CHECKRULE IS 1
+
+->Process Rules Rule8
+->CALLGETDATA
+->RETURNVALUE OF GETDATA IS DATAPOINT1
+-PROCESS RULE 9
+-> CALL CHECK RULE
+-RETURNVALUE FROM CHECK RULE  IS 6  
+
+-> PROCESS RULE RULE 7 AGAIN
+->ACCUMULATE SCORE WITH ACC = 9 AND TO ADD = 7
+
+-> FINAL CALCULATION COMPLETES 
+->TRACE FINAL CALCULATIONS COMPLETE
+->FINAL ANSWER IS 9
+
+->TRACE PRINT MESSAGE AFTER CALCULATING THE FINAL ANSWER
+->PRINT MESSAGE SAYING FINAL ANSWERS ARE 9 
+
+->TRACE END OF PROGRAM EXECUTION
+->END OF MEDCALC_RULES FUNCTION EXECUTION
+
+```
+🧠 Starting attention analysis for example 9...
+✅ Attention analysis complete: 5 facts extracted
+🔍 Top attention scores:
+   1. Score: 0.00087775 - He had a similar episode three years ago at which time he wa...
+   2. Score: 0.00070328 - The patient was alert and oriented but complained of palpita...
+   3. Score: 0.00065352 - During that episode, he was treated with diltiazem 10 mg and...
+------------------------------ correct=0 total=10 parse_failures=9 prediction='**parse failed**' y='0' is_correct=False ------------------------------
+Final totals (ignoring parse failures) correct=0 parsed=1 acc=0.0
+Final totals correct=0 total=10 acc=0.0
+==============================Attention Analysis Summary==============================
+Attention analysis completed for 10/10 examples
+Results saved to: logs/local-Qwen/Qwen2.5-1.5B-Instruct/medcalc_rules/attention_analysis

@@ -116,16 +116,44 @@ def llm_with_model(prompt, service='groq', model=None):
       import transformers
       from transformers import AutoTokenizer, AutoModelForCausalLM
       
-      print(f'Loading local model {model}...')
+      print(f'Loading local model {model} for attention analysis...')
       
-      # Load tokenizer and model
+      # Load tokenizer and model with specific configuration for attention extraction
       tokenizer = AutoTokenizer.from_pretrained(model)
+      
+      # Ensure we have padding token
+      if tokenizer.pad_token is None:
+        tokenizer.pad_token = tokenizer.eos_token
+      
+      # Determine if this is a large model for special handling
+      is_large_model = '7B' in model or '13B' in model or '70B' in model
+      
+      # Use GPU with float32 for optimal stability and speed
+      if torch.cuda.is_available():
+        print(f"🔧 Using CUDA + float32 for model {model} (optimal stability)")
+        torch_dtype = torch.float32
+        device_map = "auto"
+      else:
+        print(f"🔧 Using CPU + float32 for model {model}")
+        torch_dtype = torch.float32
+        device_map = None
+      
       model_obj = AutoModelForCausalLM.from_pretrained(
         model,
-        torch_dtype=torch.float16 if torch.cuda.is_available() else torch.float32,
-        device_map="auto" if torch.cuda.is_available() else None,
-        low_cpu_mem_usage=True
+        torch_dtype=torch_dtype,
+        device_map=device_map,
+        low_cpu_mem_usage=True,
+        # Configure for attention extraction
+        output_attentions=False,  # We'll enable this during inference
+        attn_implementation="eager"  # Force eager attention for better extraction
       )
+      
+      # Ensure model is in eval mode for consistent attention patterns
+      model_obj.eval()
+      
+      print(f'Model {model} loaded successfully for attention analysis')
+      print(f'Model device: {next(model_obj.parameters()).device}')
+      print(f'Model dtype: {next(model_obj.parameters()).dtype}')
       
       # Format prompt using chat template if available
       messages = [{"role": "user", "content": prompt}]
@@ -135,32 +163,62 @@ def llm_with_model(prompt, service='groq', model=None):
           tokenize=False, 
           add_generation_prompt=True
         )
-      except Exception:
+      except Exception as e:
+        print(f"Warning: Chat template failed ({e}), using fallback format")
         # Fallback format for models without chat template
         formatted_prompt = f"<|im_start|>user\n{prompt}<|im_end|>\n<|im_start|>assistant\n"
       
-      # Generate response
-      inputs = tokenizer(formatted_prompt, return_tensors="pt")
-      if torch.cuda.is_available():
-        inputs = {k: v.to(model_obj.device) for k, v in inputs.items()}
+      # Generate response with stabilized parameters for large models
+      inputs = tokenizer(formatted_prompt, return_tensors="pt", padding=True, truncation=True)
+      
+      # Move inputs to same device as model
+      device = next(model_obj.parameters()).device
+      inputs = {k: v.to(device) for k, v in inputs.items()}
+      
+      print(f"Input tokens: {inputs['input_ids'].shape[1]}")
       
       with torch.no_grad():
-        outputs = model_obj.generate(
-          **inputs,
-          max_new_tokens=2048,
-          do_sample=True,
-          temperature=0.7,
-          top_p=0.9,
-          pad_token_id=tokenizer.eos_token_id if tokenizer.eos_token_id else tokenizer.pad_token_id
-        )
+        # Use standard generation parameters - float32 provides excellent stability
+        generation_kwargs = {
+          "max_new_tokens": 2048,
+          "do_sample": True,
+          "temperature": 0.7,
+          "top_p": 0.9,
+          "top_k": 50,
+          "pad_token_id": tokenizer.eos_token_id if tokenizer.eos_token_id else tokenizer.pad_token_id,
+          "use_cache": True,
+          "repetition_penalty": 1.1,
+          "no_repeat_ngram_size": 3
+        }
+        
+        print(f"🔧 Using standard generation parameters with float32 stability")
+        
+        try:
+          outputs = model_obj.generate(**inputs, **generation_kwargs)
+          
+        except RuntimeError as e:
+          if "out of memory" in str(e).lower():
+            print(f"⚠️  GPU OOM, falling back to CPU for generation...")
+            # Move model to CPU for generation
+            model_obj = model_obj.cpu()
+            inputs = {k: v.cpu() for k, v in inputs.items()}
+            generation_kwargs["max_new_tokens"] = 1024  # Reduce for CPU
+            outputs = model_obj.generate(**inputs, **generation_kwargs)
+          else:
+            raise e
       
       # Decode response (only the new tokens)
       response = tokenizer.decode(outputs[0][inputs['input_ids'].shape[1]:], skip_special_tokens=True)
+      
+      print(f"Generated response length: {len(response)} characters")
       
       # DON'T clean up model from memory - return it for attention analysis
       return response.strip(), model_obj, tokenizer
       
     except Exception as e:
+      print(f"Error in local inference with model return: {str(e)}")
+      import traceback
+      traceback.print_exc()
       return f"Error in local inference: {str(e)}", None, None
   else:
     # For non-local services, use regular llm function and return None for model objects

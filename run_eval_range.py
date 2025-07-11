@@ -175,7 +175,8 @@ def main(args=None):
                 if parse_failed: parse_failures += 1
                 echo(log_fp, 
                     '-' * 30 + f' {correct=} {total=} {parse_failures=} {prediction=} {y=} {is_correct=} ' + '-' * 30)
-                time.sleep(args.delay)
+                if args.delay is not None and args.delay > 0:
+                    time.sleep(args.delay)
 
             if parse_failures:
                 parsed = total - parse_failures

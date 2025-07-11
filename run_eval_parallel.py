@@ -52,7 +52,8 @@ def get_answer(x, y, template, args):
         correct = main.correct
         parse_failures = main.parse_failures
     output_messages.append('-' * 30 + f' {correct=} {total=} {parse_failures=} {prediction=} {y=} {is_correct=} ' + '-' * 30)
-    time.sleep(args.delay)
+    if args.delay is not None and args.delay > 0:
+        time.sleep(args.delay)
 
     # log all messages at once to ensure atomicity
     for message in output_messages:

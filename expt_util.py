@@ -213,7 +213,8 @@ if __name__ == "__main__":
                 output = llm_util.llm(prompt, service=args.service, model=args.model)
                 print('-' * 30 + ' output ' + '-' * 30)
                 print(output)
-                time.sleep(args.delay)
+                if args.delay is not None and args.delay > 0:
+                    time.sleep(args.delay)
 
             # now score the output and generate a status line
             prediction = run_eval.parse_output(args, output)
