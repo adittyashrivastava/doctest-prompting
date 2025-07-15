@@ -1,0 +1,86 @@
+{
+  "summary": {
+    "total_method_calls": 2,
+    "input_context_length": 3613,
+    "total_facts": 10,
+    "total_thoughts": 2
+  },
+  "method_call_analysis": [
+    {
+      "method_call_idx": 0,
+      "method_name": "check_rule",
+      "method_call_text": "check_rule('chiefcomplain:left-sidepparesis') -> Return_value",
+      "top_attended_sentences": [],
+      "related_facts": [],
+      "matching_thought": {
+        "text": "check_rule('chiefcomplain:left-sidepparesis') -> Return_value",
+        "score": 0.999999989782061,
+        "attention_score": 0.999999989782061,
+        "frequency": 1.0,
+        "token_start": 105,
+        "token_end": 120,
+        "type": "program_trace",
+        "line_num": 15,
+        "context_before": [
+          "```",
+          "```"
+        ],
+        "context_after": [
+          "-> Return_Value: 1",
+          ""
+        ]
+      },
+      "attention_summary": {
+        "total_attention_score": 0.999999989782061,
+        "thought_attention_score": 0.999999989782061,
+        "fact_attention_score": 0,
+        "num_attended_sentences": 0,
+        "has_matching_thought": true,
+        "num_related_facts": 0,
+        "max_attention_score": 0,
+        "token_positions": {
+          "start": 105,
+          "end": 120
+        }
+      }
+    },
+    {
+      "method_call_idx": 1,
+      "method_name": "accumulate_score",
+      "method_call_text": "accumulate_score(0, 2) -> Return_Value",
+      "top_attended_sentences": [],
+      "related_facts": [],
+      "matching_thought": {
+        "text": "accumulate_score(0, 2) -> Return_Value",
+        "score": 0.9999999907109645,
+        "attention_score": 0.9999999907109645,
+        "frequency": 1.0,
+        "token_start": 134,
+        "token_end": 145,
+        "type": "program_trace",
+        "line_num": 24,
+        "context_before": [
+          "",
+          "```"
+        ],
+        "context_after": [
+          "-> 2",
+          "````"
+        ]
+      },
+      "attention_summary": {
+        "total_attention_score": 0.9999999907109645,
+        "thought_attention_score": 0.9999999907109645,
+        "fact_attention_score": 0,
+        "num_attended_sentences": 0,
+        "has_matching_thought": true,
+        "num_related_facts": 0,
+        "max_attention_score": 0,
+        "token_positions": {
+          "start": 134,
+          "end": 145
+        }
+      }
+    }
+  ]
+}

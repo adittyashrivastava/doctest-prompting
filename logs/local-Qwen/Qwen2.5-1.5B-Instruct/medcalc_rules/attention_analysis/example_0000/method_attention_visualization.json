@@ -1,0 +1,47 @@
+{
+  "summary": {
+    "total_method_calls": 1,
+    "input_context_length": 5348,
+    "total_facts": 10,
+    "total_thoughts": 1
+  },
+  "method_call_analysis": [
+    {
+      "method_call_idx": 0,
+      "method_name": "medcalc_rules",
+      "method_call_text": "medcalc_rules('We present...') -> None",
+      "top_attended_sentences": [],
+      "related_facts": [],
+      "matching_thought": {
+        "text": "medcalc_rules('We present...') -> None",
+        "score": 0.6901130948747908,
+        "attention_score": 0.6901130948747908,
+        "frequency": 1.0,
+        "token_start": 2,
+        "token_end": 12,
+        "type": "program_trace",
+        "line_num": 1,
+        "context_before": [
+          "```"
+        ],
+        "context_after": [
+          "medcalc_calculate_cha2ds2vasc_score('CHA2DS...')",
+          "medcalc_rule_0('Age: ...', ['< 6...', '65-', '+1...', '> 6...' => None])"
+        ]
+      },
+      "attention_summary": {
+        "total_attention_score": 0.6901130948747908,
+        "thought_attention_score": 0.6901130948747908,
+        "fact_attention_score": 0,
+        "num_attended_sentences": 0,
+        "has_matching_thought": true,
+        "num_related_facts": 0,
+        "max_attention_score": 0,
+        "token_positions": {
+          "start": 2,
+          "end": 12
+        }
+      }
+    }
+  ]
+}

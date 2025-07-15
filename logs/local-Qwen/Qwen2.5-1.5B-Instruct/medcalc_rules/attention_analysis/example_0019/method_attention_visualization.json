@@ -1,0 +1,161 @@
+{
+  "summary": {
+    "total_method_calls": 4,
+    "input_context_length": 3283,
+    "total_facts": 10,
+    "total_thoughts": 4
+  },
+  "method_call_analysis": [
+    {
+      "method_call_idx": 0,
+      "method_name": "unknown_method",
+      "method_call_text": "-> TRACE checking rule (TEMPERATURE >37\u00b0C (38.6\u00b0F)): No =0, Yes=+1",
+      "top_attended_sentences": [],
+      "related_facts": [],
+      "matching_thought": {
+        "text": "-> TRACE checking rule (TEMPERATURE >37\u00b0C (38.6\u00b0F)): No =0, Yes=+1",
+        "score": 1.0000000053612643,
+        "attention_score": 1.0000000053612643,
+        "frequency": 1.0,
+        "token_start": 109,
+        "token_end": 136,
+        "type": "program_trace",
+        "line_num": 7,
+        "context_before": [
+          "   ->",
+          "-> TRACE returning question='What is number of criteria met by SIRS?'"
+        ],
+        "context_after": [
+          "-> TRACE Checking rule (HEART RATE >91 BPM): No=0,Yes=+0",
+          "->TRACE checking rule(RESP BAC>20 BPM): NO=0,Yes=+2"
+        ]
+      },
+      "attention_summary": {
+        "total_attention_score": 1.0000000053612643,
+        "thought_attention_score": 1.0000000053612643,
+        "fact_attention_score": 0,
+        "num_attended_sentences": 0,
+        "has_matching_thought": true,
+        "num_related_facts": 0,
+        "max_attention_score": 0,
+        "token_positions": {
+          "start": 109,
+          "end": 136
+        }
+      }
+    },
+    {
+      "method_call_idx": 1,
+      "method_name": "unknown_method",
+      "method_call_text": "-> TRACE Checking rule (HEART RATE >91 BPM): No=0,Yes=+0",
+      "top_attended_sentences": [],
+      "related_facts": [],
+      "matching_thought": {
+        "text": "-> TRACE Checking rule (HEART RATE >91 BPM): No=0,Yes=+0",
+        "score": 1.0000000004257474,
+        "attention_score": 1.0000000004257474,
+        "frequency": 1.0,
+        "token_start": 137,
+        "token_end": 157,
+        "type": "program_trace",
+        "line_num": 8,
+        "context_before": [
+          "-> TRACE returning question='What is number of criteria met by SIRS?'",
+          "-> TRACE checking rule (TEMPERATURE >37\u00b0C (38.6\u00b0F)): No =0, Yes=+1"
+        ],
+        "context_after": [
+          "->TRACE checking rule(RESP BAC>20 BPM): NO=0,Yes=+2",
+          "->\tTRACE checking rule(WBC COUNT>12K): No=-1,Yes=0"
+        ]
+      },
+      "attention_summary": {
+        "total_attention_score": 1.0000000004257474,
+        "thought_attention_score": 1.0000000004257474,
+        "fact_attention_score": 0,
+        "num_attended_sentences": 0,
+        "has_matching_thought": true,
+        "num_related_facts": 0,
+        "max_attention_score": 0,
+        "token_positions": {
+          "start": 137,
+          "end": 157
+        }
+      }
+    },
+    {
+      "method_call_idx": 2,
+      "method_name": "rule",
+      "method_call_text": "->TRACE checking rule(RESP BAC>20 BPM): NO=0,Yes=+2",
+      "top_attended_sentences": [],
+      "related_facts": [],
+      "matching_thought": {
+        "text": "->TRACE checking rule(RESP BAC>20 BPM): NO=0,Yes=+2",
+        "score": 1.0000000021287374,
+        "attention_score": 1.0000000021287374,
+        "frequency": 1.0,
+        "token_start": 158,
+        "token_end": 178,
+        "type": "program_trace",
+        "line_num": 9,
+        "context_before": [
+          "-> TRACE checking rule (TEMPERATURE >37\u00b0C (38.6\u00b0F)): No =0, Yes=+1",
+          "-> TRACE Checking rule (HEART RATE >91 BPM): No=0,Yes=+0"
+        ],
+        "context_after": [
+          "->\tTRACE checking rule(WBC COUNT>12K): No=-1,Yes=0",
+          "```"
+        ]
+      },
+      "attention_summary": {
+        "total_attention_score": 1.0000000021287374,
+        "thought_attention_score": 1.0000000021287374,
+        "fact_attention_score": 0,
+        "num_attended_sentences": 0,
+        "has_matching_thought": true,
+        "num_related_facts": 0,
+        "max_attention_score": 0,
+        "token_positions": {
+          "start": 158,
+          "end": 178
+        }
+      }
+    },
+    {
+      "method_call_idx": 3,
+      "method_name": "rule",
+      "method_call_text": "->\tTRACE checking rule(WBC COUNT>12K): No=-1,Yes=0",
+      "top_attended_sentences": [],
+      "related_facts": [],
+      "matching_thought": {
+        "text": "->\tTRACE checking rule(WBC COUNT>12K): No=-1,Yes=0",
+        "score": 0.999999991011998,
+        "attention_score": 0.999999991011998,
+        "frequency": 1.0,
+        "token_start": 179,
+        "token_end": 197,
+        "type": "program_trace",
+        "line_num": 10,
+        "context_before": [
+          "-> TRACE Checking rule (HEART RATE >91 BPM): No=0,Yes=+0",
+          "->TRACE checking rule(RESP BAC>20 BPM): NO=0,Yes=+2"
+        ],
+        "context_after": [
+          "```"
+        ]
+      },
+      "attention_summary": {
+        "total_attention_score": 0.999999991011998,
+        "thought_attention_score": 0.999999991011998,
+        "fact_attention_score": 0,
+        "num_attended_sentences": 0,
+        "has_matching_thought": true,
+        "num_related_facts": 0,
+        "max_attention_score": 0,
+        "token_positions": {
+          "start": 179,
+          "end": 197
+        }
+      }
+    }
+  ]
+}

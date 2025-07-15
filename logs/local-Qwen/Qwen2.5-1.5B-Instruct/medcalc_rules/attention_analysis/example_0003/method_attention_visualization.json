@@ -1,0 +1,199 @@
+{
+  "summary": {
+    "total_method_calls": 5,
+    "input_context_length": 4359,
+    "total_facts": 10,
+    "total_thoughts": 5
+  },
+  "method_call_analysis": [
+    {
+      "method_call_idx": 0,
+      "method_name": "unknown_method",
+      "method_call_text": "-> (\"HEART Score\", [\"History: Slight suspicion\", \"EKG: Non-specific ST-T change\"], [])",
+      "top_attended_sentences": [],
+      "related_facts": [],
+      "matching_thought": {
+        "text": "-> (\"HEART Score\", [\"History: Slight suspicion\", \"EKG: Non-specific ST-T change\"], [])",
+        "score": 0.533909379504621,
+        "attention_score": 0.533909379504621,
+        "frequency": 1.0,
+        "token_start": 27,
+        "token_end": 51,
+        "type": "program_trace",
+        "line_num": 2,
+        "context_before": [
+          "```",
+          "medcalc_rules('This patient has presented with an unexplained inferior STEMI and nonspecific ST segment elevation on ECG.')"
+        ],
+        "context_after": [
+          "-> medcalc_scores()",
+          "-> (\"trace: Analyzing input...\")  "
+        ]
+      },
+      "attention_summary": {
+        "total_attention_score": 0.533909379504621,
+        "thought_attention_score": 0.533909379504621,
+        "fact_attention_score": 0,
+        "num_attended_sentences": 0,
+        "has_matching_thought": true,
+        "num_related_facts": 0,
+        "max_attention_score": 0,
+        "token_positions": {
+          "start": 27,
+          "end": 51
+        }
+      }
+    },
+    {
+      "method_call_idx": 1,
+      "method_name": "medcalc_scores",
+      "method_call_text": "-> medcalc_scores()",
+      "top_attended_sentences": [],
+      "related_facts": [],
+      "matching_thought": {
+        "text": "-> medcalc_scores()",
+        "score": 0.44437783339193887,
+        "attention_score": 0.44437783339193887,
+        "frequency": 1.0,
+        "token_start": 51,
+        "token_end": 56,
+        "type": "program_trace",
+        "line_num": 3,
+        "context_before": [
+          "medcalc_rules('This patient has presented with an unexplained inferior STEMI and nonspecific ST segment elevation on ECG.')",
+          "-> (\"HEART Score\", [\"History: Slight suspicion\", \"EKG: Non-specific ST-T change\"], [])"
+        ],
+        "context_after": [
+          "-> (\"trace: Analyzing input...\")  ",
+          "-> med_calculation('HEART SCORE', ['history_suspicion', 'ekg_st_change'], [], []) "
+        ]
+      },
+      "attention_summary": {
+        "total_attention_score": 0.44437783339193887,
+        "thought_attention_score": 0.44437783339193887,
+        "fact_attention_score": 0,
+        "num_attended_sentences": 0,
+        "has_matching_thought": true,
+        "num_related_facts": 0,
+        "max_attention_score": 0,
+        "token_positions": {
+          "start": 51,
+          "end": 56
+        }
+      }
+    },
+    {
+      "method_call_idx": 2,
+      "method_name": "unknown_method",
+      "method_call_text": "-> (\"trace: Analyzing input...\")",
+      "top_attended_sentences": [],
+      "related_facts": [],
+      "matching_thought": {
+        "text": "-> (\"trace: Analyzing input...\")",
+        "score": 0.4923116146099,
+        "attention_score": 0.4923116146099,
+        "frequency": 1.0,
+        "token_start": 56,
+        "token_end": 65,
+        "type": "program_trace",
+        "line_num": 4,
+        "context_before": [
+          "-> (\"HEART Score\", [\"History: Slight suspicion\", \"EKG: Non-specific ST-T change\"], [])",
+          "-> medcalc_scores()"
+        ],
+        "context_after": [
+          "-> med_calculation('HEART SCORE', ['history_suspicion', 'ekg_st_change'], [], []) ",
+          "-> (\"Final answer:\", 1)"
+        ]
+      },
+      "attention_summary": {
+        "total_attention_score": 0.4923116146099,
+        "thought_attention_score": 0.4923116146099,
+        "fact_attention_score": 0,
+        "num_attended_sentences": 0,
+        "has_matching_thought": true,
+        "num_related_facts": 0,
+        "max_attention_score": 0,
+        "token_positions": {
+          "start": 56,
+          "end": 65
+        }
+      }
+    },
+    {
+      "method_call_idx": 3,
+      "method_name": "med_calculation",
+      "method_call_text": "-> med_calculation('HEART SCORE', ['history_suspicion', 'ekg_st_change'], [], [])",
+      "top_attended_sentences": [],
+      "related_facts": [],
+      "matching_thought": {
+        "text": "-> med_calculation('HEART SCORE', ['history_suspicion', 'ekg_st_change'], [], [])",
+        "score": 0.4341776214817666,
+        "attention_score": 0.4341776214817666,
+        "frequency": 1.0,
+        "token_start": 66,
+        "token_end": 89,
+        "type": "program_trace",
+        "line_num": 5,
+        "context_before": [
+          "-> medcalc_scores()",
+          "-> (\"trace: Analyzing input...\")  "
+        ],
+        "context_after": [
+          "-> (\"Final answer:\", 1)",
+          "```"
+        ]
+      },
+      "attention_summary": {
+        "total_attention_score": 0.4341776214817666,
+        "thought_attention_score": 0.4341776214817666,
+        "fact_attention_score": 0,
+        "num_attended_sentences": 0,
+        "has_matching_thought": true,
+        "num_related_facts": 0,
+        "max_attention_score": 0,
+        "token_positions": {
+          "start": 66,
+          "end": 89
+        }
+      }
+    },
+    {
+      "method_call_idx": 4,
+      "method_name": "unknown_method",
+      "method_call_text": "-> (\"Final answer:\", 1)",
+      "top_attended_sentences": [],
+      "related_facts": [],
+      "matching_thought": {
+        "text": "-> (\"Final answer:\", 1)",
+        "score": 0.5646292766822236,
+        "attention_score": 0.5646292766822236,
+        "frequency": 1.0,
+        "token_start": 90,
+        "token_end": 98,
+        "type": "program_trace",
+        "line_num": 6,
+        "context_before": [
+          "-> (\"trace: Analyzing input...\")  ",
+          "-> med_calculation('HEART SCORE', ['history_suspicion', 'ekg_st_change'], [], []) "
+        ],
+        "context_after": [
+          "```"
+        ]
+      },
+      "attention_summary": {
+        "total_attention_score": 0.5646292766822236,
+        "thought_attention_score": 0.5646292766822236,
+        "fact_attention_score": 0,
+        "num_attended_sentences": 0,
+        "has_matching_thought": true,
+        "num_related_facts": 0,
+        "max_attention_score": 0,
+        "token_positions": {
+          "start": 90,
+          "end": 98
+        }
+      }
+    }
+  ]
+}

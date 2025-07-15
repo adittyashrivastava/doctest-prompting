@@ -1,0 +1,994 @@
+METHOD CALL ATTENTION ANALYSIS REPORT
+================================================================================
+
+EXAMPLE 0
+----------------------------------------
+Summary:
+  - Total method calls: 1
+  - Input context length: 5348
+  - Total facts: 10
+  - Total thoughts: 1
+
+Method: medcalc_rules
+Call: medcalc_rules("We present...") -> None
+Top Attended Sentences:
+Related Facts:
+Program Trace:
+  Score: 1.000000
+  Text: medcalc_rules("We present...") -> None
+  Token positions: 2-12
+Attention Summary:
+  - Total attention score: 1.000000
+  - Sentences attended: 0
+  - Max attention score: 0.000000
+
+
+================================================================================
+
+EXAMPLE 1
+----------------------------------------
+Summary:
+  - Total method calls: 0
+  - Input context length: 2776
+  - Total facts: 10
+  - Total thoughts: 0
+
+
+================================================================================
+
+EXAMPLE 2
+----------------------------------------
+Summary:
+  - Total method calls: 0
+  - Input context length: 4746
+  - Total facts: 10
+  - Total thoughts: 0
+
+
+================================================================================
+
+EXAMPLE 3
+----------------------------------------
+Summary:
+  - Total method calls: 0
+  - Input context length: 4359
+  - Total facts: 10
+  - Total thoughts: 0
+
+
+================================================================================
+
+EXAMPLE 4
+----------------------------------------
+Summary:
+  - Total method calls: 7
+  - Input context length: 6873
+  - Total facts: 10
+  - Total thoughts: 7
+
+Method: medcalc_rules
+Call: medcalc_rules("A 3 0-year old Chinese female G3 P2 at term, presented with shortness  of breath\nand a dry  cough lasting 1 week.  She has no recent sick contacts, no recent travel\nhistory, and denies obstetric issues.  Chronic HB history,\nno recent prenatal care.  Critically ill appearance, temperature 3 \n9. 3°C , pulse 1 2 8  BPM, respir 2 \n2 BPs, hypoperf via 8 / 5 5 mm Hg, SpO2 9 3%") -> None
+Top Attended Sentences:
+Related Facts:
+Program Trace:
+  Score: 1.000000
+  Text: medcalc_rules("A 3 0-year old Chinese female G3 P2 at term, presented with shortness  of breath\nand a dry  cough lasting 1 week.  She has no recent sick contacts, no recent travel\nhistory, and denies obstetric issues.  Chronic HB history,\nno recent prenatal care.  Critically ill appearance, temperature 3 \n9. 3°C , pulse 1 2 8  BPM, respir 2 \n2 BPs, hypoperf via 8 / 5 5 mm Hg, SpO2 9 3%") -> None
+  Token positions: 2-133
+Attention Summary:
+  - Total attention score: 1.000000
+  - Sentences attended: 0
+  - Max attention score: 0.000000
+
+Method: analyze_input
+Call: analyze_input('A  3 year old Chinese   female G 3 P 2 at Term presented with Shortness of Breath and a Dry Cough lasting  1 Week. She Has No Recent Sick Contacts, No Recent Travel History, And Denies Obstetric Issues. Chronic HB History, No Reccent Prenatal Care. Critically Ill Appearance, Temperature 3 . 9 . 3C, Pulse12  8 BPM, Respiration 2 . 2 BPS, Hypo perf Via 8/. 5 . 5mm Hg SpO 9,3%)') -> (None)
+Top Attended Sentences:
+Related Facts:
+Program Trace:
+  Score: 1.000000
+  Text: analyze_input('A  3 year old Chinese   female G 3 P 2 at Term presented with Shortness of Breath and a Dry Cough lasting  1 Week. She Has No Recent Sick Contacts, No Recent Travel History, And Denies Obstetric Issues. Chronic HB History, No Reccent Prenatal Care. Critically Ill Appearance, Temperature 3 . 9 . 3C, Pulse12  8 BPM, Respiration 2 . 2 BPS, Hypo perf Via 8/. 5 . 5mm Hg SpO 9,3%)') -> (None)
+  Token positions: 137-267
+Attention Summary:
+  - Total attention score: 1.000000
+  - Sentences attended: 0
+  - Max attention score: 0.000000
+
+Method: get_data
+Call: get_data('CHA2DS 2 VASc', ['Confusion:', 'BUN >  2. 9mg/dL (>.  7 mmole/L Urea)', 'Respiratory Rate >= 3 O: No', 'Systolic  BP 90-  99 mm Hgs, Diastole  61- 6 9 mmHgs']) -> ('Confusion:  Yes')
+Top Attended Sentences:
+Related Facts:
+Program Trace:
+  Score: 1.000000
+  Text: get_data('CHA2DS 2 VASc', ['Confusion:', 'BUN >  2. 9mg/dL (>.  7 mmole/L Urea)', 'Respiratory Rate >= 3 O: No', 'Systolic  BP 90-  99 mm Hgs, Diastole  61- 6 9 mmHgs']) -> ('Confusion:  Yes')
+  Token positions: 270-364
+Attention Summary:
+  - Total attention score: 1.000000
+  - Sentences attended: 0
+  - Max attention score: 0.000000
+
+Method: analyze_input
+Call: analyze_input() -> (Question: What is the Patient's CHAsds 2 Score?, Rules: ['Confession: No  Points, Yes + 1 Point'], DataPoints: ['Yes'])
+Top Attended Sentences:
+Related Facts:
+Program Trace:
+  Score: 0.865921
+  Text: analyze_input() -> (Question: What is the Patient's CHAsds 2 Score?, Rules: ['Confession: No  Points, Yes + 1 Point'], DataPoints: ['Yes'])
+  Token positions: 368-409
+Attention Summary:
+  - Total attention score: 0.865921
+  - Sentences attended: 0
+  - Max attention score: 0.000000
+
+Method: check_rule
+Call: check_rule('CONFESSION: NO POINTS, YES +  0. 1 POINT', 'YES') -> 1
+Top Attended Sentences:
+Related Facts:
+Program Trace:
+  Score: 0.757952
+  Text: check_rule('CONFESSION: NO POINTS, YES +  0. 1 POINT', 'YES') -> 1
+  Token positions: 412-439
+Attention Summary:
+  - Total attention score: 0.757952
+  - Sentences attended: 0
+  - Max attention score: 0.000000
+
+Method: accumulate_score
+Call: accumulate_score(0, 1) ->  4
+Top Attended Sentences:
+Related Facts:
+Program Trace:
+  Score: 0.699996
+  Text: accumulate_score(0, 1) ->  4
+  Token positions: 443-455
+Attention Summary:
+  - Total attention score: 0.699996
+  - Sentences attended: 0
+  - Max attention score: 0.000000
+
+Method: medcalc_results
+Call: medcalc_results(4) -> None
+Top Attended Sentences:
+Related Facts:
+Program Trace:
+  Score: 0.672938
+  Text: medcalc_results(4) -> None
+  Token positions: 470-478
+Attention Summary:
+  - Total attention score: 0.672938
+  - Sentences attended: 0
+  - Max attention score: 0.000000
+
+
+================================================================================
+
+EXAMPLE 5
+----------------------------------------
+Summary:
+  - Total method calls: 0
+  - Input context length: 2860
+  - Total facts: 10
+  - Total thoughts: 0
+
+
+================================================================================
+
+EXAMPLE 6
+----------------------------------------
+Summary:
+  - Total method calls: 2
+  - Input context length: 1320
+  - Total facts: 10
+  - Total thoughts: 2
+
+Method: medcalc_analysis
+Call: -> medcalc_analysis() -> medcalc_get_data(CENTOR SCORE RULERULES, AGE, EXUDATE_OR_SWELLING_ON_TONSILS, TEMPERATURE_HIGHER_THAN_38_DEGREES, COUGH) -> med_calc_check_rule(CENTOREXUDATE_SWELLING_TONSILS_COUGH_TEMPERATURE) -> centor_age_points(1) -> 0 -> cent_or_swelling_tonsil_points(Yes) -> +1 -> cent_cough_points(None) -> None -> cent_temperature_higher_than_36_degrees_points(No) -> -1 -> sum_of_points(-1)
+Top Attended Sentences:
+Related Facts:
+Program Trace:
+  Score: 1.000000
+  Text: -> medcalc_analysis() -> medcalc_get_data(CENTOR SCORE RULERULES, AGE, EXUDATE_OR_SWELLING_ON_TONSILS, TEMPERATURE_HIGHER_THAN_38_DEGREES, COUGH) -> med_calc_check_rule(CENTOREXUDATE_SWELLING_TONSILS_COUGH_TEMPERATURE) -> centor_age_points(1) -> 0 -> cent_or_swelling_tonsil_points(Yes) -> +1 -> cent_cough_points(None) -> None -> cent_temperature_higher_than_36_degrees_points(No) -> -1 -> sum_of_points(-1)
+  Token positions: 46-179
+Attention Summary:
+  - Total attention score: 1.000000
+  - Sentences attended: 0
+  - Max attention score: 0.000000
+
+Method: med_calc_analyze_question
+Call: -> med_calc_analyze_question(centor_score) -> output -> "The Centor score for the 1 year old child is -1."
+Top Attended Sentences:
+Related Facts:
+Program Trace:
+  Score: 1.000000
+  Text: -> med_calc_analyze_question(centor_score) -> output -> "The Centor score for the 1 year old child is -1."
+  Token positions: 179-209
+Attention Summary:
+  - Total attention score: 1.000000
+  - Sentences attended: 0
+  - Max attention score: 0.000000
+
+
+================================================================================
+
+EXAMPLE 7
+----------------------------------------
+Summary:
+  - Total method calls: 1
+  - Input context length: 3115
+  - Total facts: 10
+  - Total thoughts: 1
+
+Method: medcalc_rules
+Call: medcalc_rules("age=62 years old, sex=male, CHF=no, HT=n, stroke/no stroke") -> (["CHA2DS"])
+Top Attended Sentences:
+Related Facts:
+Program Trace:
+  Score: 1.000000
+  Text: medcalc_rules("age=62 years old, sex=male, CHF=no, HT=n, stroke/no stroke") -> (["CHA2DS"])
+  Token positions: 2-35
+Attention Summary:
+  - Total attention score: 1.000000
+  - Sentences attended: 0
+  - Max attention score: 0.000000
+
+
+================================================================================
+
+EXAMPLE 8
+----------------------------------------
+Summary:
+  - Total method calls: 1
+  - Input context length: 5075
+  - Total facts: 10
+  - Total thoughts: 1
+
+Method: medcalc_rules
+Call: medcalc_rules(INPUT1) -> Trace: medcalclules called with INPUT1...
+Top Attended Sentences:
+Related Facts:
+Program Trace:
+  Score: 1.000000
+  Text: medcalc_rules(INPUT1) -> Trace: medcalclules called with INPUT1...
+  Token positions: 2-20
+Attention Summary:
+  - Total attention score: 1.000000
+  - Sentences attended: 0
+  - Max attention score: 0.000000
+
+
+================================================================================
+
+EXAMPLE 9
+----------------------------------------
+Summary:
+  - Total method calls: 2
+  - Input context length: 3603
+  - Total facts: 10
+  - Total thoughts: 2
+
+Method: medcalc_rules
+Call: medcalc_rules(INPUT1) -> ("CHA2DS₂-VASC Score", ["Age: ≥ 66 years = ++1 point", "Sex (Male): +0 points", "Congestion (CHD): No CHD history", "High Blood Pressure (hypertension): No hypertensive history", "(stroke, transient ischemic attack, or thrombo-embolisms): No history", "'Vascular Disease': No history of previous myocardial or peripheral artery diseases or atherosclerosis", "'Diabetes Mellitus': No diabetes mellitus"], ["Patient age 84 years old"])
+Top Attended Sentences:
+Related Facts:
+Program Trace:
+  Score: 1.000000
+  Text: medcalc_rules(INPUT1) -> ("CHA2DS₂-VASC Score", ["Age: ≥ 66 years = ++1 point", "Sex (Male): +0 points", "Congestion (CHD): No CHD history", "High Blood Pressure (hypertension): No hypertensive history", "(stroke, transient ischemic attack, or thrombo-embolisms): No history", "'Vascular Disease': No history of previous myocardial or peripheral artery diseases or atherosclerosis", "'Diabetes Mellitus': No diabetes mellitus"], ["Patient age 84 years old"])
+  Token positions: 2-125
+Attention Summary:
+  - Total attention score: 1.000000
+  - Sentences attended: 0
+  - Max attention score: 0.000000
+
+Method: medcalc_scores
+Call: medcalc_scores(CHA2ds2vasc_score) -> (CHA2Ds2VascScore, 1)
+Top Attended Sentences:
+Related Facts:
+Program Trace:
+  Score: 1.000000
+  Text: medcalc_scores(CHA2ds2vasc_score) -> (CHA2Ds2VascScore, 1)
+  Token positions: 125-150
+Attention Summary:
+  - Total attention score: 1.000000
+  - Sentences attended: 0
+  - Max attention score: 0.000000
+
+
+================================================================================
+
+EXAMPLE 10
+----------------------------------------
+Summary:
+  - Total method calls: 8
+  - Input context length: 3532
+  - Total facts: 10
+  - Total thoughts: 8
+
+Method: unknown_method
+Call: -> ('What is patient\'s age?', ['Age: 25-34 years', 'Age: >= 64 years'], [])
+Top Attended Sentences:
+Related Facts:
+Program Trace:
+  Score: 1.000000
+  Text: -> ('What is patient\'s age?', ['Age: 25-34 years', 'Age: >= 64 years'], [])
+  Token positions: 33-63
+Attention Summary:
+  - Total attention score: 1.000000
+  - Sentences attended: 0
+  - Max attention score: 0.000000
+
+Method: len
+Call: -> ('trace', ['Calling analyze_input...', 'Calling analyze\_input returned question=\'What is a patient\'\''s age?\'', len(rules)=1, len(datapoin...])
+Top Attended Sentences:
+Related Facts:
+Program Trace:
+  Score: 1.000000
+  Text: -> ('trace', ['Calling analyze_input...', 'Calling analyze\_input returned question=\'What is a patient\'\''s age?\'', len(rules)=1, len(datapoin...])
+  Token positions: 63-103
+Attention Summary:
+  - Total attention score: 1.000000
+  - Sentences attended: 0
+  - Max attention score: 0.000000
+
+Method: unknown_method
+Call: -> ('analyze_input', 'What is your age? ', ['age'], {'age': 'female'})
+Top Attended Sentences:
+Related Facts:
+Program Trace:
+  Score: 1.000000
+  Text: -> ('analyze_input', 'What is your age? ', ['age'], {'age': 'female'})
+  Token positions: 103-124
+Attention Summary:
+  - Total attention score: 1.000000
+  - Sentences attended: 0
+  - Max attention score: 0.000000
+
+Method: unknown_method
+Call: -> ('get_data', 'Female', ['gender'])
+Top Attended Sentences:
+Related Facts:
+Program Trace:
+  Score: 1.000000
+  Text: -> ('get_data', 'Female', ['gender'])
+  Token positions: 124-135
+Attention Summary:
+  - Total attention score: 1.000000
+  - Sentences attended: 0
+  - Max attention score: 0.000000
+
+Method: unknown_method
+Call: -> ('check_rule', 'female', ['sex'])
+Top Attended Sentences:
+Related Facts:
+Program Trace:
+  Score: 1.000000
+  Text: -> ('check_rule', 'female', ['sex'])
+  Token positions: 135-146
+Attention Summary:
+  - Total attention score: 1.000000
+  - Sentences attended: 0
+  - Max attention score: 0.000000
+
+Method: unknown_method
+Call: -> () -> ()
+Top Attended Sentences:
+Related Facts:
+Program Trace:
+  Score: 1.000000
+  Text: -> () -> ()
+  Token positions: 146-150
+Attention Summary:
+  - Total attention score: 1.000000
+  - Sentences attended: 0
+  - Max attention score: 0.000000
+
+Method: unknown_method
+Call: -> ('accumulate_score', 0)
+Top Attended Sentences:
+Related Facts:
+Program Trace:
+  Score: 1.000000
+  Text: -> ('accumulate_score', 0)
+  Token positions: 150-158
+Attention Summary:
+  - Total attention score: 1.000000
+  - Sentences attended: 0
+  - Max attention score: 0.000000
+
+Method: unknown_method
+Call: -> ()
+Top Attended Sentences:
+Related Facts:
+Program Trace:
+  Score: 1.000000
+  Text: -> ()
+  Token positions: 146-148
+Attention Summary:
+  - Total attention score: 1.000000
+  - Sentences attended: 0
+  - Max attention score: 0.000000
+
+
+================================================================================
+
+EXAMPLE 11
+----------------------------------------
+Summary:
+  - Total method calls: 0
+  - Input context length: 4473
+  - Total facts: 10
+  - Total thoughts: 0
+
+
+================================================================================
+
+EXAMPLE 12
+----------------------------------------
+Summary:
+  - Total method calls: 0
+  - Input context length: 8045
+  - Total facts: 10
+  - Total thoughts: 0
+
+
+================================================================================
+
+EXAMPLE 13
+----------------------------------------
+Summary:
+  - Total method calls: 5
+  - Input context length: 3001
+  - Total facts: 10
+  - Total thoughts: 5
+
+Method: unknown_method
+Call: -> ('CHA2DS₂_VASc', ['Age:', '< 6 years = ', '+1 year = ', '≥ 7 years =+', 'Sex:', 'Female = +', 'Chf:', 'Yes = +'], [])
+Top Attended Sentences:
+Related Facts:
+Program Trace:
+  Score: 1.000000
+  Text: -> ('CHA2DS₂_VASc', ['Age:', '< 6 years = ', '+1 year = ', '≥ 7 years =+', 'Sex:', 'Female = +', 'Chf:', 'Yes = +'], [])
+  Token positions: 25-74
+Attention Summary:
+  - Total attention score: 1.000000
+  - Sentences attended: 0
+  - Max attention score: 0.000000
+
+Method: unknown_method
+Call: -> ('analyze_input', ['CHA2_DS_2_VASC', ['age:', '<6=', '>=65=' ,'>74=', 'sex:' , 'female=' , 'chf:' , '>chf=']])
+Top Attended Sentences:
+Related Facts:
+Program Trace:
+  Score: 1.000000
+  Text: -> ('analyze_input', ['CHA2_DS_2_VASC', ['age:', '<6=', '>=65=' ,'>74=', 'sex:' , 'female=' , 'chf:' , '>chf=']])
+  Token positions: 74-122
+Attention Summary:
+  - Total attention score: 1.000000
+  - Sentences attended: 0
+  - Max attention score: 0.000000
+
+Method: unknown_method
+Call: -> ('get_data', ['< 6', '6-', '>=75', '>= 7', 'female', 'no'])
+Top Attended Sentences:
+Related Facts:
+Program Trace:
+  Score: 1.000000
+  Text: -> ('get_data', ['< 6', '6-', '>=75', '>= 7', 'female', 'no'])
+  Token positions: 122-151
+Attention Summary:
+  - Total attention score: 1.000000
+  - Sentences attended: 0
+  - Max attention score: 0.000000
+
+Method: unknown_method
+Call: -> ('check_rule', ['AGE', 'age', '>', '<'], ['<6=', '=6-', '=>=7='])
+Top Attended Sentences:
+Related Facts:
+Program Trace:
+  Score: 1.000000
+  Text: -> ('check_rule', ['AGE', 'age', '>', '<'], ['<6=', '=6-', '=>=7='])
+  Token positions: 151-179
+Attention Summary:
+  - Total attention score: 1.000000
+  - Sentences attended: 0
+  - Max attention score: 0.000000
+
+Method: unknown_method
+Call: -> ('accumulate_score', [1, 0])
+Top Attended Sentences:
+Related Facts:
+Program Trace:
+  Score: 1.000000
+  Text: -> ('accumulate_score', [1, 0])
+  Token positions: 183-194
+Attention Summary:
+  - Total attention score: 1.000000
+  - Sentences attended: 0
+  - Max attention score: 0.000000
+
+
+================================================================================
+
+EXAMPLE 14
+----------------------------------------
+Summary:
+  - Total method calls: 0
+  - Input context length: 3033
+  - Total facts: 10
+  - Total thoughts: 0
+
+
+================================================================================
+
+EXAMPLE 15
+----------------------------------------
+Summary:
+  - Total method calls: 1
+  - Input context length: 6660
+  - Total facts: 10
+  - Total thoughts: 1
+
+Method: medcalc_rules
+Call: medcalc_rules('A 64-year-old female patient presented...') -> None
+Top Attended Sentences:
+Related Facts:
+Program Trace:
+  Score: 1.000000
+  Text: medcalc_rules('A 64-year-old female patient presented...') -> None
+  Token positions: 2-19
+Attention Summary:
+  - Total attention score: 1.000000
+  - Sentences attended: 0
+  - Max attention score: 0.000000
+
+
+================================================================================
+
+EXAMPLE 16
+----------------------------------------
+Summary:
+  - Total method calls: 0
+  - Input context length: 4864
+  - Total facts: 10
+  - Total thoughts: 0
+
+
+================================================================================
+
+EXAMPLE 17
+----------------------------------------
+Summary:
+  - Total method calls: 1
+  - Input context length: 4765
+  - Total facts: 10
+  - Total thoughts: 1
+
+Method: medcalc_rules
+Call: medcalc_rules("A 57-year-old female, with diabetes mellitu...") -> None
+Top Attended Sentences:
+Related Facts:
+Program Trace:
+  Score: 1.000000
+  Text: medcalc_rules("A 57-year-old female, with diabetes mellitu...") -> None
+  Token positions: 2-22
+Attention Summary:
+  - Total attention score: 1.000000
+  - Sentences attended: 0
+  - Max attention score: 0.000000
+
+
+================================================================================
+
+EXAMPLE 18
+----------------------------------------
+Summary:
+  - Total method calls: 1
+  - Input context length: 2699
+  - Total facts: 10
+  - Total thoughts: 1
+
+Method: unknown_method
+Call: ->TRACE: return value: ('What are your criteria for the Perthes-Emser-Persson (PERC) rule?', ['Perthes-EMSER-PERSSON', ['age>=50', 'heart rate>=10]', ['oxygen saturation on normal air<95%', 'leg swelling'], ['hemoptysis', 'recent surgery or trauma (within last 4weeks)', 'history of PE or dvt']], ['age >=50:', 'heart_rate >=10:', '', 'oxygen_saturation_on_normal_air_<95:', 'leg_swelling', '', 'hemoptisis', 'history_of_PE_or_dvt'])
+Top Attended Sentences:
+Related Facts:
+Program Trace:
+  Score: 0.991072
+  Text: ->TRACE: return value: ('What are your criteria for the Perthes-Emser-Persson (PERC) rule?', ['Perthes-EMSER-PERSSON', ['age>=50', 'heart rate>=10]', ['oxygen saturation on normal air<95%', 'leg swelling'], ['hemoptysis', 'recent surgery or trauma (within last 4weeks)', 'history of PE or dvt']], ['age >=50:', 'heart_rate >=10:', '', 'oxygen_saturation_on_normal_air_<95:', 'leg_swelling', '', 'hemoptisis', 'history_of_PE_or_dvt'])
+  Token positions: 179-315
+Attention Summary:
+  - Total attention score: 0.991072
+  - Sentences attended: 0
+  - Max attention score: 0.000000
+
+
+================================================================================
+
+EXAMPLE 19
+----------------------------------------
+Summary:
+  - Total method calls: 4
+  - Input context length: 3283
+  - Total facts: 10
+  - Total thoughts: 4
+
+Method: unknown_method
+Call: -> TRACE checking rule (TEMPERATURE >37°C (38.6°F)): No =0, Yes=+1
+Top Attended Sentences:
+Related Facts:
+Program Trace:
+  Score: 1.000000
+  Text: -> TRACE checking rule (TEMPERATURE >37°C (38.6°F)): No =0, Yes=+1
+  Token positions: 109-136
+Attention Summary:
+  - Total attention score: 1.000000
+  - Sentences attended: 0
+  - Max attention score: 0.000000
+
+Method: unknown_method
+Call: -> TRACE Checking rule (HEART RATE >91 BPM): No=0,Yes=+0
+Top Attended Sentences:
+Related Facts:
+Program Trace:
+  Score: 1.000000
+  Text: -> TRACE Checking rule (HEART RATE >91 BPM): No=0,Yes=+0
+  Token positions: 137-157
+Attention Summary:
+  - Total attention score: 1.000000
+  - Sentences attended: 0
+  - Max attention score: 0.000000
+
+Method: rule
+Call: ->TRACE checking rule(RESP BAC>20 BPM): NO=0,Yes=+2
+Top Attended Sentences:
+Related Facts:
+Program Trace:
+  Score: 1.000000
+  Text: ->TRACE checking rule(RESP BAC>20 BPM): NO=0,Yes=+2
+  Token positions: 158-178
+Attention Summary:
+  - Total attention score: 1.000000
+  - Sentences attended: 0
+  - Max attention score: 0.000000
+
+Method: rule
+Call: ->	TRACE checking rule(WBC COUNT>12K): No=-1,Yes=0
+Top Attended Sentences:
+Related Facts:
+Program Trace:
+  Score: 1.000000
+  Text: ->	TRACE checking rule(WBC COUNT>12K): No=-1,Yes=0
+  Token positions: 179-197
+Attention Summary:
+  - Total attention score: 1.000000
+  - Sentences attended: 0
+  - Max attention score: 0.000000
+
+
+================================================================================
+
+EXAMPLE 20
+----------------------------------------
+Summary:
+  - Total method calls: 0
+  - Input context length: 4577
+  - Total facts: 10
+  - Total thoughts: 0
+
+
+================================================================================
+
+EXAMPLE 21
+----------------------------------------
+Summary:
+  - Total method calls: 0
+  - Input context length: 4363
+  - Total facts: 10
+  - Total thoughts: 0
+
+
+================================================================================
+
+EXAMPLE 22
+----------------------------------------
+Summary:
+  - Total method calls: 0
+  - Input context length: 2272
+  - Total facts: 10
+  - Total thoughts: 0
+
+
+================================================================================
+
+EXAMPLE 23
+----------------------------------------
+Summary:
+  - Total method calls: 4
+  - Input context length: 3504
+  - Total facts: 10
+  - Total thoughts: 4
+
+Method: function_name
+Call: function_name(analyze\_input, inputs=[('A \_ 76\_-year-old-woman-with-a-history-of-invadec\_-uctual-carcinoma-and-tamoxifen-therapy-presents-to-the-emergency-department-with-synCOPE', ['age'], ['76']))] -> return\_value
+Top Attended Sentences:
+Related Facts:
+Program Trace:
+  Score: 1.000000
+  Text: function_name(analyze\_input, inputs=[('A \_ 76\_-year-old-woman-with-a-history-of-invadec\_-uctual-carcinoma-and-tamoxifen-therapy-presents-to-the-emergency-department-with-synCOPE', ['age'], ['76']))] -> return\_value
+  Token positions: 45-114
+Attention Summary:
+  - Total attention score: 1.000000
+  - Sentences attended: 0
+  - Max attention score: 0.000000
+
+Method: function_name
+Call: function_name(get\_data, ('CHA2ds VasC', [['female', 0]]) -> return\
+Top Attended Sentences:
+Related Facts:
+Program Trace:
+  Score: 1.000000
+  Text: function_name(get\_data, ('CHA2ds VasC', [['female', 0]]) -> return\
+  Token positions: 171-193
+Attention Summary:
+  - Total attention score: 1.000000
+  - Sentences attended: 0
+  - Max attention score: 0.000000
+
+Method: _name
+Call: function\_name(accumulate\_score, (0,0)) -> return\_
+Top Attended Sentences:
+Related Facts:
+Program Trace:
+  Score: 1.000000
+  Text: function\_name(accumulate\_score, (0,0)) -> return\_
+  Token positions: 204-221
+Attention Summary:
+  - Total attention score: 1.000000
+  - Sentences attended: 0
+  - Max attention score: 0.000000
+
+Method: _call
+Call: function\_call(check\_rule, ('CLA2ds Vasc C', [['yes', 1]]) -> reuturn\_value
+Top Attended Sentences:
+Related Facts:
+Program Trace:
+  Score: 1.000000
+  Text: function\_call(check\_rule, ('CLA2ds Vasc C', [['yes', 1]]) -> reuturn\_value
+  Token positions: 231-258
+Attention Summary:
+  - Total attention score: 1.000000
+  - Sentences attended: 0
+  - Max attention score: 0.000000
+
+
+================================================================================
+
+EXAMPLE 24
+----------------------------------------
+Summary:
+  - Total method calls: 2
+  - Input context length: 3613
+  - Total facts: 10
+  - Total thoughts: 2
+
+Method: check_rule
+Call: check_rule('chiefcomplain:left-sidepparesis') -> Return_value
+Top Attended Sentences:
+Related Facts:
+Program Trace:
+  Score: 1.000000
+  Text: check_rule('chiefcomplain:left-sidepparesis') -> Return_value
+  Token positions: 105-120
+Attention Summary:
+  - Total attention score: 1.000000
+  - Sentences attended: 0
+  - Max attention score: 0.000000
+
+Method: accumulate_score
+Call: accumulate_score(0, 2) -> Return_Value
+Top Attended Sentences:
+Related Facts:
+Program Trace:
+  Score: 1.000000
+  Text: accumulate_score(0, 2) -> Return_Value
+  Token positions: 134-145
+Attention Summary:
+  - Total attention score: 1.000000
+  - Sentences attended: 0
+  - Max attention score: 0.000000
+
+
+================================================================================
+
+EXAMPLE 25
+----------------------------------------
+Summary:
+  - Total method calls: 0
+  - Input context length: 4518
+  - Total facts: 10
+  - Total thoughts: 0
+
+
+================================================================================
+
+EXAMPLE 26
+----------------------------------------
+Summary:
+  - Total method calls: 0
+  - Input context length: 6665
+  - Total facts: 10
+  - Total thoughts: 0
+
+
+================================================================================
+
+EXAMPLE 27
+----------------------------------------
+Summary:
+  - Total method calls: 0
+  - Input context length: 5937
+  - Total facts: 10
+  - Total thoughts: 0
+
+
+================================================================================
+
+EXAMPLE 28
+----------------------------------------
+Summary:
+  - Total method calls: 8
+  - Input context length: 2180
+  - Total facts: 10
+  - Total thoughts: 8
+
+Method: medcalc_rules
+Call: medcalc_rules("A 71-year-old woman with history") -> ("TRACE: calling analyze_input...")
+Top Attended Sentences:
+Related Facts:
+Program Trace:
+  Score: 1.000000
+  Text: medcalc_rules("A 71-year-old woman with history") -> ("TRACE: calling analyze_input...")
+  Token positions: 2-25
+Attention Summary:
+  - Total attention score: 1.000000
+  - Sentences attended: 0
+  - Max attention score: 0.000000
+
+Method: analyze_input
+Call: analyze_input("A man with asthma and COPD") -> () -> ()
+Top Attended Sentences:
+Related Facts:
+Program Trace:
+  Score: 1.000000
+  Text: analyze_input("A man with asthma and COPD") -> () -> ()
+  Token positions: 25-40
+Attention Summary:
+  - Total attention score: 1.000000
+  - Sentences attended: 0
+  - Max attention score: 0.000000
+
+Method: get_data
+Call: get_data("Confusion", ["No = 1 point"]) -> 1
+Top Attended Sentences:
+Related Facts:
+Program Trace:
+  Score: 1.000000
+  Text: get_data("Confusion", ["No = 1 point"]) -> 1
+  Token positions: 40-56
+Attention Summary:
+  - Total attention score: 1.000000
+  - Sentences attended: 0
+  - Max attention score: 0.000000
+
+Method: get_data
+Call: get_data(None, None) -> ()
+Top Attended Sentences:
+Related Facts:
+Program Trace:
+  Score: 1.000000
+  Text: get_data(None, None) -> ()
+  Token positions: 57-65
+Attention Summary:
+  - Total attention score: 1.000000
+  - Sentences attended: 0
+  - Max attention score: 0.000000
+
+Method: accumulate_score
+Call: accumulate_score(0, 1) -> 0 + 1 -> 2
+Top Attended Sentences:
+Related Facts:
+Program Trace:
+  Score: 1.000000
+  Text: accumulate_score(0, 1) -> 0 + 1 -> 2
+  Token positions: 65-82
+Attention Summary:
+  - Total attention score: 1.000000
+  - Sentences attended: 0
+  - Max attention score: 0.000000
+
+Method: analyze_input
+Call: analyze_input("") -> ("A 16-year-old girl presenting with acute onset of confusion and altered mental status.")
+Top Attended Sentences:
+Related Facts:
+Program Trace:
+  Score: 1.000000
+  Text: analyze_input("") -> ("A 16-year-old girl presenting with acute onset of confusion and altered mental status.")
+  Token positions: 83-106
+Attention Summary:
+  - Total attention score: 1.000000
+  - Sentences attended: 0
+  - Max attention score: 0.000000
+
+Method: analyze_input
+Call: analyze_input() -> ()
+Top Attended Sentences:
+Related Facts:
+Program Trace:
+  Score: 1.000000
+  Text: analyze_input() -> ()
+  Token positions: 106-111
+Attention Summary:
+  - Total attention score: 1.000000
+  - Sentences attended: 0
+  - Max attention score: 0.000000
+
+Method: get_data
+Call: get_data(["age: <65"], ["No points"]) -> ()
+Top Attended Sentences:
+Related Facts:
+Program Trace:
+  Score: 1.000000
+  Text: get_data(["age: <65"], ["No points"]) -> ()
+  Token positions: 128-143
+Attention Summary:
+  - Total attention score: 1.000000
+  - Sentences attended: 0
+  - Max attention score: 0.000000
+
+
+================================================================================
+
+EXAMPLE 29
+----------------------------------------
+Summary:
+  - Total method calls: 0
+  - Input context length: 3366
+  - Total facts: 10
+  - Total thoughts: 0
+
+
+================================================================================
+
+EXAMPLE 30
+----------------------------------------
+Summary:
+  - Total method calls: 2
+  - Input context length: 1423
+  - Total facts: 10
+  - Total thoughts: 2
+
+Method: unknown_method
+Call: -> Trace returning (None, None, None)
+Top Attended Sentences:
+Related Facts:
+Program Trace:
+  Score: 1.000000
+  Text: -> Trace returning (None, None, None)
+  Token positions: 197-207
+Attention Summary:
+  - Total attention score: 1.000000
+  - Sentences attended: 0
+  - Max attention score: 0.000000
+
+Method: medcalc_scores
+Call: -> medcalc_scores(Blood pressure: 83/63 mmHgo Body mass index: 6.2 kg/m^2 Blood sugar: 59 mgdl Glycosylated haemoglobin: 4.2 %)
+Top Attended Sentences:
+Related Facts:
+Program Trace:
+  Score: 1.000000
+  Text: -> medcalc_scores(Blood pressure: 83/63 mmHgo Body mass index: 6.2 kg/m^2 Blood sugar: 59 mgdl Glycosylated haemoglobin: 4.2 %)
+  Token positions: 214-265
+Attention Summary:
+  - Total attention score: 1.000000
+  - Sentences attended: 0
+  - Max attention score: 0.000000
+
+
+================================================================================
+

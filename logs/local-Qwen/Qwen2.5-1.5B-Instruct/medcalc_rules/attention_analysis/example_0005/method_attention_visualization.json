@@ -1,0 +1,162 @@
+{
+  "summary": {
+    "total_method_calls": 4,
+    "input_context_length": 2860,
+    "total_facts": 10,
+    "total_thoughts": 4
+  },
+  "method_call_analysis": [
+    {
+      "method_call_idx": 0,
+      "method_name": "unknown_method",
+      "method_call_text": "->  ('CHA2DS  S  Sc  ore', ['age', 'sex', 'CHF', 'hypertension', 'stroke_tia_thrombo'], ['age'] )",
+      "top_attended_sentences": [],
+      "related_facts": [],
+      "matching_thought": {
+        "text": "->  ('CHA2DS  S  Sc  ore', ['age', 'sex', 'CHF', 'hypertension', 'stroke_tia_thrombo'], ['age'] )",
+        "score": 0.36891768418634974,
+        "attention_score": 0.36891768418634974,
+        "frequency": 1.0,
+        "token_start": 605,
+        "token_end": 645,
+        "type": "program_trace",
+        "line_num": 2,
+        "context_before": [
+          "```",
+          "medcalc_rules('An  8  year-old man  presented  to  our  institution  complaining  of  recurrent  fever  and  a  mitral  regurgitant  murmur  .  He  has  a past  history  significant  for  atrial  fibrillation  being  treated  with  apixiban  status  post  leadless  pacemaker  implantation  and AV  nodal  ablation   1 5  days  ago ,  hypertension ,  hyperlipidaemia ,  obstructive  sleep  apnoea  on  continuous  positive  airway  pressure ,  diverticula  and diverticular  disease ,  dental  caries ,  melanoma  in  situ  ,  and persistent  pulmonary  coccidian  mycosis  on flucozole .  H e  underwent  a trans-thoracic  echocadimgi  which  showed  normal  left  ventricular  size  and no  wall  motion  abnormalities  ,   LVE  F  of   5   6  % ,  severe  mitra  regrugitation  due  to incomplete  coaptatio  of the  mitr  valve  leaflets  (  Figures  and ) ,  mild  right  ventricu  ral  enlargement ,  systo  dy  scomon  d toni  c  dysfunction  wi  th ve  see  apical  right ventri  cl  led  , v  lei  ts  trici  pu  re  regurati  tion  , a  nd no  peri  cad  e  effusi  on .  A  transesphageli  c echocadi  mo  fi  nally  confir  ed  restricted  mitro  valve leaf  s  resul  ting  in incom plete  coap  tatio  and seve  l  mit  regra  ugation  ( Fi  gure  and ).  N o  veget  ants  wer  e s  ee  n  .   B  loo  c b  u  l t  s p  r  e   r  es  ur  e l  y  c d  id  ot  find  e n d oca  ndi  s ti  c s  as  a c  u s  t  y o  f  fe  e t ,  a n d  h  e w  a s  l a  ter  f e  ar  o  n d f  ind  e d  t o  h a  ve  non  Hodgkin'' s  li  m  o m  e i  n   s  o l  o g  y . ')"
+        ],
+        "context_after": [
+          "->  (0, [(0, [0]), (1, ['8']), (1. 5, ['ma  le'])])",
+          "->  ([0, 1], [('sex')])"
+        ]
+      },
+      "attention_summary": {
+        "total_attention_score": 0.36891768418634974,
+        "thought_attention_score": 0.36891768418634974,
+        "fact_attention_score": 0,
+        "num_attended_sentences": 0,
+        "has_matching_thought": true,
+        "num_related_facts": 0,
+        "max_attention_score": 0,
+        "token_positions": {
+          "start": 605,
+          "end": 645
+        }
+      }
+    },
+    {
+      "method_call_idx": 1,
+      "method_name": "unknown_method",
+      "method_call_text": "->  (0, [(0, [0]), (1, ['8']), (1. 5, ['ma  le'])])",
+      "top_attended_sentences": [],
+      "related_facts": [],
+      "matching_thought": {
+        "text": "->  (0, [(0, [0]), (1, ['8']), (1. 5, ['ma  le'])])",
+        "score": 0.43685459393751,
+        "attention_score": 0.43685459393751,
+        "frequency": 1.0,
+        "token_start": 645,
+        "token_end": 674,
+        "type": "program_trace",
+        "line_num": 3,
+        "context_before": [
+          "medcalc_rules('An  8  year-old man  presented  to  our  institution  complaining  of  recurrent  fever  and  a  mitral  regurgitant  murmur  .  He  has  a past  history  significant  for  atrial  fibrillation  being  treated  with  apixiban  status  post  leadless  pacemaker  implantation  and AV  nodal  ablation   1 5  days  ago ,  hypertension ,  hyperlipidaemia ,  obstructive  sleep  apnoea  on  continuous  positive  airway  pressure ,  diverticula  and diverticular  disease ,  dental  caries ,  melanoma  in  situ  ,  and persistent  pulmonary  coccidian  mycosis  on flucozole .  H e  underwent  a trans-thoracic  echocadimgi  which  showed  normal  left  ventricular  size  and no  wall  motion  abnormalities  ,   LVE  F  of   5   6  % ,  severe  mitra  regrugitation  due  to incomplete  coaptatio  of the  mitr  valve  leaflets  (  Figures  and ) ,  mild  right  ventricu  ral  enlargement ,  systo  dy  scomon  d toni  c  dysfunction  wi  th ve  see  apical  right ventri  cl  led  , v  lei  ts  trici  pu  re  regurati  tion  , a  nd no  peri  cad  e  effusi  on .  A  transesphageli  c echocadi  mo  fi  nally  confir  ed  restricted  mitro  valve leaf  s  resul  ting  in incom plete  coap  tatio  and seve  l  mit  regra  ugation  ( Fi  gure  and ).  N o  veget  ants  wer  e s  ee  n  .   B  loo  c b  u  l t  s p  r  e   r  es  ur  e l  y  c d  id  ot  find  e n d oca  ndi  s ti  c s  as  a c  u s  t  y o  f  fe  e t ,  a n d  h  e w  a s  l a  ter  f e  ar  o  n d f  ind  e d  t o  h a  ve  non  Hodgkin'' s  li  m  o m  e i  n   s  o l  o g  y . ')",
+          "->  ('CHA2DS  S  Sc  ore', ['age', 'sex', 'CHF', 'hypertension', 'stroke_tia_thrombo'], ['age'] )"
+        ],
+        "context_after": [
+          "->  ([0, 1], [('sex')])",
+          "->  "
+        ]
+      },
+      "attention_summary": {
+        "total_attention_score": 0.43685459393751,
+        "thought_attention_score": 0.43685459393751,
+        "fact_attention_score": 0,
+        "num_attended_sentences": 0,
+        "has_matching_thought": true,
+        "num_related_facts": 0,
+        "max_attention_score": 0,
+        "token_positions": {
+          "start": 645,
+          "end": 674
+        }
+      }
+    },
+    {
+      "method_call_idx": 2,
+      "method_name": "unknown_method",
+      "method_call_text": "->  ([0, 1], [('sex')])",
+      "top_attended_sentences": [],
+      "related_facts": [],
+      "matching_thought": {
+        "text": "->  ([0, 1], [('sex')])",
+        "score": 0.3737910912680597,
+        "attention_score": 0.3737910912680597,
+        "frequency": 1.0,
+        "token_start": 674,
+        "token_end": 685,
+        "type": "program_trace",
+        "line_num": 4,
+        "context_before": [
+          "->  ('CHA2DS  S  Sc  ore', ['age', 'sex', 'CHF', 'hypertension', 'stroke_tia_thrombo'], ['age'] )",
+          "->  (0, [(0, [0]), (1, ['8']), (1. 5, ['ma  le'])])"
+        ],
+        "context_after": [
+          "->  ",
+          "->  medcalc_ r ul es(..."
+        ]
+      },
+      "attention_summary": {
+        "total_attention_score": 0.3737910912680597,
+        "thought_attention_score": 0.3737910912680597,
+        "fact_attention_score": 0,
+        "num_attended_sentences": 0,
+        "has_matching_thought": true,
+        "num_related_facts": 0,
+        "max_attention_score": 0,
+        "token_positions": {
+          "start": 674,
+          "end": 685
+        }
+      }
+    },
+    {
+      "method_call_idx": 3,
+      "method_name": "unknown_method",
+      "method_call_text": "->  [('CHA2dsSc  Ored', ['dys  ec  ges  ha  l ', 'hyperti  s io  na  n', 'stro  k  s tri  n g ', 'tia  t hromb  o ], ['d  yse  sc  3  e ', 'h  yp  erl  i  da  m i ', 'sti  nk  s t ri  ng ', 'ti a  thi  o a ', 'tr  ih  bro  th  ro  ', 'd  iab  et  hi  pa  s ', 'p  a r  ta  l '] )]",
+      "top_attended_sentences": [],
+      "related_facts": [],
+      "matching_thought": {
+        "text": "->  [('CHA2dsSc  Ored', ['dys  ec  ges  ha  l ', 'hyperti  s io  na  n', 'stro  k  s tri  n g ', 'tia  t hromb  o ], ['d  yse  sc  3  e ', 'h  yp  erl  i  da  m i ', 'sti  nk  s t ri  ng ', 'ti a  thi  o a ', 'tr  ih  bro  th  ro  ', 'd  iab  et  hi  pa  s ', 'p  a r  ta  l '] )]",
+        "score": 0.4070588278389803,
+        "attention_score": 0.4070588278389803,
+        "frequency": 1.0,
+        "token_start": 708,
+        "token_end": 849,
+        "type": "program_trace",
+        "line_num": 8,
+        "context_before": [
+          "->  medcalc_ r ul es(...",
+          "->  'CHA2DsSc  ored'"
+        ],
+        "context_after": [
+          "->  2  ...",
+          "->  ``CHA2DssSc  oe  re d``"
+        ]
+      },
+      "attention_summary": {
+        "total_attention_score": 0.4070588278389803,
+        "thought_attention_score": 0.4070588278389803,
+        "fact_attention_score": 0,
+        "num_attended_sentences": 0,
+        "has_matching_thought": true,
+        "num_related_facts": 0,
+        "max_attention_score": 0,
+        "token_positions": {
+          "start": 708,
+          "end": 849
+        }
+      }
+    }
+  ]
+}

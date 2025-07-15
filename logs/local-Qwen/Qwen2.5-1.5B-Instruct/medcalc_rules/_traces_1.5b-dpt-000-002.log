@@ -10,11 +10,10 @@ PROGRAM:
 ```
 
 QUESTION: Predict what the output of the program above will be, given
-the input shown below.  You must simulate the COMPLETE execution trace
-showing ALL function calls and their outputs step by step.
+the input shown below.  You must simulate the execution trace showing
+ONLY the input and output of each function call.
 
-For each mocked function call (functions decorated with @mock.proxymock, 
-@mock.dictmock, etc.), show:
+For each function call, show ONLY:
 1. The function name and arguments being called
 2. The return value from that function
 
@@ -23,10 +22,15 @@ Show the execution in this format:
 function_name(arg1, arg2, ...) -> return_value
 ```
 
-Then show any print statements or final outputs.
+Do NOT show:
+- Intermediate computations or variable assignments
+- Implementation details or step-by-step calculations
+- Internal processing steps
 
-Respond with the FULL simulation trace including all intermediate steps,
-function calls, and outputs. Do NOT skip any function calls or intermediate results.
+Focus ONLY on the input-output mapping of each function call.
+Then show any final outputs or print statements.
+
+Respond with the streamlined trace showing only function calls and their return values.
 
 ```
 >>> {task_name}({input_str})
@@ -83,12 +87,8 @@ DATAPOINTS1 = [
 "non-ST elevation myocardial infarction (NSTEMI)",
 "type two diabetes"
 ..................................................
-126 lines skipped
+130 lines skipped
 ..................................................
-print(f"TRACE: analyze_input returned question='{question}', {len(rules)} rules, {len(datapoints)} datapoints")
-
-acc = 0
-print(f"TRACE: Starting accumulation with acc={acc}")
 
 for i, rule in enumerate(rules):
 print(f"TRACE: Processing rule {i+1}/{len(rules)}: {rule}")
@@ -114,11 +114,10 @@ mock.main(locals())
 ```
 
 QUESTION: Predict what the output of the program above will be, given
-the input shown below.  You must simulate the COMPLETE execution trace
-showing ALL function calls and their outputs step by step.
+the input shown below.  You must simulate the execution trace showing
+ONLY the input and output of each function call.
 
-For each mocked function call (functions decorated with @mock.proxymock,
-@mock.dictmock, etc.), show:
+For each function call, show ONLY:
 1. The function name and arguments being called
 2. The return value from that function
 
@@ -127,10 +126,15 @@ Show the execution in this format:
 function_name(arg1, arg2, ...) -> return_value
 ```
 
-Then show any print statements or final outputs.
+Do NOT show:
+- Intermediate computations or variable assignments
+- Implementation details or step-by-step calculations
+- Internal processing steps
 
-Respond with the FULL simulation trace including all intermediate steps,
-function calls, and outputs. Do NOT skip any function calls or intermediate results.
+Focus ONLY on the input-output mapping of each function call.
+Then show any final outputs or print statements.
+
+Respond with the streamlined trace showing only function calls and their return values.
 
 ```
 >>> medcalc_rules({input_str})
@@ -153,30 +157,22 @@ Calculate CHA2DS2-VASc Score for Atrial Fibrillation Stroke Risk by summing the 
     Diabetes history: No = 0 points, Yes = +1 point
 ------------------------------ output ------------------------------
 ```
-FUNCTION CALL: medcalcrules('We present...') -> None
-TRACE: calling medcalc\_rules called with argument: We present...
-TRACE: analyzing input...
-TRACE : calling analyze\_input with inputs ['We present...', 'What is...']
-TRACE : analyze\_Input returned question='What is...' , 9 rules, 13 data points
-TRACE : processing rule 1: Age: age >= 70 = 2 points (age 82)
-TRACE : checking rule 2: Sex: sex = male = 1 point (sex = male)
-TRACE: checking rule: CHF history: CHD history = yes = 3 points (CHD history yes)
-TRACE  : checking  rule: Hypertensive history: hypertensive history = no = 4 points (hypertensive no)
-TRACE   : checking Rule: Stroke/TI/AIT history: Stroke history =  no =5 points (stroke history no)
-   TRACE : checking Rules: vascular disease history: vascular history = No =6 points (vascular history no )
-   TRACE: checking Rule : Diabetes history : diabetes history = Diabetic yes =7 points (diabetic yes)
-   TRACe : Accumulating score = 9 points
-   TRACE END OF ACCUMULATION
-FUNCTION CALL : medcalcrules() -> 9
-TRACE END OF MEDCALC\_RULES FUNCTION
-FINAL OUTPUT: The patient's CAH2DSVASC score is 9.
+medcalc_rules('We present...') -> ('CHA2DS', ['Age:', 'Sex:', 'CHF:', 'HypERTension:', 'Stroke/TIA:', 'VASCULAR:', 'DIABETES:'])
+CHA2DIScore(CHA2DiscoScoreRule(AGE)) -> 2
+CHA2_DISCO_SCORE -> 4
 ```
 🧠 Starting attention analysis for example 0...
-✅ Attention analysis complete: 5 facts extracted
-🔍 Top attention scores:
-   1. Score: 0.00052102 - The patient was admitted to our hospital with worsening shor...
-   2. Score: 0.00046310 - The patient was started on IV furosemide and had an initial ...
-   3. Score: 0.00046018 - The patient had a history of non-ST elevation myocardial inf...
+✅ Attention analysis complete:
+   📊 Facts extracted: 10
+   🧠 Thoughts extracted: 2
+   🎯 Method calls found: 2
+🔍 Top attention scores (facts):
+   1. Score: 0.00056072 - The patient was admitted to our hospital with worsening shor...
+   2. Score: 0.00050005 - The patient was started on IV furosemide and had an initial ...
+   3. Score: 0.00049348 - The patient had a history of non-ST elevation myocardial inf...
+🔍 Top attention scores (thoughts):
+   1. Score: 0.99999999 - medcalc_rules('We present...') -> ('CHA2DS', ['Age:', 'Sex:'...
+   2. Score: 0.99999999 - CHA2DIScore(CHA2DiscoScoreRule(AGE)) -> 2...
 ------------------------------ correct=0 total=1 parse_failures=1 prediction='**parse failed**' y='6' is_correct=False ------------------------------
 prompting local:Qwen/Qwen2.5-1.5B-Instruct
 ------------------------------ input ------------------------------
@@ -193,30 +189,37 @@ Calculate Wells' Criteria for Pulmonary Embolism by summing the results of the f
     Hemoptysis: No = 0 points, Yes = +1 point
     Malignancy with treatment within 6 months or palliative: No = 0 points, Yes = +1 point
 ------------------------------ output ------------------------------
-Here is the simulated execution trace for the `medcalc_rules` function:
+```
+medcalc_rules('Fifty—one-year-old Caucasian female was ...')
+```
 
 ```
-TRACE: calling medcalc Rules Function...
-FUNCTION_CALL: medCalcRules() -> None
-FUNCTION_CALLS: analyzeInput(input='Fifty one year old Caucasian female with fever/chills and back pain, recently had spinal absess & implanted spinal nerve stimulus, mitra valve prolapsion & GERD, ongoing chronic backpain management, omepraizole & acetaminofen for pain, BP 110/60mmHg with high pulse rate, jugular vein distension, elevated p2, no murmur/gallop heard, normal breathing, abdomen soft, non-tender, warm, tenderness noted at lower lumbar spine, neuro exam normal, lab values: wbc count 16k, bandemia 22%, latic acid 46 mg, EKG shows sinus tacha, troponins ok, blood culturng positive for staphyloxus, echocademy reveals LV EF 69%, VA, LA, RA & RV enlarged with RV hypokinesis, RV systol pressure 70 mm Hg, RAA pressure 4/12 mm Hgg, PA pressure 5/13 mm Hgy, pulmonary HTN, Echo reveals RV dilation, previous echod adamy normal, HR 88bpm, RR 23 bps, PTT 13 seconds, PTT 14 seconds, INR 1 , PTT ratio 1 : 1 ; thrombolysis started, bloodculture positive for S.aureus, 1st echocardio graphic result, 8mo prior echodady normal, 2nd echodaxy revealing RV dilation & hypertrophy, pt undergoes left & right heart catherization, coronary arteries, LV funcnion normal, RA pressure, RV pressure, PA pressures, pulmonary haemotony, Echo on next day reveal dilitation & improvement in RV, pt recovers on dischagge')
-FUNCTION_CALLERS: medCalcs()
-FUNCTION_CALLER: medcalcs()
-CALLING FUNCTION: analyze_Input(input='fifty one yr old caucasion female with fevers & back pain with recent spinal abessence and spinalnerve stimulator implantation, mitrat valve prolapsed & gerd, ongoing back pain medication, bp 1 1o/6o mmhg with high puls rate, jugsular veas are distented, pe2 loud, no murmors or gallops heard, brehths sound normal, abdomen soft and without tenderness, neulogy exam normal,blood test reveils wbc 17k, bandaemia 19%, latica acid 35mg, ekg shows sinus tauch, tropanins ok. Blood culturing prouided s.aureux, echodeyreveives lv ef 62%, va la la ra and rv enlarged with r v hypokineisis of rv estimated rv systolic presure 72 mm hg, raa pressure 3/15 mm hg pa pressure 2/14 mm hg indicating significant increase of pulmonary httn, echodavey next day reveals dilitation and improvement of r v, pt recoveries on discharge')
+```
+TRACE: calling analyze_input...
+TRACE: Question extracted: What is thepatient's scoreof Wells'criteriafor Pulmonary Embolement?
+TRACE: Rules extracted: ['Clinical signsand symptoms ofDVT:No=0points,Yes+=3points', 'PEis#1 diagnosisORequallylikely:No=-0point,Yes+=3point', 'Heart rate>10:No-=0point,Yes+=1. 5point', '', 'Immobilization atleast3daysORSurgerypreviousof4weeks:NO-=0 point,Yes+=+1. +5point'', 'Previous,objectively diagnosed PE/orDVT:NO -=0 point,YEs+=+l point']
+TRACE: Datapoints extracted: [NoDVTsignsmentioned,'CTangramagraytednoevdenceofpulmonaryembolisme','pulse12o/min','recentspinalabscessfollowedsbyimplantationofspinalnervestimulator','NopreviousPE/DVTmentionerdone','Nohemoptysismentioned','Nonegermancytreatmentwithin6monthsorpalliative']
+TRACE :calling get_datafor rule :
+TRACE:get_datareturned: NoDVT signsmentioneddosegmentationerror
+TRACE :Calling check_rulefor rule:
+TRACE:check_rulereturned:NoDvt signsmntionedsegmentationerror
 
-FUNCTION_CALLETERS: med_calcs()
-CLASS_METHOD_CALLER_FUNC_NAME: med_calcules() -> medcalcules.input('fifty twelve year old caucasian female withfevers and backpain, recent spinalabsess and implantation spinal nervestimulator,mitral valveplositionandGERDongoingbackpainmanagement,omeprazolandacetametponneededchronicbackpain,bp126/68mmhgwithhighpulsrate,jugularveinsdistentedup toe of ear withprominent “a”and “v”waves,pe2loud,no murmorsorgallopsheard,nobreathsoundnormal,abdomensoftandwithouttenderness,neurolgicalexamnormal,bloodtestreveilswbc18k,bandemia19%
-lactacid48mg,ekgshowssinus tauch,troponinsok,bloodculturedprovidedsaureus,echodavereveseslvef62%va-la-lra-andrvenlargedwithrvhypokineosisrvysystolpressure72mmhg,rava-pressure3/4mmhg,pah pressure2/5mmhgindicatingsignificantincreaseofpulmonaryhtn,echodadayrevealesdilationandyouripmriofrvpt recoveredondischarge') -> med_calcule.output([ques="What is patient's chads score?",rules=[Rule1, Rule2,...],datapoints=['fifty twenty year old white female with complaint of fever',...]]) -> medcalles.output(ques="what is patient’s chad score?")
-FUNCTION_CALLEERS: MEDCALLES()
-FUNCTION CALLERS: analyze_INPUT()
-FUNCTIONCALLERS: MedCalcules()
-FUNCTION CLELL CALLERS : med_calcues.output()
-FUNCTIONCALLEERS: analzye_Input(input="Fifty eleven year old Caucasion Female has fever, chills and pain in her lower back, recently suffered a spinal absesis and implanted a spinal nerve Stimulator, she has Mitral Valve prolapse, GERD and ongoing back Pain Management, Omeprazoles and Acetaminophens used for Chronic Back Pain. Her BP is 180 over 1OO, pulse rate is 84 beats per minute, JUGULAR VEINS ARE DISTENDED UP TO THE ANGLE OF THE EAR WITH PROMINENT “A” AND “V” WAVES. HER P2 IS LOUD; NO MURMORS OR GALLOPS HEARD. HER BREATHS SOUND NORMAL. HER ABDOMEN IS SOFT AND NON-TENDER. SHE HAS NO SKIN LESIONS. NEUROLOGICAL EXAM IS NORMAL. HIS LAB VALUES SHOW WBC COUNT AT 21K With BANDAEMIA OF 25% AND LACTIC ACID LEVEL AT 50 MG PER DILUTION. HIS EKG REVEALS SINUS TACHYCARDIA. SERIAL TRONIN LEVELS ARE NORMAL. SHE WAS ADMINISTERED WITH BROAD-SPECTRUM ANTIBIOTICS, INTRAVENOUS FLUIDS AND DAMPIRON AS INFUSION. HER BLOOD CULTURE IS POSITIVE FOR STAPHYLOCOCCUS AUREUS. HER ECHOCARDIOGRAPHIC RESULT REVEIVES SMALL LEFT VENTRICLE WITH EJECTION FRCTION OF 68%, FLAT INTERVENTRAL SEPTUM, NORMAL LEFT ATRIAL(LA), BOWEL OF THE INTERARYAL SEPTUMPIT ON THE LA, RIGHT ATRIA(RA) AND RV ENARGEMENT WITH SEVERE HYPOKINEISIS OF RV(). ESTIMATED RV SYSTOLIC PRESSURE IS 82 MMHG. SHE ALSO HAD TEETHE CHODOGRAPHY TO LOOK FOR ANY VISUALISATION OF EVOLUTION OF PULMONARY EMBOLEMI. THERE WAS NO VISUALIZATION OF EVULATION OF PLEURAL EMBOLEM. HER EVCHODOGY REPORT FROM LAST EPOCH WAS NORMAL. HIGH RESOLUTION COMPUTERIZED TOMOGRAPHY (CT SCAN) REVEIVEDNORMAL LUNGS AND CT ANGIOGRAPHY REVEIVEDEVOLENT EVIDENCE OF PULLUOMARHYPOEMOEME. THE PATIENT UNDERGOSE LEFT AND RIGHT HEART CATETERIZATION 1O DAYS AFTER THE EVENT. CORONARY ARTERIES AND LV FUNCNION WERE NORMAL. RA PRESSURE 6MMHG, RV PRESSURE, PA PRESSURE MEAN 28MMHG INDICATING SIGNIFICANT IMPROVEMENT OF PUPULAR HEMORRHAGICITY. THEECHODAYREVEIVEDMARKLYIMPROVED RA AND RV DILATATION .PATIENT HAD FULL RECOVERY ON DISCHARGE.')
-FUNCTION CALLER: analyzInput(input_str='Fifth year old Caucasien female with complaints fever, chill and back pains, recent spacial absces and spine nerve stimilator implantation with mitral valves prolapse &GERD, chronic back paining management, otamprazole & acetiamopfen for chronic backs pain. BP 90/70mmhg, pulse 1oo/min, respiration rate 1/4min, no skin lesion; neck supple, jugula veas distended, angle of ear, prominent a and v waves, P2 loud; no murmurs nor gallops, lung fields clear, normal vesicial breath sounds, abdominal soft and not tender, neurological exam normal. Lab report reveals WBC at 1k, betaemia at 26%, lataric acid at 48 mg. EKG reveales sinus tacho, tropoinins ok.. Blood culture is positive for strephyllocoxisaures. ECHO revere small left ventricle with ejecttion friciton of 73%, flatted interventral septum with normal left auricular (LA) and right auricular(ra) and rv enegryment with sever hypokinisis of rhv estimated rv sytopllic pressure 86mmhg. Right atrial pressure 1 /2 mmhg, pulmonary arterial pressure 9/2 mmh, mean pressure  29 mmh indicating significant improviment of pulmonary hemorraghy. Echoe on the 2day reveived markedly imrpoved r and rv dilatations. Patnt had full recovery when discharged.')
-FUNCTION CALLED: med_calels.input() -> NONE
+TRACE:accumulating scorewith acc=0, toadd=0
+TRACE:Final calculation complete
+Finalanswer: 1
+```
 🧠 Starting attention analysis for example 1...
-✅ Attention analysis complete: 5 facts extracted
-🔍 Top attention scores:
-   1. Score: 0.00051388 - Calculate Wells' Criteria for Pulmonary Embolism by summing ...
-   2. Score: 0.00050242 - Past medical history included recent spinal abscess followed...
-   3. Score: 0.00045667 - Estimated RV systolic pressure was 75 mmHg...
+✅ Attention analysis complete:
+   📊 Facts extracted: 10
+   🧠 Thoughts extracted: 0
+   🎯 Method calls found: 0
+🔍 Top attention scores (facts):
+   1. Score: 0.00090669 - Calculate Wells' Criteria for Pulmonary Embolism by summing ...
+   2. Score: 0.00077461 - Past medical history included recent spinal abscess followed...
+   3. Score: 0.00071163 - On physical examination, patient appeared sick...
 ------------------------------ correct=0 total=2 parse_failures=2 prediction='**parse failed**' y='4.5' is_correct=False ------------------------------
+Final totals (ignoring parse failures) correct=0 parsed=0 acc=0.0 (all examples failed to parse)
+Final totals correct=0 total=2 acc=0.0
+==============================Attention Analysis Summary==============================
+Attention analysis completed for 2/2 examples
+Results saved to: logs/local-Qwen/Qwen2.5-1.5B-Instruct/medcalc_rules/attention_analysis

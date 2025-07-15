@@ -1,0 +1,48 @@
+{
+  "summary": {
+    "total_method_calls": 1,
+    "input_context_length": 2699,
+    "total_facts": 10,
+    "total_thoughts": 1
+  },
+  "method_call_analysis": [
+    {
+      "method_call_idx": 0,
+      "method_name": "unknown_method",
+      "method_call_text": "->TRACE: return value: ('What are your criteria for the Perthes-Emser-Persson (PERC) rule?', ['Perthes-EMSER-PERSSON', ['age>=50', 'heart rate>=10]', ['oxygen saturation on normal air<95%', 'leg swelling'], ['hemoptysis', 'recent surgery or trauma (within last 4weeks)', 'history of PE or dvt']], ['age >=50:', 'heart_rate >=10:', '', 'oxygen_saturation_on_normal_air_<95:', 'leg_swelling', '', 'hemoptisis', 'history_of_PE_or_dvt'])",
+      "top_attended_sentences": [],
+      "related_facts": [],
+      "matching_thought": {
+        "text": "->TRACE: return value: ('What are your criteria for the Perthes-Emser-Persson (PERC) rule?', ['Perthes-EMSER-PERSSON', ['age>=50', 'heart rate>=10]', ['oxygen saturation on normal air<95%', 'leg swelling'], ['hemoptysis', 'recent surgery or trauma (within last 4weeks)', 'history of PE or dvt']], ['age >=50:', 'heart_rate >=10:', '', 'oxygen_saturation_on_normal_air_<95:', 'leg_swelling', '', 'hemoptisis', 'history_of_PE_or_dvt'])",
+        "score": 0.9910723785517597,
+        "attention_score": 0.9910723785517597,
+        "frequency": 1.0,
+        "token_start": 179,
+        "token_end": 315,
+        "type": "program_trace",
+        "line_num": 6,
+        "context_before": [
+          "-> TRACE analyzing input...",
+          "->\tTRACE: calling analyze_question..."
+        ],
+        "context_after": [
+          "->TRACE calling accumulate_score...",
+          "->Trace calling accumulate_rule..."
+        ]
+      },
+      "attention_summary": {
+        "total_attention_score": 0.9910723785517597,
+        "thought_attention_score": 0.9910723785517597,
+        "fact_attention_score": 0,
+        "num_attended_sentences": 0,
+        "has_matching_thought": true,
+        "num_related_facts": 0,
+        "max_attention_score": 0,
+        "token_positions": {
+          "start": 179,
+          "end": 315
+        }
+      }
+    }
+  ]
+}

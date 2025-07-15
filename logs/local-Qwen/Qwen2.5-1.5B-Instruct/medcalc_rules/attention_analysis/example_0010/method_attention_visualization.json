@@ -1,0 +1,313 @@
+{
+  "summary": {
+    "total_method_calls": 8,
+    "input_context_length": 3532,
+    "total_facts": 10,
+    "total_thoughts": 8
+  },
+  "method_call_analysis": [
+    {
+      "method_call_idx": 0,
+      "method_name": "unknown_method",
+      "method_call_text": "-> ('What is patient\\'s age?', ['Age: 25-34 years', 'Age: >= 64 years'], [])",
+      "top_attended_sentences": [],
+      "related_facts": [],
+      "matching_thought": {
+        "text": "-> ('What is patient\\'s age?', ['Age: 25-34 years', 'Age: >= 64 years'], [])",
+        "score": 0.9999999991485051,
+        "attention_score": 0.9999999991485051,
+        "frequency": 1.0,
+        "token_start": 33,
+        "token_end": 63,
+        "type": "program_trace",
+        "line_num": 2,
+        "context_before": [
+          "```",
+          "medcalc_rules('A 26-year-old female presented with palpitations and fatigue. Electrocardiogram showed sinus rhythm without any arrhythmias.')"
+        ],
+        "context_after": [
+          "-> ('trace', ['Calling analyze_input...', 'Calling analyze\\_input returned question=\\'What is a patient\\'\\''s age?\\'', len(rules)=1, len(datapoin...])",
+          "-> ('analyze_input', 'What is your age? ', ['age'], {'age': 'female'})"
+        ]
+      },
+      "attention_summary": {
+        "total_attention_score": 0.9999999991485051,
+        "thought_attention_score": 0.9999999991485051,
+        "fact_attention_score": 0,
+        "num_attended_sentences": 0,
+        "has_matching_thought": true,
+        "num_related_facts": 0,
+        "max_attention_score": 0,
+        "token_positions": {
+          "start": 33,
+          "end": 63
+        }
+      }
+    },
+    {
+      "method_call_idx": 1,
+      "method_name": "len",
+      "method_call_text": "-> ('trace', ['Calling analyze_input...', 'Calling analyze\\_input returned question=\\'What is a patient\\'\\''s age?\\'', len(rules)=1, len(datapoin...])",
+      "top_attended_sentences": [],
+      "related_facts": [],
+      "matching_thought": {
+        "text": "-> ('trace', ['Calling analyze_input...', 'Calling analyze\\_input returned question=\\'What is a patient\\'\\''s age?\\'', len(rules)=1, len(datapoin...])",
+        "score": 1.0000000019158637,
+        "attention_score": 1.0000000019158637,
+        "frequency": 1.0,
+        "token_start": 63,
+        "token_end": 103,
+        "type": "program_trace",
+        "line_num": 3,
+        "context_before": [
+          "medcalc_rules('A 26-year-old female presented with palpitations and fatigue. Electrocardiogram showed sinus rhythm without any arrhythmias.')",
+          "-> ('What is patient\\'s age?', ['Age: 25-34 years', 'Age: >= 64 years'], [])"
+        ],
+        "context_after": [
+          "-> ('analyze_input', 'What is your age? ', ['age'], {'age': 'female'})",
+          "-> ('get_data', 'Female', ['gender'])"
+        ]
+      },
+      "attention_summary": {
+        "total_attention_score": 1.0000000019158637,
+        "thought_attention_score": 1.0000000019158637,
+        "fact_attention_score": 0,
+        "num_attended_sentences": 0,
+        "has_matching_thought": true,
+        "num_related_facts": 0,
+        "max_attention_score": 0,
+        "token_positions": {
+          "start": 63,
+          "end": 103
+        }
+      }
+    },
+    {
+      "method_call_idx": 2,
+      "method_name": "unknown_method",
+      "method_call_text": "-> ('analyze_input', 'What is your age? ', ['age'], {'age': 'female'})",
+      "top_attended_sentences": [],
+      "related_facts": [],
+      "matching_thought": {
+        "text": "-> ('analyze_input', 'What is your age? ', ['age'], {'age': 'female'})",
+        "score": 0.9999999910795769,
+        "attention_score": 0.9999999910795769,
+        "frequency": 1.0,
+        "token_start": 103,
+        "token_end": 124,
+        "type": "program_trace",
+        "line_num": 4,
+        "context_before": [
+          "-> ('What is patient\\'s age?', ['Age: 25-34 years', 'Age: >= 64 years'], [])",
+          "-> ('trace', ['Calling analyze_input...', 'Calling analyze\\_input returned question=\\'What is a patient\\'\\''s age?\\'', len(rules)=1, len(datapoin...])"
+        ],
+        "context_after": [
+          "-> ('get_data', 'Female', ['gender'])",
+          "-> ('check_rule', 'female', ['sex'])"
+        ]
+      },
+      "attention_summary": {
+        "total_attention_score": 0.9999999910795769,
+        "thought_attention_score": 0.9999999910795769,
+        "fact_attention_score": 0,
+        "num_attended_sentences": 0,
+        "has_matching_thought": true,
+        "num_related_facts": 0,
+        "max_attention_score": 0,
+        "token_positions": {
+          "start": 103,
+          "end": 124
+        }
+      }
+    },
+    {
+      "method_call_idx": 3,
+      "method_name": "unknown_method",
+      "method_call_text": "-> ('get_data', 'Female', ['gender'])",
+      "top_attended_sentences": [],
+      "related_facts": [],
+      "matching_thought": {
+        "text": "-> ('get_data', 'Female', ['gender'])",
+        "score": 0.9999999907109645,
+        "attention_score": 0.9999999907109645,
+        "frequency": 1.0,
+        "token_start": 124,
+        "token_end": 135,
+        "type": "program_trace",
+        "line_num": 5,
+        "context_before": [
+          "-> ('trace', ['Calling analyze_input...', 'Calling analyze\\_input returned question=\\'What is a patient\\'\\''s age?\\'', len(rules)=1, len(datapoin...])",
+          "-> ('analyze_input', 'What is your age? ', ['age'], {'age': 'female'})"
+        ],
+        "context_after": [
+          "-> ('check_rule', 'female', ['sex'])",
+          "-> () -> ()"
+        ]
+      },
+      "attention_summary": {
+        "total_attention_score": 0.9999999907109645,
+        "thought_attention_score": 0.9999999907109645,
+        "fact_attention_score": 0,
+        "num_attended_sentences": 0,
+        "has_matching_thought": true,
+        "num_related_facts": 0,
+        "max_attention_score": 0,
+        "token_positions": {
+          "start": 124,
+          "end": 135
+        }
+      }
+    },
+    {
+      "method_call_idx": 4,
+      "method_name": "unknown_method",
+      "method_call_text": "-> ('check_rule', 'female', ['sex'])",
+      "top_attended_sentences": [],
+      "related_facts": [],
+      "matching_thought": {
+        "text": "-> ('check_rule', 'female', ['sex'])",
+        "score": 0.9999999914850507,
+        "attention_score": 0.9999999914850507,
+        "frequency": 1.0,
+        "token_start": 135,
+        "token_end": 146,
+        "type": "program_trace",
+        "line_num": 6,
+        "context_before": [
+          "-> ('analyze_input', 'What is your age? ', ['age'], {'age': 'female'})",
+          "-> ('get_data', 'Female', ['gender'])"
+        ],
+        "context_after": [
+          "-> () -> ()",
+          "-> ('accumulate_score', 0)"
+        ]
+      },
+      "attention_summary": {
+        "total_attention_score": 0.9999999914850507,
+        "thought_attention_score": 0.9999999914850507,
+        "fact_attention_score": 0,
+        "num_attended_sentences": 0,
+        "has_matching_thought": true,
+        "num_related_facts": 0,
+        "max_attention_score": 0,
+        "token_positions": {
+          "start": 135,
+          "end": 146
+        }
+      }
+    },
+    {
+      "method_call_idx": 5,
+      "method_name": "unknown_method",
+      "method_call_text": "-> () -> ()",
+      "top_attended_sentences": [],
+      "related_facts": [],
+      "matching_thought": {
+        "text": "-> () -> ()",
+        "score": 1.0,
+        "attention_score": 1.0,
+        "frequency": 1.0,
+        "token_start": 146,
+        "token_end": 150,
+        "type": "program_trace",
+        "line_num": 7,
+        "context_before": [
+          "-> ('get_data', 'Female', ['gender'])",
+          "-> ('check_rule', 'female', ['sex'])"
+        ],
+        "context_after": [
+          "-> ('accumulate_score', 0)",
+          "-> ()"
+        ]
+      },
+      "attention_summary": {
+        "total_attention_score": 1.0,
+        "thought_attention_score": 1.0,
+        "fact_attention_score": 0,
+        "num_attended_sentences": 0,
+        "has_matching_thought": true,
+        "num_related_facts": 0,
+        "max_attention_score": 0,
+        "token_positions": {
+          "start": 146,
+          "end": 150
+        }
+      }
+    },
+    {
+      "method_call_idx": 6,
+      "method_name": "unknown_method",
+      "method_call_text": "-> ('accumulate_score', 0)",
+      "top_attended_sentences": [],
+      "related_facts": [],
+      "matching_thought": {
+        "text": "-> ('accumulate_score', 0)",
+        "score": 0.9999999850988388,
+        "attention_score": 0.9999999850988388,
+        "frequency": 1.0,
+        "token_start": 150,
+        "token_end": 158,
+        "type": "program_trace",
+        "line_num": 8,
+        "context_before": [
+          "-> ('check_rule', 'female', ['sex'])",
+          "-> () -> ()"
+        ],
+        "context_after": [
+          "-> ()",
+          "```"
+        ]
+      },
+      "attention_summary": {
+        "total_attention_score": 0.9999999850988388,
+        "thought_attention_score": 0.9999999850988388,
+        "fact_attention_score": 0,
+        "num_attended_sentences": 0,
+        "has_matching_thought": true,
+        "num_related_facts": 0,
+        "max_attention_score": 0,
+        "token_positions": {
+          "start": 150,
+          "end": 158
+        }
+      }
+    },
+    {
+      "method_call_idx": 7,
+      "method_name": "unknown_method",
+      "method_call_text": "-> ()",
+      "top_attended_sentences": [],
+      "related_facts": [],
+      "matching_thought": {
+        "text": "-> ()",
+        "score": 1.0000000085149492,
+        "attention_score": 1.0000000085149492,
+        "frequency": 1.0,
+        "token_start": 146,
+        "token_end": 148,
+        "type": "program_trace",
+        "line_num": 9,
+        "context_before": [
+          "-> () -> ()",
+          "-> ('accumulate_score', 0)"
+        ],
+        "context_after": [
+          "```"
+        ]
+      },
+      "attention_summary": {
+        "total_attention_score": 1.0000000085149492,
+        "thought_attention_score": 1.0000000085149492,
+        "fact_attention_score": 0,
+        "num_attended_sentences": 0,
+        "has_matching_thought": true,
+        "num_related_facts": 0,
+        "max_attention_score": 0,
+        "token_positions": {
+          "start": 146,
+          "end": 148
+        }
+      }
+    }
+  ]
+}

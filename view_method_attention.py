@@ -73,35 +73,44 @@ def display_method_attention(examples, show_detailed=False):
             else:
                 print(f"   📝 No significant attention found")
             
-            # Show related facts if detailed view
+            # Show related facts and thoughts
             if show_detailed:
                 related_facts = method_analysis.get('related_facts', [])
                 if related_facts:
                     print(f"   💡 Related facts:")
                     for j, fact in enumerate(related_facts[:2], 1):
-                        score = fact.get('score', 0)
+                        score = fact.get('attention_score', fact.get('score', 0))
                         text = fact.get('text', 'No text')
                         if len(text) > 60:
                             text = text[:57] + "..."
                         print(f"      {j}. [{score:.6f}] \"{text}\"")
                 
-                related_thoughts = method_analysis.get('related_thoughts', [])
-                if related_thoughts:
-                    print(f"   🧠 Related thoughts:")
-                    for j, thought in enumerate(related_thoughts[:2], 1):
-                        score = thought.get('score', 0)
-                        text = thought.get('text', 'No text')
-                        if len(text) > 60:
-                            text = text[:57] + "..."
-                        print(f"      {j}. [{score:.6f}] \"{text}\"")
+                matching_thought = method_analysis.get('matching_thought')
+                if matching_thought:
+                    print(f"   🧠 Program Trace:")
+                    score = matching_thought.get('attention_score', 0)
+                    text = matching_thought.get('text', 'No text')
+                    if len(text) > 60:
+                        text = text[:57] + "..."
+                    token_start = matching_thought.get('token_start', 0)
+                    token_end = matching_thought.get('token_end', 0)
+                    print(f"      [{score:.6f}] \"{text}\" (tokens: {token_start}-{token_end})")
             
-            # Show attention summary
+            # Show enhanced attention summary
             attention_summary = method_analysis.get('attention_summary', {})
             total_score = attention_summary.get('total_attention_score', 0)
+            thought_score = attention_summary.get('thought_attention_score', 0)
+            fact_score = attention_summary.get('fact_attention_score', 0)
             num_sentences = attention_summary.get('num_attended_sentences', 0)
+            has_thought = attention_summary.get('has_matching_thought', False)
+            num_facts = attention_summary.get('num_related_facts', 0)
             max_score = attention_summary.get('max_attention_score', 0)
             
-            print(f"   📊 Attention: total={total_score:.6f}, sentences={num_sentences}, max={max_score:.6f}")
+            print(f"   📊 Attention Summary:")
+            print(f"      • Total: {total_score:.6f}")
+            print(f"      • Thoughts: {thought_score:.6f} (has trace: {has_thought})")
+            print(f"      • Facts: {fact_score:.6f} ({num_facts} facts)")
+            print(f"      • Sentences: {num_sentences}, Max: {max_score:.6f}")
 
 def find_interesting_patterns(examples):
     """Find interesting attention patterns across examples"""
@@ -110,29 +119,55 @@ def find_interesting_patterns(examples):
     print(f"{'='*60}")
     
     # Collect method attention patterns
-    method_patterns = {}
+    method_patterns = {
+        'total_scores': {},
+        'thought_scores': {},
+        'fact_scores': {}
+    }
     
     for example in examples:
         for method_analysis in example.get('method_call_analysis', []):
             method_name = method_analysis.get('method_name', 'unknown')
             attention_summary = method_analysis.get('attention_summary', {})
             
-            if method_name not in method_patterns:
-                method_patterns[method_name] = []
+            # Initialize if not exists
+            for pattern_type in method_patterns:
+                if method_name not in method_patterns[pattern_type]:
+                    method_patterns[pattern_type][method_name] = []
             
-            method_patterns[method_name].append(attention_summary.get('total_attention_score', 0))
+            # Collect scores
+            method_patterns['total_scores'][method_name].append(
+                attention_summary.get('total_attention_score', 0)
+            )
+            method_patterns['thought_scores'][method_name].append(
+                attention_summary.get('thought_attention_score', 0)
+            )
+            method_patterns['fact_scores'][method_name].append(
+                attention_summary.get('fact_attention_score', 0)
+            )
     
     # Show patterns
-    for method_name, scores in method_patterns.items():
-        if len(scores) > 1:
-            avg_score = sum(scores) / len(scores)
-            max_score = max(scores)
-            min_score = min(scores)
-            
+    for method_name in method_patterns['total_scores']:
+        total_scores = method_patterns['total_scores'][method_name]
+        thought_scores = method_patterns['thought_scores'][method_name]
+        fact_scores = method_patterns['fact_scores'][method_name]
+        
+        if len(total_scores) > 1:
             print(f"🎯 {method_name}:")
-            print(f"   Average attention: {avg_score:.6f}")
-            print(f"   Range: {min_score:.6f} - {max_score:.6f}")
-            print(f"   Appearances: {len(scores)}")
+            print(f"   Total attention: avg={sum(total_scores)/len(total_scores):.6f}, "
+                  f"max={max(total_scores):.6f}, appearances={len(total_scores)}")
+            print(f"   Thought attention: avg={sum(thought_scores)/len(thought_scores):.6f}")
+            print(f"   Fact attention: avg={sum(fact_scores)/len(fact_scores):.6f}")
+            
+            # Show which is more important for this method
+            avg_thought = sum(thought_scores) / len(thought_scores)
+            avg_fact = sum(fact_scores) / len(fact_scores)
+            
+            if avg_thought > avg_fact:
+                print(f"   → More thought-focused (ratio: {avg_thought/avg_fact:.2f})")
+            else:
+                print(f"   → More fact-focused (ratio: {avg_fact/avg_thought:.2f})")
+            print()
 
 def main():
     parser = argparse.ArgumentParser(description="View method call attention patterns")

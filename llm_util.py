@@ -143,6 +143,7 @@ def llm_with_model(prompt, service='groq', model=None):
         torch_dtype=torch_dtype,
         device_map=device_map,
         low_cpu_mem_usage=True,
+        offload_buffers=True,  # Fix OOM issue for large models
         # Configure for attention extraction
         output_attentions=False,  # We'll enable this during inference
         attn_implementation="eager"  # Force eager attention for better extraction
@@ -352,7 +353,8 @@ def llm(prompt, service='groq', model=None):
         model,
         torch_dtype=torch.float16 if torch.cuda.is_available() else torch.float32,
         device_map="auto" if torch.cuda.is_available() else None,
-        low_cpu_mem_usage=True
+        low_cpu_mem_usage=True,
+        offload_buffers=True  # Fix OOM issue for large models
       )
       
       # Format prompt using chat template if available

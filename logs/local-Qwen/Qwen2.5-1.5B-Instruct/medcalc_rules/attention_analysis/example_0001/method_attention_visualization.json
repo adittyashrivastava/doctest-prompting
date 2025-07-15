@@ -1,0 +1,48 @@
+{
+  "summary": {
+    "total_method_calls": 1,
+    "input_context_length": 2776,
+    "total_facts": 10,
+    "total_thoughts": 1
+  },
+  "method_call_analysis": [
+    {
+      "method_call_idx": 0,
+      "method_name": "analyze_input",
+      "method_call_text": "-> TRACE calling analyze_input(...)",
+      "top_attended_sentences": [],
+      "related_facts": [],
+      "matching_thought": {
+        "text": "-> TRACE calling analyze_input(...)",
+        "score": 0.5044282774019632,
+        "attention_score": 0.5044282774019632,
+        "frequency": 1.0,
+        "token_start": 401,
+        "token_end": 407,
+        "type": "program_trace",
+        "line_num": 3,
+        "context_before": [
+          "medcalc_rules('Fifty-two-year-old Hispanic woman presented with sudden onset of dyspnea, cough, and orthopnea. She has a history  of COPD and is currently taking long-term oxygen therapy. Her vital signs include: pulse oximetry 95% on room air, temperature 37\u00b0C, respiratory rates 28/min, and blood pressure 140/85 mm Hg. Her cardiac rhythm is regular with a pulse rate of 84 beats per minute. Initial laboratory findings are: white blood cell count 11,080/uL, neutrophils 76%.')",
+          "-> TRACE: medcalcs called with argument: 'Fifty-five-year-old African American man was brought to the emergency department by ambulance because of acute chest pain. He complained of substernal chest discomfort lasting about one hour, associated with nausea, palpitations, and shortness-of-breath. His past medical record indicated that he has undergone several procedures for congenital heart defects over the last ten years, most recently a balloon valvotomy five days prior. Current medication includes lisinopril 25 mg daily, esomeprazole 2 Omg twice daily, digoxin 0.25 mcg daily, calcium channel blocker 50 mg once daily, metformin 1 gm daily, and bisoprolol 5 mg twice daily. On presentation, there was no focal neurological deficit noted, but there was diffuse petechiae and ecchymosis on both lower extremities. Auscultation revealed fine crackles bilaterally in the lower lung fields. His arterial blood gases showed pH 7.28, PaCO2 63 mm H2O, and PaO2 46 mm H1g. He received endotracheal intubation and mechanical ventilation. The imaging studies demonstrated a large area of consolidation in the upper lobes bilater..."
+        ],
+        "context_after": [
+          "TRACE: analyzing input string",
+          "TRACE: extract question: What is the Patient's CHADS2 Score?"
+        ]
+      },
+      "attention_summary": {
+        "total_attention_score": 0.5044282774019632,
+        "thought_attention_score": 0.5044282774019632,
+        "fact_attention_score": 0,
+        "num_attended_sentences": 0,
+        "has_matching_thought": true,
+        "num_related_facts": 0,
+        "max_attention_score": 0,
+        "token_positions": {
+          "start": 401,
+          "end": 407
+        }
+      }
+    }
+  ]
+}

@@ -69,14 +69,15 @@ def print_method_attention_summary(method_data):
                     score = fact.get('score', 0)
                     print(f"         {j}. Score: {score:.6f} - \"{fact_text}\"")
             
-            # Show related thoughts
-            related_thoughts = method_analysis['related_thoughts']
-            if related_thoughts:
-                print(f"      🧠 Related Thoughts:")
-                for j, thought in enumerate(related_thoughts[:2], 1):
-                    thought_text = thought.get('text', 'No text')[:50] + "..." if len(thought.get('text', '')) > 50 else thought.get('text', 'No text')
-                    score = thought.get('score', 0)
-                    print(f"         {j}. Score: {score:.6f} - \"{thought_text}\"")
+            # Show matching thought (program trace)
+            matching_thought = method_analysis.get('matching_thought')
+            if matching_thought:
+                print(f"      🧠 Program Trace:")
+                thought_text = matching_thought.get('text', 'No text')[:50] + "..." if len(matching_thought.get('text', '')) > 50 else matching_thought.get('text', 'No text')
+                score = matching_thought.get('attention_score', 0)
+                token_start = matching_thought.get('token_start', 0)
+                token_end = matching_thought.get('token_end', 0)
+                print(f"         Score: {score:.6f} - \"{thought_text}\" (tokens: {token_start}-{token_end})")
             
             # Show attention summary
             attention_summary = method_analysis['attention_summary']
@@ -210,11 +211,15 @@ def generate_method_attention_report(method_data, output_file):
                     f.write(f"  {j}. Score: {fact.get('score', 0):.6f}\n")
                     f.write(f"     Text: {fact.get('text', 'No text')}\n")
                 
-                # Related thoughts
-                f.write(f"Related Thoughts:\n")
-                for j, thought in enumerate(method_analysis['related_thoughts'][:3], 1):
-                    f.write(f"  {j}. Score: {thought.get('score', 0):.6f}\n")
-                    f.write(f"     Text: {thought.get('text', 'No text')}\n")
+                # Matching thought (program trace)
+                matching_thought = method_analysis.get('matching_thought')
+                if matching_thought:
+                    f.write(f"Program Trace:\n")
+                    f.write(f"  Score: {matching_thought.get('attention_score', 0):.6f}\n")
+                    f.write(f"  Text: {matching_thought.get('text', 'No text')}\n")
+                    f.write(f"  Token positions: {matching_thought.get('token_start', 0)}-{matching_thought.get('token_end', 0)}\n")
+                else:
+                    f.write(f"Program Trace: None\n")
                 
                 f.write(f"Attention Summary:\n")
                 attention_summary = method_analysis['attention_summary']

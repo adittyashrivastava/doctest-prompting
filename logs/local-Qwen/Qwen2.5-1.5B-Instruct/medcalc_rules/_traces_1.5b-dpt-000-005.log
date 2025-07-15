@@ -1,0 +1,329 @@
+Namespace(config='conf.d/medcalc_traces_1.5b.conf', config1=None, config2=None, config3=None, config4=None, task='medcalc_rules', variant='_traces_1.5b', example_dir='medcalc/examples/train', test_example_dir=None, partial_program_dir='medcalc/mocks', lo=0, hi=5, log_dir='logs', log_stem='', append_to_log=False, json_output=False, service='local', model='Qwen/Qwen2.5-1.5B-Instruct', parallel=1, delay=None, template_file='templates/predict_output_with_traces.txt', baseline_template_format=False, cot_prompt_dir=None, CoT=False, test_set=False, disable_excess_len=False, disable_dist_to_goal=False, disable_optimal_actions=False, disable_all_optimal=False, enable_attention_analysis=True)
+============================== prompt template ==============================
+Consider the program fragment below.  This program fragament is
+incomplete, with key parts of the implementation hidden, by
+replacing them with "..." markers.
+
+PROGRAM:
+```python
+{partial_program}
+```
+
+QUESTION: Predict what the output of the program above will be, given
+the input shown below.  You must simulate the execution trace showing
+ONLY the input and output of each function call.
+
+For each function call, show ONLY:
+1. The function name and arguments being called
+2. The return value from that function
+
+Show the execution in this format:
+```
+function_name(arg1, arg2, ...) -> return_value
+```
+
+Do NOT show:
+- Intermediate computations or variable assignments
+- Implementation details or step-by-step calculations
+- Internal processing steps
+
+Focus ONLY on the input-output mapping of each function call.
+Then show any final outputs or print statements.
+
+Respond with the streamlined trace showing only function calls and their return values.
+
+```
+>>> {task_name}({input_str})
+``` 
+============================== template with program ==============================
+Consider the program fragment below.  This program fragament is
+incomplete, with key parts of the implementation hidden, by
+replacing them with "..." markers.
+
+PROGRAM:
+```python
+#!/usr/bin/env python3
+
+# Mock file for medcalc_rules with traces using 1.5B model (GPU memory friendly)
+# This file provides the detailed execution traces for the medcalc_rules function
+
+import sys
+import os
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..'))
+import mock
+
+# Input examples with complete medical case data
+INPUT1 = """We present an 85-year-old male with a past medical history of obesity, type two diabetes, atrial fibrillation, diastolic heart failure, chronic kidney disease (CKD) stage three, and coronary artery disease. The patient had a history of non-ST elevation myocardial infarction (NSTEMI) four weeks before the current admission, requiring a drug-eluting stent (DES) to the left anterior descending (LAD) artery. He also had a history of significant gastrointestinal bleed in the past month, for which apixaban was stopped. The patient was admitted to our hospital with worsening shortness of breath and found to have bilateral pleural effusions, right greater than left. He was afebrile and did not have any symptoms of pneumonia. The patient was started on IV furosemide and had an initial diagnostic, small-bore, ultrasound-guided tap from the right pleural effusion that was uneventful and yielded straw-colored 1000 mL of fluid. The pleural fluid analysis was mildly exudative based on Light's lactate dehydrogenase (LDH) criteria, but cytology was negative as well as Gram stain, bacterial, and fungal cultures. Autoimmune screening, including anti-nuclear antibody (ANA) and extractable nuclear antigen (ENA), was negative. In anticipation of a potential repeat pleural tap, the patient's aspirin was stopped. One week later, the patient was getting more short of breath, and chest X-ray revealed recurrent bilateral effusions worse on the right side. Echocardiogram showed features of diastolic dysfunction, with a left ventricular ejection fraction of 55% and no significant valvular disease. Arterial blood gas (ABG) was suggestive of hypercapnic respiratory failure; thus, he was started on non-invasive ventilation (NIV) and shifted to the ICU. He underwent a second, uneventful pleural tap on the right side, that yielded 1500 mL of straw-colored fluid. Analysis again showed an exudate with negative bacterial, fungal cultures, and cytology. CT scan of the chest showed basal atelectasis with significant pleural effusions, no lung masses, or lymph nodes enlargement (Figure ). The patient was transferred to the step-down unit, completed a 10-day course of antibiotics for possible community-acquired pneumonia, although sputum and blood cultures remained negative. One week later, the patient again clinically deteriorated and was admitted to ICU with hypercapnic respiratory failure and worsening pleural effusions. He initially required continuous bilevel positive airway pressure (BiPAP) ventilation until he stabilized. He had a third, right-sided thoracocentesis under ultrasound-guidance from a posterior approach, atraumatic, and yielded 1500 mL of clear thin yellow fluid. The patient had a follow-up chest X-ray 20 min later that showed improvement in the previously seen right-sided pleural effusion and no pneumothorax. However, two hours later, the patient was suddenly getting sweaty, tachypneic, lethargic while on BiPAP. His blood pressure (BP) was reading 60/40 mmHg, heart rate was dropping to 40 bpm, and he was less responsive. There was minimal air entry on auscultating the right chest with dullness to percussion, and no signs of any pain or tenderness. ABG showed hypoxia and a stable PCO2 level. Immediate chest X-ray showed a new 3.5 cm hemothorax on the right side (Figure ).
+He was given 1 L of IV fluids, norepinephrine for BP support, and an urgent right-sided IC surgical drain was inserted, which immediately drained 1.7 L of blood.
+The patient had a central line insertion, and three units of packed red blood cells (PRBC) transfused. Repeat hemoglobin after the second transfused unit was still below baseline at 6 g/L (from 8 g/L). He clinically started to improve after the hemothorax drainage, was more responsive, and pressor requirement was decreased. Overnight he received two units of platelets, and clopidogrel was stopped. The next day, the IC surgical drain still had around 800 mL output of serosanguinous fluid, but he was clinically back to his baseline as before this event. CT scan of the chest with IV contrast did not show any active bleeding into the pleural space but showed complex right-sided effusion. The IR team performed IC arteries angiogram to diagnose the site of the injured vessel. That was done within 24 h of the event and was negative. The cardiothoracic surgery team was consulted for possible video-assisted thoracoscopic surgery (VATS) procedure in the right pleural space. The patient continued to improve, and after a few days we removed the surgical drain, and transferred him out to the step-down unit with cardiothoracic surgical team following up on his care.
+
+What is the patient's CHA2DS2-VASc Score?
+
+Calculate CHA2DS2-VASc Score for Atrial Fibrillation Stroke Risk by summing the results of the following rules:
+Age: < 65 years = 0 points, 65-74 years = +1 point, ≥ 75 years = +2 points
+Sex: Female = +1 point, Male = 0 points
+Congestive Heart Failure (CHF) history: No = 0 points, Yes = +1 point
+Hypertension history: No = 0 points, Yes = +1 point
+Stroke, Transient Ischemic Attack (TIA), or Thromboembolism history: No = 0 points, Yes = +2 points
+Vascular disease history (previous myocardial infarction, peripheral artery disease, or aortic plaque): No = 0 points, Yes = +1 point
+Diabetes history: No = 0 points, Yes = +1 point"""
+
+QUES1 = "What is the patient's CHA2DS2-VASc Score?"
+RULES1 = [
+"Age: < 65 years = 0 points, 65-74 years = +1 point, ≥ 75 years = +2 points",
+"Sex: Female = +1 point, Male = 0 points",
+"Congestive Heart Failure (CHF) history: No = 0 points, Yes = +1 point",
+"Hypertension history: No = 0 points, Yes = +1 point",
+"Stroke, Transient Ischemic Attack (TIA), or Thromboembolism history: No = 0 points, Yes = +2 points",
+"Vascular disease history (previous myocardial infarction, peripheral artery disease, or aortic plaque): No = 0 points, Yes = +1 point",
+"Diabetes history: No = 0 points, Yes = +1 point"
+]
+DATAPOINTS1 = [
+"85-year-old male",
+"male",
+"diastolic heart failure",
+"No hypertension mentioned",
+"No stroke/TIA mentioned",
+"non-ST elevation myocardial infarction (NSTEMI)",
+"type two diabetes"
+..................................................
+130 lines skipped
+..................................................
+
+for i, rule in enumerate(rules):
+print(f"TRACE: Processing rule {i+1}/{len(rules)}: {rule}")
+
+print(f"TRACE: Calling get_data for rule...")
+relevant_data = get_data(rule, datapoints)
+print(f"TRACE: get_data returned: {relevant_data}")
+
+print(f"TRACE: Calling check_rule...")
+to_add = check_rule(rule, relevant_data)
+print(f"TRACE: check_rule returned: {to_add}")
+
+print(f"TRACE: Calling accumulate_score with acc={acc}, to_add={to_add}")
+acc = accumulate_score(acc, to_add)
+print(f"TRACE: accumulate_score returned: {acc}")
+
+print(f"TRACE: Final calculation complete")
+print(f"Final answer: {acc}")
+return acc
+
+if __name__ == '__main__':
+mock.main(locals())
+```
+
+QUESTION: Predict what the output of the program above will be, given
+the input shown below.  You must simulate the execution trace showing
+ONLY the input and output of each function call.
+
+For each function call, show ONLY:
+1. The function name and arguments being called
+2. The return value from that function
+
+Show the execution in this format:
+```
+function_name(arg1, arg2, ...) -> return_value
+```
+
+Do NOT show:
+- Intermediate computations or variable assignments
+- Implementation details or step-by-step calculations
+- Internal processing steps
+
+Focus ONLY on the input-output mapping of each function call.
+Then show any final outputs or print statements.
+
+Respond with the streamlined trace showing only function calls and their return values.
+
+```
+>>> medcalc_rules({input_str})
+```
+prompting local:Qwen/Qwen2.5-1.5B-Instruct
+------------------------------ input ------------------------------
+We present an 85-year-old male with a past medical history of obesity, type two diabetes, atrial fibrillation, diastolic heart failure, chronic kidney disease (CKD) stage three, and coronary artery disease. The patient had a history of non-ST elevation myocardial infarction (NSTEMI) four weeks before the current admission, requiring a drug-eluting stent (DES) to the left anterior descending (LAD) artery. He also had a history of significant gastrointestinal bleed in the past month, for which apixaban was stopped. The patient was admitted to our hospital with worsening shortness of breath and found to have bilateral pleural effusions, right greater than left. He was afebrile and did not have any symptoms of pneumonia. The patient was started on IV furosemide and had an initial diagnostic, small-bore, ultrasound-guided tap from the right pleural effusion that was uneventful and yielded straw-colored 1000 mL of fluid. The pleural fluid analysis was mildly exudative based on Light’s lactate dehydrogenase (LDH) criteria, but cytology was negative as well as Gram stain, bacterial, and fungal cultures. Autoimmune screening, including anti-nuclear antibody (ANA) and extractable nuclear antigen (ENA), was negative. In anticipation of a potential repeat pleural tap, the patient's aspirin was stopped. One week later, the patient was getting more short of breath, and chest X-ray revealed recurrent bilateral effusions worse on the right side. Echocardiogram showed features of diastolic dysfunction, with a left ventricular ejection fraction of 55% and no significant valvular disease. Arterial blood gas (ABG) was suggestive of hypercapnic respiratory failure; thus, he was started on non-invasive ventilation (NIV) and shifted to the ICU. He underwent a second, uneventful pleural tap on the right side, that yielded 1500 mL of straw-colored fluid. Analysis again showed an exudate with negative bacterial, fungal cultures, and cytology. CT scan of the chest showed basal atelectasis with significant pleural effusions, no lung masses, or lymph nodes enlargement (Figure ). The patient was transferred to the step-down unit, completed a 10-day course of antibiotics for possible community-acquired pneumonia, although sputum and blood cultures remained negative. One week later, the patient again clinically deteriorated and was admitted to ICU with hypercapnic respiratory failure and worsening pleural effusions. He initially required continuous bilevel positive airway pressure (BiPAP) ventilation until he stabilized. He had a third, right-sided thoracocentesis under ultrasound-guidance from a posterior approach, atraumatic, and yielded 1500 mL of clear thin yellow fluid. The patient had a follow-up chest X-ray 20 min later that showed improvement in the previously seen right-sided pleural effusion and no pneumothorax. However, two hours later, the patient was suddenly getting sweaty, tachypneic, lethargic while on BiPAP. His blood pressure (BP) was reading 60/40 mmHg, heart rate was dropping to 40 bpm, and he was less responsive. There was minimal air entry on auscultating the right chest with dullness to percussion, and no signs of any pain or tenderness. ABG showed hypoxia and a stable PCO2 level. Immediate chest X-ray showed a new 3.5 cm hemothorax on the right side (Figure ).
+He was given 1 L of IV fluids, norepinephrine for BP support, and an urgent right-sided IC surgical drain was inserted, which immediately drained 1.7 L of blood.
+The patient had a central line insertion, and three units of packed red blood cells (PRBC) transfused. Repeat hemoglobin after the second transfused unit was still below baseline at 6 g/L (from 8 g/L). He clinically started to improve after the hemothorax drainage, was more responsive, and pressor requirement was decreased. Overnight he received two units of platelets, and clopidogrel was stopped. The next day, the IC surgical drain still had around 800 mL output of serosanguinous fluid, but he was clinically back to his baseline as before this event. CT scan of the chest with IV contrast did not show any active bleeding into the pleural space but showed complex right-sided effusion. The IR team performed IC arteries angiogram to diagnose the site of the injured vessel. That was done within 24 h of the event and was negative. The cardiothoracic surgery team was consulted for possible video-assisted thoracoscopic surgery (VATS) procedure in the right pleural space. The patient continued to improve, and after a few days we removed the surgical drain, and transferred him out to the step-down unit with cardiothoracic surgical team following up on his care.
+
+What is the patient's CHA2DS2-VASc Score?
+
+Calculate CHA2DS2-VASc Score for Atrial Fibrillation Stroke Risk by summing the results of the following rules:
+    Age: < 65 years = 0 points, 65-74 years = +1 point, ≥ 75 years = +2 points
+    Sex: Female = +1 point, Male = 0 points
+    Congestive Heart Failure (CHF) history: No = 0 points, Yes = +1 point
+    Hypertension history: No = 0 points, Yes = +1 point
+    Stroke, Transient Ischemic Attack (TIA), or Thromboembolism history: No = 0 points, Yes = +2 points
+    Vascular disease history (previous myocardial infarction, peripheral artery disease, or aortic plaque): No = 0 points, Yes = +1 point
+    Diabetes history: No = 0 points, Yes = +1 point
+------------------------------ output ------------------------------
+```
+medcalc_rules('We present...') -> None
+medcalc_calculate_cha2ds2vasc_score('CHA2DS...')
+medcalc_rule_0('Age: ...', ['< 6...', '65-', '+1...', '> 6...' => None])
+medcalc_check_rule_1('Male', ['Female'] => 1)
+medcalc_analyze_input('We p...')
+medcal...
+```
+🧠 Starting attention analysis for example 0...
+✅ Attention analysis complete:
+   📊 Facts extracted: 10
+   🧠 Thoughts extracted: 1
+   🎯 Method calls found: 1
+🔍 Top attention scores (facts):
+   1. Score: 0.00055901 - The patient was admitted to our hospital with worsening shor...
+   2. Score: 0.00049828 - The patient was started on IV furosemide and had an initial ...
+   3. Score: 0.00049188 - The patient had a history of non-ST elevation myocardial inf...
+🔍 Top attention scores (thoughts):
+   1. Score: 0.69011309 - medcalc_rules('We present...') -> None...
+------------------------------ correct=0 total=1 parse_failures=1 prediction='**parse failed**' y='6' is_correct=False ------------------------------
+prompting local:Qwen/Qwen2.5-1.5B-Instruct
+------------------------------ input ------------------------------
+Fifty-one-year-old Caucasian female was admitted to our hospital with complaints of fever and chills for three days and low back pain for two days. Past medical history included recent spinal abscess followed by implantation of spinal nerve stimulator, mitral valve prolapse and GERD. Her medications included omeprazole and acetaminophen as needed for chronic back pain. On physical examination, patient appeared sick. Vital signs: BP 80/50 mmHg, Pulse 120/min, respiratory rate 24/min. No skin lesions; neck was supple. Jugular veins were distended up to angle of the ear with prominent ‘a’ and ‘v’ waves. Her P2 was loud; No murmurs or gallop; lung fields were clear with normal vesicular breath sounds. Abdomen was soft and non tender. She had increased warmth and tenderness at the level of D10 - D12 vertebrae. Neurological examination was normal. Her labs revealed WBC count of 15,000 with bandaemia of 20%, lactic acid of 45 mgs%. Her EKG revealed sinus tachycardia. Serial troponin levels were normal. She was treated with broad spectrum antibiotics, intravenous fluids and dopamine as infusion. Her blood culture was positive for Staphylococcus aureus. Her echocardiogram revealed small left ventricle with ejection fraction of 65%, flattened interventricular septum, normal left atrium (LA), bowing of the interatrial septum to the LA, right atrial (RA) and RV enlargement with severe hypokinesia of RV (). Estimated RV systolic pressure was 75 mmHg. She also had TEE to look for any vegetation. There was no vegetation. Her echo examination 8 months ago was normal. High resolution Chest computerized tomography (CT) revealed normal lungs and CT angiogram revealed no evidence of pulmonary embolism. The patient underwent left and right heart catheterization10 days later. Coronary arteries and LV function were normal. RA pressure 6 mmHg, RV, 36/11 mmHg, pulmonary artery 36/11 mmHg, mean 24 mmHg, indicating significant improvement of pulmonary hypertension. Echo on the next day revealed markedly improved RA and RV dilatation (). Patient had a full recovery on discharge.
+
+What is the patient's score of Wells' criteria for Pulmonary Embolism?
+
+Calculate Wells' Criteria for Pulmonary Embolism by summing the results of the following rules:
+    Clinical signs and symptoms of DVT: No = 0 points, Yes = +3 points
+    PE is #1 diagnosis OR equally likely: No = 0 points, Yes = +3 points
+    Heart rate > 100: No = 0 points, Yes = +1.5 points
+    Immobilization at least 3 days OR surgery in the previous 4 weeks: No = 0 points, Yes = +1.5 points
+    Previous, objectively diagnosed PE or DVT: No = 0 points, Yes = +1.5 points
+    Hemoptysis: No = 0 points, Yes = +1 point
+    Malignancy with treatment within 6 months or palliative: No = 0 points, Yes = +1 point
+------------------------------ output ------------------------------
+```
+medcalc_rules('Fifty-two-year-old Hispanic woman presented with sudden onset of dyspnea, cough, and orthopnea. She has a history  of COPD and is currently taking long-term oxygen therapy. Her vital signs include: pulse oximetry 95% on room air, temperature 37°C, respiratory rates 28/min, and blood pressure 140/85 mm Hg. Her cardiac rhythm is regular with a pulse rate of 84 beats per minute. Initial laboratory findings are: white blood cell count 11,080/uL, neutrophils 76%.')
+-> TRACE: medcalcs called with argument: 'Fifty-five-year-old African American man was brought to the emergency department by ambulance because of acute chest pain. He complained of substernal chest discomfort lasting about one hour, associated with nausea, palpitations, and shortness-of-breath. His past medical record indicated that he has undergone several procedures for congenital heart defects over the last ten years, most recently a balloon valvotomy five days prior. Current medication includes lisinopril 25 mg daily, esomeprazole 2 Omg twice daily, digoxin 0.25 mcg daily, calcium channel blocker 50 mg once daily, metformin 1 gm daily, and bisoprolol 5 mg twice daily. On presentation, there was no focal neurological deficit noted, but there was diffuse petechiae and ecchymosis on both lower extremities. Auscultation revealed fine crackles bilaterally in the lower lung fields. His arterial blood gases showed pH 7.28, PaCO2 63 mm H2O, and PaO2 46 mm H1g. He received endotracheal intubation and mechanical ventilation. The imaging studies demonstrated a large area of consolidation in the upper lobes bilater...
+-> TRACE calling analyze_input(...)
+TRACE: analyzing input string
+TRACE: extract question: What is the Patient's CHADS2 Score?
+TRACE: total rules: 7
+TRACE :total dataproints: 9
+-> TRACE returning question='What is Patient\'s CHADS 2 Score?', total rules=7, total datapoints=9
+TRACE calling get_data()
+TRACE: Getting Data: rule=CHA2DS_2_VASc_Score rule_index=0 datapoints=['55-year old African American', 'Male', 'COPD', 'History of congenital cardiaca defects']
+TRACE: Retrieving data... No match
+-> Returning data=None
+TRACE returning to caller
+TRACE assigning result=0
+TRACE return value = 6
+-> Return value =6
+````
+🧠 Starting attention analysis for example 1...
+✅ Attention analysis complete:
+   📊 Facts extracted: 10
+   🧠 Thoughts extracted: 1
+   🎯 Method calls found: 1
+🔍 Top attention scores (facts):
+   1. Score: 0.00077188 - Calculate Wells' Criteria for Pulmonary Embolism by summing ...
+   2. Score: 0.00067359 - Past medical history included recent spinal abscess followed...
+   3. Score: 0.00064512 - On physical examination, patient appeared sick...
+🔍 Top attention scores (thoughts):
+   1. Score: 0.50442828 - -> TRACE calling analyze_input(...)...
+------------------------------ correct=0 total=2 parse_failures=2 prediction='**parse failed**' y='4.5' is_correct=False ------------------------------
+prompting local:Qwen/Qwen2.5-1.5B-Instruct
+------------------------------ input ------------------------------
+A 47 year-old Asian female was transferred to the authors’ institution from another hospital with a subacute history of shortness of breath, bilateral lower extremity swelling, pleuritic chest pain, cyanosis, episodic loss of consciousness and hypotension. Two years prior to admission she had underwent an abdominal hysterectomy for uterine fibroids, which were complicated by symptomatic anemia from associated menorrhagia. Two months prior to admission, she sustained a brief loss of consciousness, then two weeks before admission she developed gradual onset of pleuritic chest pain and lower extremity edema. One day prior to admission, she complained of some shortness of breath and a non-productive cough. There were no known risk factors or family history of thromboembolism. She had no other significant past medical, surgical or obstetric history. She was a non-smoker, non-alcoholic and denied use of illicit substances. She had no history of drug allergy.
+On the day of admission, she developed dizziness at home and fell to the ground. Her family helped her to bed wherein she had a witnessed four-minute period of loss of consciousness. She was taken by ambulance to an outside hospital where she appeared cyanotic and hypotensive with a weak pulse, was immediately sedated, endotracheally intubated and started on intravenous norepinephrine. Physical examination, prior to intubation, revealed a dusky blue skin suggestive of cyanosis. She had a tachycardia with pulse rate of 110 per minute, hypotension with systolic blood pressure of 70 mmHg and tachypnea with respiratory rate of 34 breaths per minute. There was teeth clenching and hypersalivation. An electrocardiogram and serum troponin levels were normal, her initial arterial blood pH was 7.25 with a PCO2 of 2.93 kPa (22 mmHg) and a PO2 of 67.46 kPa (506 mmHg) on an inspired fraction of oxygen of 1.0. The leukocyte count was 12.9 x 103 /μL with 81% neutrophils and 16.2% lymphocytes. Other hematologic and coagulation parameters were within the normal range. The serum bicarbonate was 14.6 mmol/L while other serum chemistries, renal and liver function tests were unremarkable. A computed tomography (CT) scan of the head was normal. A venous duplex ultrasound scan showed the presence of a right lower extremity proximal deep venous thrombosis (DVT) extending to the groin and she was commenced on intravenous standard unfractionated heparin.
+Later that day the patient was transferred to our hospital where a pulmonary embolism protocol computed tomography (CT) scan of the thorax and pelvis (, , ) and a repeat transthoracic echocardiogram were performed (). Because of the positive venous duplex ultrasound finding of a DVT, a D-Dimer was not requested.
+The patient was seen by a pulmonologist who made a differential diagnosis of an intracardiac tumor thrombus versus a thromboembolism-in-transit, and advised a surgical opinion. Because of delays in obtaining a concensus on appropriate surgical management from the cardiothoracic, vascular and gynecologic surgeons together with the need for further imaging studies, ongoing hypotension, presumed transient complete occlusion of the tricuspid valve and a confirmed deep venous thrombosis, the patient was initially thrombolysed intravenously with 100 mg of tissue plasminogen activator to treat any life-threatening component of venous thrombosis. Following this, the patient’s hemodynamic indices improved only slightly. The next day, the patient underwent a joint procedure with single stage median sternotomy and exploratory laparotomy, extraction of an inferior vena cava, common iliac vein and right atrial tumor thrombus, and included bilateral salpingo-oophorectomy. The histopathology of the tumor was consistent with leiomyoma ().
+Post-operative transoesophageal echocardiogram and CT showed complete removal of the intravascular lesion with minimal residual pelvic mass. There were no complications and the patient was subsequently taken off pressors, extubated and discharged to follow-up on oral anticoagulation.
+
+What is the patient's score of Wells' criteria for Pulmonary Embolism?
+
+Calculate Wells' Criteria for Pulmonary Embolism by summing the results of the following rules:
+    Clinical signs and symptoms of DVT: No = 0 points, Yes = +3 points
+    PE is #1 diagnosis OR equally likely: No = 0 points, Yes = +3 points
+    Heart rate > 100: No = 0 points, Yes = +1.5 points
+    Immobilization at least 3 days OR surgery in the previous 4 weeks: No = 0 points, Yes = +1.5 points
+    Previous, objectively diagnosed PE or DVT: No = 0 points, Yes = +1.5 points
+    Hemoptysis: No = 0 points, Yes = +1 point
+    Malignancy with treatment within 6 months or palliative: No = 0 points, Yes = +1 point
+------------------------------ output ------------------------------
+```
+medcalc_rules('A 49-year-old Asian woman was transferred from another facility with a history consistent with acute exacerbation of chronic obstructive pulmonary disease (COPD) and underlying cardiopulmonary conditions.')
+```
+🧠 Starting attention analysis for example 2...
+✅ Attention analysis complete:
+   📊 Facts extracted: 10
+   🧠 Thoughts extracted: 0
+   🎯 Method calls found: 0
+🔍 Top attention scores (facts):
+   1. Score: 0.00064008 - Two years prior to admission she had underwent an abdominal ...
+   2. Score: 0.00056278 - Calculate Wells' Criteria for Pulmonary Embolism by summing ...
+   3. Score: 0.00055226 - 25 with a PCO2 of 2...
+------------------------------ correct=0 total=3 parse_failures=3 prediction='**parse failed**' y='9.0' is_correct=False ------------------------------
+prompting local:Qwen/Qwen2.5-1.5B-Instruct
+------------------------------ input ------------------------------
+A 40-year-old male called the emergency medical services immediately after experiencing an unrelenting headache, nausea, and chest pain, that evolved shortly after consuming rhino and completing intercourse. He denied having a medical history, experiencing anginal symptoms in the past and denied using any medications, including herbal supplements. He denied a tobacco or alcohol history but endorsed to using alprazolam and various sexual enhancers for years. He stated that he began using sildenafil years prior despite not displaying any signs or symptoms of sexual dysfunction and using it solely for recreational purposes. Eventually, he switched to tadalafil when the effects began wearing off. On the insistence of his friends and looking for cost-effective methods, he switched to rhino in 2016, stating that the potency was producing satisfying results with lower costs compared to PDE5i. He would acquire rhino for $8 from multiple gas stations and endorsed being a chronic user of rhino, usually consuming one 950 mg pill before the intended use, but this particular time he took three pills. During his years of sexual enhancer use, he did endorse to frequently experiencing similar headaches in the past after use, although it was never to this degree, nor was it ever un-interrupting. A pre-hospital electrocardiograph (ECG) revealed an inferior ST-segment elevation myocardial infarction (STEMI) and complete heart block manifested by bradycardia (Figure ).
+His vitals while at the emergency department were blood pressure of 111/63 mm Hg, heart rate of 48 beats per minute, respiratory rate of 22, oxygen saturation of 99% on room air, and Glasgow Coma Scale of 15. On physical examination, he was diaphoretic with cold extremities and had precordial chest pain and brisk pulses throughout. A repeat ECG in the emergency department reported similar findings of inferior ST-segment elevations in leads II, III, aVF, V5, and V6 and ST-segment depressions in leads I, aVL, and V2 while high-sensitivity troponin I was 163.41 ng/mL. Notable labs was a white blood cell count of 14.3 K/UL without left shift, total cholesterol 184 mg/dL, triglycerides 283 mg/dL, high density lipoprotein (HDL) 26 mg/dL, low density lipoprotein (LDL) 101 mg/dL, mild transaminitis with aspartate aminotransferase at 307 U/L, and alanine aminotransferase at 117 U/L. Urine toxicology screen came back positive for benzodiazepines. As per protocol, the cardiac catheterization lab was activated, and the patient received fentanyl 50 mcg and a loading dose of aspirin 325 mg before the procedure. Coronary angiography revealed 100% occlusion with thrombolysis in myocardial infarction (TIMI) grade flow of 0 (Figure ). He underwent percutaneous coronary intervention (PCI) with a drug-eluting stent (DES). Post dilation demonstrated 0% stenosis with a TIMI grade flow of 3 (Figure ). He was simultaneously transvenously paced after demonstrating complete heart block morphology. After the procedure, he was started on dual antiplatelet therapy with aspirin 81 mg and ticagrelor 90 mg twice daily and was given analgesia. His sheath was removed shortly after and he recovered without any complication. An ECG completed post procedure revealed disappearance of ST changes and the presence of a Q wave consistent with a previous MI (Figure ). A reconstructed diagram of the coronaries can be seen below (Figure ).
+
+What is the patient's HEART score?
+
+Calculate HEART Score for Major Cardiac Events by summing the results of the following rules:
+    History: Slightly suspicious = 0 points, Moderately suspicious = +1 point, Highly suspicious = +2 points
+    EKG: Normal = 0 points, Non-specific repolarization disturbance = +1 point, Significant ST deviation = +2 points
+    Age: <45 years = 0 points, 45-64 years = +1 point, ≥65 years = +2 points
+    Risk factors (HTN, hypercholesterolemia, DM, obesity (BMI >30 kg/m²), smoking (current or cessation within 3 months), positive family history of cardiovascular disease before age 65, atherosclerotic disease such as prior MI, PCI/CABG, CVA/TIA, or peripheral arterial disease): No known risk factors = 0 points, 1-2 risk factors = +1 point, ≥3 risk factors or history of atherosclerotic disease = +2 points
+    Initial troponin level: ≤normal limit = 0 points, 1–3× normal limit = +1 point, >3× normal limit = +2 points
+------------------------------ output ------------------------------
+```
+medcalc_rules('This patient has presented with an unexplained inferior STEMI and nonspecific ST segment elevation on ECG.')
+-> ("HEART Score", ["History: Slight suspicion", "EKG: Non-specific ST-T change"], [])
+-> medcalc_scores()
+-> ("trace: Analyzing input...")  
+-> med_calculation('HEART SCORE', ['history_suspicion', 'ekg_st_change'], [], []) 
+-> ("Final answer:", 1)
+```
+🧠 Starting attention analysis for example 3...
+✅ Attention analysis complete:
+   📊 Facts extracted: 10
+   🧠 Thoughts extracted: 5
+   🎯 Method calls found: 5
+🔍 Top attention scores (facts):
+   1. Score: 0.00076190 - He denied having a medical history, experiencing anginal sym...
+   2. Score: 0.00063555 - He stated that he began using sildenafil years prior despite...
+   3. Score: 0.00062389 - Eventually, he switched to tadalafil when the effects began ...
+🔍 Top attention scores (thoughts):
+   1. Score: 0.56462928 - -> ("Final answer:", 1)...
+   2. Score: 0.53390938 - -> ("HEART Score", ["History: Slight suspicion", "EKG: Non-s...
+   3. Score: 0.49231161 - -> ("trace: Analyzing input...")...
+------------------------------ correct=0 total=4 parse_failures=4 prediction='**parse failed**' y='5' is_correct=False ------------------------------
+prompting local:Qwen/Qwen2.5-1.5B-Instruct
+------------------------------ input ------------------------------
+A 30-year-old Chinese female, G3P2002 at 26 weeks and 2 days gestation, presented to the Emergency Department complaining of shortness of breath and a dry cough that started one week prior. She had no sick contacts or recent travel history and denied obstetrical complaints. Her history was significant for chronic hepatitis B and two prior vaginal deliveries. She appeared critically ill, with vitals as follows: febrile to 39.3°C, tachycardic to 128 beats per minute, tachypneic with a respiratory rate of 22 breaths per minute, hypotensive to 88/55 mmHg, and her oxygen saturation was 93% on room air. Pertinent laboratory findings included WBC 7.0 K/μL, an initial neutrophil–lymphocyte ratio of 7.25, hemoglobin/hematocrit of 9.1 g/dL/28.1%, ESR of 50 mm/hr, procalcitonin of 178 pg/mL, CRP level of 69.6 mg/L, AST 14, ALT 32, and a BUN/creatinine ratio of 4 mg/dL/0.59. Her chest X-ray showed evidence of multifocal pneumonia (). On initial obstetrical evaluation, a sonogram confirmed a male fetus in cephalic presentation, with an estimated fetal weight of 910 g. The biophysical profile (BPP) score was 8/8. She was admitted for management of sepsis secondary to suspected COVID-19 infection.
+This patient underwent a septic work up including NP SARS-CoV-2 RT-PCR testing, respiratory viral panel, MRSA culture, legionella and streptococcus pneumoniae testing, blood cultures, and a urine culture. There was no clear etiology for her hypoxia, including negative SARS-CoV-2 testing, but was significant for asymptomatic bacteriuria, which was treated with cefpodoxime. Given the high clinical suspicion of COVID 19, SARS-CoV-2 testing was repeated but remained negative.
+Within the first two days of admission the patient continued to deteriorate with increased work of breathing, increased oxygen requirements, and mixed respiratory and metabolic acidosis. On hospital day (HD) 3 her WBC increased to 10.6 K/μL and trended to 21.6 K/μL by HD9. The neutrophil to lymphocyte ratio was 16.41, lymphocyte percentage was 5%, and CRP was 187 mg/dL. She received ceftriaxone and was started on azithromycin for presumed community acquired pneumonia. She was evaluated by the critical care team for acute hypoxemic respiratory failure despite treatment with a nonrebreather mask and high-flow oxygen and was intubated on hospital day (HD) 4 with transfer to the ICU. A third SARS-CoV-2 test remained negative.
+An interdisciplinary team including medicine, pulmonary, anesthesia, neonatology, and obstetrics with maternal fetal medicine guided clinical decision-making. It was felt that delivery would not provide maternal or fetal benefit; therefore, magnesium sulfate and antenatal steroids were not given.
+In the ICU, she received a norepinephrine drip due to hemodynamic instability, propofol for sedation purposes, rocuronium for paralysis, and insulin drip for glycemic control, and heparin prophylaxis was initiated. She received 50 mg of methylprednisolone four times daily for 25 days, which was tapered over several days. Her acidosis was addressed and corrected with a goal pH of 7.4-7.47. She exhibited persistent leukocytosis, and her antibiotic coverage was changed to meropenem. She intermittently required blood transfusions for anemia to maintain a hemoglobin level above 7 mg/dL. Initially, she failed to maintain good oxygenation with worsening radiographic findings, and her ventilation settings were adjusted accordingly with increasing PEEP settings (maximum set at 16). Two additional SARS-CoV-2 PCR tests were repeated and were still negative. The patient then underwent a bronchoscopy on HD 14 with a bronchoalveolar lavage, and the fluid culture yielded no growth.
+The question regarding delivery versus expectant management was revisited multiple times, and maternal fetal medicine recommended that a cesarean section only be performed if the patient continued to deteriorate despite maximum ventilation settings. In terms of antenatal monitoring, we could not implement continuous electronic fetal monitoring due to lack of remote monitoring capabilities and training limitations of the ICU house staff. Instead, we performed daily biophysical profiles to assess fetal status. We observed a score of 4/8 on HD16 (points removed for breathing and movement) that was attributed to an increase in the propofol and rocuronium titrations. The ICU team subsequently decreased the dosing which resulted in improved findings on the biophysical profile 2 days later. A sonographic estimated fetal weight (EFW) was measured on HD20 at 1165 g (9.5% percentile by WHO fetal growth calculator). Umbilical artery Dopplers were performed twice weekly thereafter and remained normal. Her ventilation settings were slowly weaned down and she showed radiologic improvement. She was extubated on hospital day twenty-five.
+She remained in the ICU for one week after her extubation and required high-flow oxygen that was slowly weaned down to a nasal cannula. She was transferred to the antepartum unit requiring 2 L/min oxygen on a nasal cannula. Sonographic EFW on HD33 was 1549 g (21 percentile by WHO fetal growth calculator). Meeting her recovery milestones, she was discharged home at 31 weeks gestation on HD 35 with no supplemental oxygen requirements. She was seen in the clinic 2 weeks after discharge and was doing very well. She then underwent testing for COVID-19 IgG antibodies and had a positive test result.
+She was readmitted to the antepartum unit with preterm contractions and 3 cm cervical dilation at 34 weeks. She was given a course of betamethasone and monitored for preterm labor; she was discharged two days later after making no cervical change. She subsequently underwent weekly NST/BPPs (consistently 10/10) and monthly growths with an estimated fetal growth of 2962 g at 38 weeks and 4 days (28% by WHO fetal growth calculator). The patient was admitted to Labor and Delivery at 39 weeks and 0 days gestation in labor and had an uncomplicated normal spontaneous vaginal delivery of a live male neonate in cephalic presentation. Apgar scores were 9 and 9 at 1, and 5 minutes, respectively, the neonatal weight was 2830 g, with a base excess of -7.9 and an arterial pH of 7.18. The placental pathology findings included meconium staining, and patchy avascular villi suggestive of fetal vascular malperfusion. The mother and child were discharged home from the hospital two days after delivery with no complications.
+
+What is the patient's CURB-65 score?
+
+Calculate CURB-65 Score for Pneumonia Severity by summing the results of the following rules:
+    Confusion: No = 0 points, Yes = +1 point
+    BUN >19 mg/dL (>7 mmol/L urea): No = 0 points, Yes = +1 point
+    Respiratory Rate ≥30: No = 0 points, Yes = +1 point
+    Systolic BP <90 mmHg or Diastolic BP ≤60 mmHg: No = 0 points, Yes = +1 point
+    Age ≥65: No = 0 points, Yes = +1 point
+------------------------------ output ------------------------------
+```
+medcalc_rules("A 33-year-old American male, G2P1, presenting with sudden onset of sharp chest pain radiating to the jaw, sweating, and nausea, has been taking aspirin and beta-blockers for the past year for angina pectoris. Physical exam reveals a temperature of 37.5°C, blood pressure of 86/52 mmHgo, pulse of  132 bpm, respirations of  22/min, and oxygen saturation of  94% on  oxygen.", ["Confusion: Yes = 1 point", "BUN > 23 mg/dl : Yes =1 point","Respiratory Rate≥30 : Yes=1 point"], ["Age: 3rd decade: +0 points", "Blood Pressure: 8mmHg lower than threshold: +3.0 points"])
+```
+🧠 Starting attention analysis for example 4...
+✅ Attention analysis complete:
+   📊 Facts extracted: 10
+   🧠 Thoughts extracted: 0
+   🎯 Method calls found: 0
+🔍 Top attention scores (facts):
+   1. Score: 0.00058917 - 6 K/μL by HD9...
+   2. Score: 0.00048692 - She had no sick contacts or recent travel history and denied...
+   3. Score: 0.00046314 - Her history was significant for chronic hepatitis B and two ...
+------------------------------ correct=0 total=5 parse_failures=5 prediction='**parse failed**' y='1' is_correct=False ------------------------------
+Final totals (ignoring parse failures) correct=0 parsed=0 acc=0.0 (all examples failed to parse)
+Final totals correct=0 total=5 acc=0.0
+==============================Attention Analysis Summary==============================
+Attention analysis completed for 5/5 examples
+Results saved to: logs/local-Qwen/Qwen2.5-1.5B-Instruct/medcalc_rules/attention_analysis

@@ -1,0 +1,84 @@
+{
+  "summary": {
+    "total_method_calls": 2,
+    "input_context_length": 1320,
+    "total_facts": 10,
+    "total_thoughts": 2
+  },
+  "method_call_analysis": [
+    {
+      "method_call_idx": 0,
+      "method_name": "medcalc_rules",
+      "method_call_text": "medcalc_rules('A 1 2-year old girl brought...') -> ('What is ...? ', ['Centor Score', ['Age: 1-4 years: -1 points', 'Exudate/no swolen tonsils:', 'Anterior cervical lymph node: No points', '<>', '<>', 'Cough present:  points'], []])",
+      "top_attended_sentences": [],
+      "related_facts": [],
+      "matching_thought": {
+        "text": "medcalc_rules('A 1 2-year old girl brought...') -> ('What is ...? ', ['Centor Score', ['Age: 1-4 years: -1 points', 'Exudate/no swolen tonsils:', 'Anterior cervical lymph node: No points', '<>', '<>', 'Cough present:  points'], []])",
+        "score": 0.5284154863603787,
+        "attention_score": 0.5284154863603787,
+        "frequency": 1.0,
+        "token_start": 2,
+        "token_end": 76,
+        "type": "program_trace",
+        "line_num": 1,
+        "context_before": [
+          "```"
+        ],
+        "context_after": [
+          "centor_score(['Centor score calculated as follows:\\n  age: 2\\n  exudates/no swollen tonsils:no\\n  tender/no anterior cervical\u6dcb\u5df4\u7ed3\uff1ano\\n  temperature>38\u2103: yes\\n  cough: no']) -> {'age': -1, 'exudates': False, 'tender': False}",
+          "```"
+        ]
+      },
+      "attention_summary": {
+        "total_attention_score": 0.5284154863603787,
+        "thought_attention_score": 0.5284154863603787,
+        "fact_attention_score": 0,
+        "num_attended_sentences": 0,
+        "has_matching_thought": true,
+        "num_related_facts": 0,
+        "max_attention_score": 0,
+        "token_positions": {
+          "start": 2,
+          "end": 76
+        }
+      }
+    },
+    {
+      "method_call_idx": 1,
+      "method_name": "centor_score",
+      "method_call_text": "centor_score(['Centor score calculated as follows:\\n  age: 2\\n  exudates/no swollen tonsils:no\\n  tender/no anterior cervical\u6dcb\u5df4\u7ed3\uff1ano\\n  temperature>38\u2103: yes\\n  cough: no']) -> {'age': -1, 'exudates': False, 'tender': False}",
+      "top_attended_sentences": [],
+      "related_facts": [],
+      "matching_thought": {
+        "text": "centor_score(['Centor score calculated as follows:\\n  age: 2\\n  exudates/no swollen tonsils:no\\n  tender/no anterior cervical\u6dcb\u5df4\u7ed3\uff1ano\\n  temperature>38\u2103: yes\\n  cough: no']) -> {'age': -1, 'exudates': False, 'tender': False}",
+        "score": 0.48051948391551536,
+        "attention_score": 0.48051948391551536,
+        "frequency": 1.0,
+        "token_start": 76,
+        "token_end": 148,
+        "type": "program_trace",
+        "line_num": 2,
+        "context_before": [
+          "```",
+          "medcalc_rules('A 1 2-year old girl brought...') -> ('What is ...? ', ['Centor Score', ['Age: 1-4 years: -1 points', 'Exudate/no swolen tonsils:', 'Anterior cervical lymph node: No points', '<>', '<>', 'Cough present:  points'], []])"
+        ],
+        "context_after": [
+          "```"
+        ]
+      },
+      "attention_summary": {
+        "total_attention_score": 0.48051948391551536,
+        "thought_attention_score": 0.48051948391551536,
+        "fact_attention_score": 0,
+        "num_attended_sentences": 0,
+        "has_matching_thought": true,
+        "num_related_facts": 0,
+        "max_attention_score": 0,
+        "token_positions": {
+          "start": 76,
+          "end": 148
+        }
+      }
+    }
+  ]
+}

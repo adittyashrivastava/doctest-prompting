@@ -1,0 +1,200 @@
+{
+  "summary": {
+    "total_method_calls": 5,
+    "input_context_length": 3001,
+    "total_facts": 10,
+    "total_thoughts": 5
+  },
+  "method_call_analysis": [
+    {
+      "method_call_idx": 0,
+      "method_name": "unknown_method",
+      "method_call_text": "-> ('CHA2DS\u2082_VASc', ['Age:', '< 6 years = ', '+1 year = ', '\u2265 7 years =+', 'Sex:', 'Female = +', 'Chf:', 'Yes = +'], [])",
+      "top_attended_sentences": [],
+      "related_facts": [],
+      "matching_thought": {
+        "text": "-> ('CHA2DS\u2082_VASc', ['Age:', '< 6 years = ', '+1 year = ', '\u2265 7 years =+', 'Sex:', 'Female = +', 'Chf:', 'Yes = +'], [])",
+        "score": 0.9999999927014721,
+        "attention_score": 0.9999999927014721,
+        "frequency": 1.0,
+        "token_start": 25,
+        "token_end": 74,
+        "type": "program_trace",
+        "line_num": 2,
+        "context_before": [
+          "```",
+          "medcalc_rules(\"A 74-year-old white woman was admitted with dyspepsia and palpitations.\")"
+        ],
+        "context_after": [
+          "-> ('analyze_input', ['CHA2_DS_2_VASC', ['age:', '<6=', '>=65=' ,'>74=', 'sex:' , 'female=' , 'chf:' , '>chf=']])",
+          "-> ('get_data', ['< 6', '6-', '>=75', '>= 7', 'female', 'no'])"
+        ]
+      },
+      "attention_summary": {
+        "total_attention_score": 0.9999999927014721,
+        "thought_attention_score": 0.9999999927014721,
+        "fact_attention_score": 0,
+        "num_attended_sentences": 0,
+        "has_matching_thought": true,
+        "num_related_facts": 0,
+        "max_attention_score": 0,
+        "token_positions": {
+          "start": 25,
+          "end": 74
+        }
+      }
+    },
+    {
+      "method_call_idx": 1,
+      "method_name": "unknown_method",
+      "method_call_text": "-> ('analyze_input', ['CHA2_DS_2_VASC', ['age:', '<6=', '>=65=' ,'>74=', 'sex:' , 'female=' , 'chf:' , '>chf=']])",
+      "top_attended_sentences": [],
+      "related_facts": [],
+      "matching_thought": {
+        "text": "-> ('analyze_input', ['CHA2_DS_2_VASC', ['age:', '<6=', '>=65=' ,'>74=', 'sex:' , 'female=' , 'chf:' , '>chf=']])",
+        "score": 0.9999999978712627,
+        "attention_score": 0.9999999978712627,
+        "frequency": 1.0,
+        "token_start": 74,
+        "token_end": 122,
+        "type": "program_trace",
+        "line_num": 3,
+        "context_before": [
+          "medcalc_rules(\"A 74-year-old white woman was admitted with dyspepsia and palpitations.\")",
+          "-> ('CHA2DS\u2082_VASc', ['Age:', '< 6 years = ', '+1 year = ', '\u2265 7 years =+', 'Sex:', 'Female = +', 'Chf:', 'Yes = +'], [])"
+        ],
+        "context_after": [
+          "-> ('get_data', ['< 6', '6-', '>=75', '>= 7', 'female', 'no'])",
+          "-> ('check_rule', ['AGE', 'age', '>', '<'], ['<6=', '=6-', '=>=7='])"
+        ]
+      },
+      "attention_summary": {
+        "total_attention_score": 0.9999999978712627,
+        "thought_attention_score": 0.9999999978712627,
+        "fact_attention_score": 0,
+        "num_attended_sentences": 0,
+        "has_matching_thought": true,
+        "num_related_facts": 0,
+        "max_attention_score": 0,
+        "token_positions": {
+          "start": 74,
+          "end": 122
+        }
+      }
+    },
+    {
+      "method_call_idx": 2,
+      "method_name": "unknown_method",
+      "method_call_text": "-> ('get_data', ['< 6', '6-', '>=75', '>= 7', 'female', 'no'])",
+      "top_attended_sentences": [],
+      "related_facts": [],
+      "matching_thought": {
+        "text": "-> ('get_data', ['< 6', '6-', '>=75', '>= 7', 'female', 'no'])",
+        "score": 0.9999999991191432,
+        "attention_score": 0.9999999991191432,
+        "frequency": 1.0,
+        "token_start": 122,
+        "token_end": 151,
+        "type": "program_trace",
+        "line_num": 4,
+        "context_before": [
+          "-> ('CHA2DS\u2082_VASc', ['Age:', '< 6 years = ', '+1 year = ', '\u2265 7 years =+', 'Sex:', 'Female = +', 'Chf:', 'Yes = +'], [])",
+          "-> ('analyze_input', ['CHA2_DS_2_VASC', ['age:', '<6=', '>=65=' ,'>74=', 'sex:' , 'female=' , 'chf:' , '>chf=']])"
+        ],
+        "context_after": [
+          "-> ('check_rule', ['AGE', 'age', '>', '<'], ['<6=', '=6-', '=>=7='])",
+          "-> 1"
+        ]
+      },
+      "attention_summary": {
+        "total_attention_score": 0.9999999991191432,
+        "thought_attention_score": 0.9999999991191432,
+        "fact_attention_score": 0,
+        "num_attended_sentences": 0,
+        "has_matching_thought": true,
+        "num_related_facts": 0,
+        "max_attention_score": 0,
+        "token_positions": {
+          "start": 122,
+          "end": 151
+        }
+      }
+    },
+    {
+      "method_call_idx": 3,
+      "method_name": "unknown_method",
+      "method_call_text": "-> ('check_rule', ['AGE', 'age', '>', '<'], ['<6=', '=6-', '=>=7='])",
+      "top_attended_sentences": [],
+      "related_facts": [],
+      "matching_thought": {
+        "text": "-> ('check_rule', ['AGE', 'age', '>', '<'], ['<6=', '=6-', '=>=7='])",
+        "score": 1.0000000051697906,
+        "attention_score": 1.0000000051697906,
+        "frequency": 1.0,
+        "token_start": 151,
+        "token_end": 179,
+        "type": "program_trace",
+        "line_num": 5,
+        "context_before": [
+          "-> ('analyze_input', ['CHA2_DS_2_VASC', ['age:', '<6=', '>=65=' ,'>74=', 'sex:' , 'female=' , 'chf:' , '>chf=']])",
+          "-> ('get_data', ['< 6', '6-', '>=75', '>= 7', 'female', 'no'])"
+        ],
+        "context_after": [
+          "-> 1",
+          "-> ('accumulate_score', [1, 0])"
+        ]
+      },
+      "attention_summary": {
+        "total_attention_score": 1.0000000051697906,
+        "thought_attention_score": 1.0000000051697906,
+        "fact_attention_score": 0,
+        "num_attended_sentences": 0,
+        "has_matching_thought": true,
+        "num_related_facts": 0,
+        "max_attention_score": 0,
+        "token_positions": {
+          "start": 151,
+          "end": 179
+        }
+      }
+    },
+    {
+      "method_call_idx": 4,
+      "method_name": "unknown_method",
+      "method_call_text": "-> ('accumulate_score', [1, 0])",
+      "top_attended_sentences": [],
+      "related_facts": [],
+      "matching_thought": {
+        "text": "-> ('accumulate_score', [1, 0])",
+        "score": 0.9999999945813959,
+        "attention_score": 0.9999999945813959,
+        "frequency": 1.0,
+        "token_start": 183,
+        "token_end": 194,
+        "type": "program_trace",
+        "line_num": 7,
+        "context_before": [
+          "-> ('check_rule', ['AGE', 'age', '>', '<'], ['<6=', '=6-', '=>=7='])",
+          "-> 1"
+        ],
+        "context_after": [
+          "-> 2",
+          "```"
+        ]
+      },
+      "attention_summary": {
+        "total_attention_score": 0.9999999945813959,
+        "thought_attention_score": 0.9999999945813959,
+        "fact_attention_score": 0,
+        "num_attended_sentences": 0,
+        "has_matching_thought": true,
+        "num_related_facts": 0,
+        "max_attention_score": 0,
+        "token_positions": {
+          "start": 183,
+          "end": 194
+        }
+      }
+    }
+  ]
+}

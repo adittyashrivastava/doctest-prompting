@@ -1,0 +1,481 @@
+{
+  "example_idx": 24,
+  "input": "A 71-year-old man presented to ED with a chief complaint of left-sided numbness. Approximately five hours prior to arrival, the patient developed sudden onset of left-sided perioral, thumb, and thenar numbness. Past medical history was significant for coronary artery disease, type 2 diabetes, chronic kidney disease, hypertension, and clear cell renal cell carcinoma status post nephrectomy (10 years prior). The patient had taken two tablets of baby aspirin prior to arrival. He denied having any deficits prior to onset of symptoms, and denied any changes in vision, speech difficulties, weakness, ataxia, chest pain, palpitations, or shortness of breath. Vitals were notable for hypertension with systolic blood pressures ranging from 150s to 190s. Symptoms resolved spontaneously about 30 min after arrival to the ED and on examination the patient was found to have no residual neurological deficits. The patient denied secondary causes for perioral numbness including hypocalcemia, thyroid dysfunction, history of seizures, and/or migraines. Due to complaint of lateralized paresthesias and multiple risk factors for stroke, workup for a potential transient ischemic attack was begun.\nLaboratory workup was significant for serum creatinine of 1.28 mg/dL and glucose of 213 mg/dL, otherwise basic metabolic panel (BMP) was normal. Thyroid stimulating hormone (TSH), complete blood count (CBC), and coagulation screen were unremarkable. Lipid panel was remarkable for cholesterol of 199 mg/dL, low density lipoprotein (LDL) of 98 mg/dL, triglyceride of 259 mg/dL, and high density lipoprotein (HDL) of 49 mg/dL. Glycated hemoglobin was 7.0%. Initial imaging was done with noncontrast CT of the head which showed age-appropriate involutional changes without acute intracranial hemorrhage (Figure ).\nComputed tomography angiography (CTA) of the head and neck was unremarkable. Transthoracic echocardiogram (TTE) did neither reveal a patent foramen ovale nor thrombi. Electrocardiogram (ECG) was unchanged from prior and revealed normal sinus rhythm.\nFollow up imaging was done with MRI of the brain which showed an acute lacunar infarct of the right thalamus and other chronic changes (Figures -).\nThe patient was diagnosed with an acute right thalamic infarct with findings consistent with COS. He was not a candidate for thrombolytic therapy with intravenous alteplase. He was started on high-intensity statin therapy, and dual antiplatelet therapy (DAPT) with aspirin and clopidogrel for 30 days, with plans to continue clopidogrel monotherapy thereafter. His antihypertensive medication regimen was also optimized, and he was advised to quit smoking.\n\nWhat is the patient's HEART score?\n\nCalculate HEART Score for Major Cardiac Events by summing the results of the following rules:\n    History: Slightly suspicious = 0 points, Moderately suspicious = +1 point, Highly suspicious = +2 points\n    EKG: Normal = 0 points, Non-specific repolarization disturbance = +1 point, Significant ST deviation = +2 points\n    Age: <45 years = 0 points, 45-64 years = +1 point, \u226565 years = +2 points\n    Risk factors (HTN, hypercholesterolemia, DM, obesity (BMI >30 kg/m\u00b2), smoking (current or cessation within 3 months), positive family history of cardiovascular disease before age 65, atherosclerotic disease such as prior MI, PCI/CABG, CVA/TIA, or peripheral arterial disease): No known risk factors = 0 points, 1-2 risk factors = +1 point, \u22653 risk factors or history of atherosclerotic disease = +2 points\n    Initial troponin level: \u2264normal limit = 0 points, 1\u20133\u00d7 normal limit = +1 point, >3\u00d7 normal limit = +2 points",
+  "response": "```\nmedcalc_rules('A 72-year-old woman presented to ER with sudden onset left-sided paresthesis lasting approximately 5 hours. Chief complaint is associated with a mild headache.')\n-> Trace: medcalcs called with argument: {'chiefComplaint': 'left-sided paresis', 'headache': True}\n-> Trace:\n\n```\n\n```\nget_data('chiefComplain: left-sidedparesis')\n-> Return_value: 'left-sideparesis'\n\nTrace:\n\n```\n```\ncheck_rule('chiefcomplain:left-sidepparesis') -> Return_value\n-> Return_Value: 1\n\nTrace:\n\n```\n\n\n```\naccumulate_score(0, 2) -> Return_Value\n-> 2\n````\n\n```\nfinal_answer(2)\n-> Return Value: 2\n\nOutput:\n\nFinal Answer:  2",
+  "target": "4",
+  "retrieved_facts": [
+    {
+      "id": 1,
+      "text": "Approximately five hours prior to arrival, the patient developed sudden onset of left-sided perioral, thumb, and thenar numbness",
+      "token_start": 19,
+      "token_end": 46,
+      "token_indices": [
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        39,
+        40,
+        41,
+        42,
+        43,
+        44,
+        45
+      ],
+      "length": 27,
+      "frequency": 0.20041109969167523,
+      "attention_score": 0.000882937491669812
+    },
+    {
+      "id": 9,
+      "text": "Laboratory workup was significant for serum creatinine of 1",
+      "token_start": 242,
+      "token_end": 255,
+      "token_indices": [
+        242,
+        243,
+        244,
+        245,
+        246,
+        247,
+        248,
+        249,
+        250,
+        251,
+        252,
+        253,
+        254
+      ],
+      "length": 13,
+      "frequency": 0.19013360739979446,
+      "attention_score": 0.000826180937964425
+    },
+    {
+      "id": 3,
+      "text": "The patient had taken two tablets of baby aspirin prior to arrival",
+      "token_start": 84,
+      "token_end": 97,
+      "token_indices": [
+        84,
+        85,
+        86,
+        87,
+        88,
+        89,
+        90,
+        91,
+        92,
+        93,
+        94,
+        95,
+        96
+      ],
+      "length": 13,
+      "frequency": 0.04984583761562179,
+      "attention_score": 0.0006567073876850676
+    },
+    {
+      "id": 2,
+      "text": "Past medical history was significant for coronary artery disease, type 2 diabetes, chronic kidney disease, hypertension, and clear cell renal cell carcinoma status post nephrectomy (10 years prior)",
+      "token_start": 46,
+      "token_end": 84,
+      "token_indices": [
+        46,
+        47,
+        48,
+        49,
+        50,
+        51,
+        52,
+        53,
+        54,
+        55,
+        56,
+        57,
+        58,
+        59,
+        60,
+        61,
+        62,
+        63,
+        64,
+        65,
+        66,
+        67,
+        68,
+        69,
+        70,
+        71,
+        72,
+        73,
+        74,
+        75,
+        76,
+        77,
+        78,
+        79,
+        80,
+        81,
+        82,
+        83
+      ],
+      "length": 38,
+      "frequency": 0.09969167523124357,
+      "attention_score": 0.0005815965158216637
+    },
+    {
+      "id": 8,
+      "text": "Due to complaint of lateralized paresthesias and multiple risk factors for stroke, workup for a potential transient ischemic attack was begun",
+      "token_start": 214,
+      "token_end": 242,
+      "token_indices": [
+        214,
+        215,
+        216,
+        217,
+        218,
+        219,
+        220,
+        221,
+        222,
+        223,
+        224,
+        225,
+        226,
+        227,
+        228,
+        229,
+        230,
+        231,
+        232,
+        233,
+        234,
+        235,
+        236,
+        237,
+        238,
+        239,
+        240,
+        241
+      ],
+      "length": 28,
+      "frequency": 0.07091469681397738,
+      "attention_score": 0.000495856188437667
+    },
+    {
+      "id": 20,
+      "text": "The patient was diagnosed with an acute right thalamic infarct with findings consistent with COS",
+      "token_start": 502,
+      "token_end": 521,
+      "token_indices": [
+        502,
+        503,
+        504,
+        505,
+        506,
+        507,
+        508,
+        509,
+        510,
+        511,
+        512,
+        513,
+        514,
+        515,
+        516,
+        517,
+        518,
+        519,
+        520
+      ],
+      "length": 19,
+      "frequency": 0.050873586844809866,
+      "attention_score": 0.000493742518623074
+    },
+    {
+      "id": 6,
+      "text": "Symptoms resolved spontaneously about 30 min after arrival to the ED and on examination the patient was found to have no residual neurological deficits",
+      "token_start": 159,
+      "token_end": 186,
+      "token_indices": [
+        159,
+        160,
+        161,
+        162,
+        163,
+        164,
+        165,
+        166,
+        167,
+        168,
+        169,
+        170,
+        171,
+        172,
+        173,
+        174,
+        175,
+        176,
+        177,
+        178,
+        179,
+        180,
+        181,
+        182,
+        183,
+        184,
+        185
+      ],
+      "length": 27,
+      "frequency": 0.044193216855087356,
+      "attention_score": 0.0004876692130000685
+    },
+    {
+      "id": 5,
+      "text": "Vitals were notable for hypertension with systolic blood pressures ranging from 150s to 190s",
+      "token_start": 135,
+      "token_end": 159,
+      "token_indices": [
+        135,
+        136,
+        137,
+        138,
+        139,
+        140,
+        141,
+        142,
+        143,
+        144,
+        145,
+        146,
+        147,
+        148,
+        149,
+        150,
+        151,
+        152,
+        153,
+        154,
+        155,
+        156,
+        157,
+        158
+      ],
+      "length": 24,
+      "frequency": 0.05806783144912641,
+      "attention_score": 0.0004868267522239437
+    },
+    {
+      "id": 7,
+      "text": "The patient denied secondary causes for perioral numbness including hypocalcemia, thyroid dysfunction, history of seizures, and/or migraines",
+      "token_start": 186,
+      "token_end": 214,
+      "token_indices": [
+        186,
+        187,
+        188,
+        189,
+        190,
+        191,
+        192,
+        193,
+        194,
+        195,
+        196,
+        197,
+        198,
+        199,
+        200,
+        201,
+        202,
+        203,
+        204,
+        205,
+        206,
+        207,
+        208,
+        209,
+        210,
+        211,
+        212,
+        213
+      ],
+      "length": 28,
+      "frequency": 0.0868448098663926,
+      "attention_score": 0.0004835284723207732
+    },
+    {
+      "id": 21,
+      "text": "He was not a candidate for thrombolytic therapy with intravenous alteplase",
+      "token_start": 521,
+      "token_end": 538,
+      "token_indices": [
+        521,
+        522,
+        523,
+        524,
+        525,
+        526,
+        527,
+        528,
+        529,
+        530,
+        531,
+        532,
+        533,
+        534,
+        535,
+        536,
+        537
+      ],
+      "length": 17,
+      "frequency": 0.05960945529290853,
+      "attention_score": 0.00047531975692557564
+    }
+  ],
+  "retrieved_thoughts": [
+    {
+      "text": "accumulate_score(0, 2) -> Return_Value",
+      "score": 0.9999999907109645,
+      "attention_score": 0.9999999907109645,
+      "frequency": 1.0,
+      "token_start": 134,
+      "token_end": 145,
+      "type": "program_trace",
+      "line_num": 24,
+      "context_before": [
+        "",
+        "```"
+      ],
+      "context_after": [
+        "-> 2",
+        "````"
+      ]
+    },
+    {
+      "text": "check_rule('chiefcomplain:left-sidepparesis') -> Return_value",
+      "score": 0.999999989782061,
+      "attention_score": 0.999999989782061,
+      "frequency": 1.0,
+      "token_start": 105,
+      "token_end": 120,
+      "type": "program_trace",
+      "line_num": 15,
+      "context_before": [
+        "```",
+        "```"
+      ],
+      "context_after": [
+        "-> Return_Value: 1",
+        ""
+      ]
+    }
+  ],
+  "method_calls": [
+    {
+      "line_num": 15,
+      "call_text": "check_rule('chiefcomplain:left-sidepparesis') -> Return_value",
+      "context_before": [
+        "```",
+        "```"
+      ],
+      "context_after": [
+        "-> Return_Value: 1",
+        ""
+      ]
+    },
+    {
+      "line_num": 24,
+      "call_text": "accumulate_score(0, 2) -> Return_Value",
+      "context_before": [
+        "",
+        "```"
+      ],
+      "context_after": [
+        "-> 2",
+        "````"
+      ]
+    }
+  ],
+  "method_call_attention": {
+    "0": {
+      "method_name": "check_rule",
+      "method_call_text": "check_rule('chiefcomplain:left-sidepparesis') -> Return_value",
+      "matching_thought": {
+        "text": "check_rule('chiefcomplain:left-sidepparesis') -> Return_value",
+        "score": 0.999999989782061,
+        "attention_score": 0.999999989782061,
+        "frequency": 1.0,
+        "token_start": 105,
+        "token_end": 120,
+        "type": "program_trace",
+        "line_num": 15,
+        "context_before": [
+          "```",
+          "```"
+        ],
+        "context_after": [
+          "-> Return_Value: 1",
+          ""
+        ]
+      },
+      "related_facts": [],
+      "thought_attention_score": 0.999999989782061,
+      "fact_attention_score": 0,
+      "total_attention_score": 0.999999989782061,
+      "token_positions": {
+        "start": 105,
+        "end": 120
+      }
+    },
+    "1": {
+      "method_name": "accumulate_score",
+      "method_call_text": "accumulate_score(0, 2) -> Return_Value",
+      "matching_thought": {
+        "text": "accumulate_score(0, 2) -> Return_Value",
+        "score": 0.9999999907109645,
+        "attention_score": 0.9999999907109645,
+        "frequency": 1.0,
+        "token_start": 134,
+        "token_end": 145,
+        "type": "program_trace",
+        "line_num": 24,
+        "context_before": [
+          "",
+          "```"
+        ],
+        "context_after": [
+          "-> 2",
+          "````"
+        ]
+      },
+      "related_facts": [],
+      "thought_attention_score": 0.9999999907109645,
+      "fact_attention_score": 0,
+      "total_attention_score": 0.9999999907109645,
+      "token_positions": {
+        "start": 134,
+        "end": 145
+      }
+    }
+  },
+  "num_facts": 10,
+  "num_thoughts": 2,
+  "analysis_timestamp": "2025-07-15T05:20:27.556223"
+}

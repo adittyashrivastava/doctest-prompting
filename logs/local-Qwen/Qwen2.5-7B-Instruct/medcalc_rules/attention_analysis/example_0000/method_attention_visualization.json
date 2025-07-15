@@ -1,0 +1,388 @@
+{
+  "summary": {
+    "total_method_calls": 10,
+    "input_context_length": 5348,
+    "total_facts": 0,
+    "total_thoughts": 10
+  },
+  "method_call_analysis": [
+    {
+      "method_call_idx": 0,
+      "method_name": "medcalc_rules",
+      "method_call_text": "medcalc_rules('What is ... Risk by ... rules:') -> ('What is...', ['Age: <...points', 'Sex: Female...points'), ['Age:<65...points'])",
+      "top_attended_sentences": [],
+      "related_facts": [],
+      "matching_thought": {
+        "text": "medcalc_rules('What is ... Risk by ... rules:') -> ('What is...', ['Age: <...points', 'Sex: Female...points'), ['Age:<65...points'])",
+        "score": 0.9999999945416992,
+        "attention_score": 0.9999999945416992,
+        "frequency": 1.0,
+        "token_start": 2,
+        "token_end": 41,
+        "type": "program_trace",
+        "line_num": 1,
+        "context_before": [
+          "```"
+        ],
+        "context_after": [
+          "analyze_input('What...VASc Score?') -> (' What...Score?', ['Age...points'], ['Age<65years', 'sexmale', 'congestiveheartfailurehistory', 'hypertensionhistory', ..., 'diabeteshistory'])",
+          "get_data('Age: ...points', ['Age::<65year']) -> 'Age:<75years'"
+        ]
+      },
+      "attention_summary": {
+        "total_attention_score": 0.9999999945416992,
+        "thought_attention_score": 0.9999999945416992,
+        "fact_attention_score": 0,
+        "num_attended_sentences": 0,
+        "has_matching_thought": true,
+        "num_related_facts": 0,
+        "max_attention_score": 0,
+        "token_positions": {
+          "start": 2,
+          "end": 41
+        }
+      }
+    },
+    {
+      "method_call_idx": 1,
+      "method_name": "analyze_input",
+      "method_call_text": "analyze_input('What...VASc Score?') -> (' What...Score?', ['Age...points'], ['Age<65years', 'sexmale', 'congestiveheartfailurehistory', 'hypertensionhistory', ..., 'diabeteshistory'])",
+      "top_attended_sentences": [],
+      "related_facts": [],
+      "matching_thought": {
+        "text": "analyze_input('What...VASc Score?') -> (' What...Score?', ['Age...points'], ['Age<65years', 'sexmale', 'congestiveheartfailurehistory', 'hypertensionhistory', ..., 'diabeteshistory'])",
+        "score": 0.9999999921276884,
+        "attention_score": 0.9999999921276884,
+        "frequency": 1.0,
+        "token_start": 41,
+        "token_end": 94,
+        "type": "program_trace",
+        "line_num": 2,
+        "context_before": [
+          "```",
+          "medcalc_rules('What is ... Risk by ... rules:') -> ('What is...', ['Age: <...points', 'Sex: Female...points'), ['Age:<65...points'])"
+        ],
+        "context_after": [
+          "get_data('Age: ...points', ['Age::<65year']) -> 'Age:<75years'",
+          "check_rule('Age:<...years', '<75year') -> 2"
+        ]
+      },
+      "attention_summary": {
+        "total_attention_score": 0.9999999921276884,
+        "thought_attention_score": 0.9999999921276884,
+        "fact_attention_score": 0,
+        "num_attended_sentences": 0,
+        "has_matching_thought": true,
+        "num_related_facts": 0,
+        "max_attention_score": 0,
+        "token_positions": {
+          "start": 41,
+          "end": 94
+        }
+      }
+    },
+    {
+      "method_call_idx": 2,
+      "method_name": "get_data",
+      "method_call_text": "get_data('Age: ...points', ['Age::<65year']) -> 'Age:<75years'",
+      "top_attended_sentences": [],
+      "related_facts": [],
+      "matching_thought": {
+        "text": "get_data('Age: ...points', ['Age::<65year']) -> 'Age:<75years'",
+        "score": 0.9999999640891271,
+        "attention_score": 0.9999999640891271,
+        "frequency": 1.0,
+        "token_start": 94,
+        "token_end": 117,
+        "type": "program_trace",
+        "line_num": 3,
+        "context_before": [
+          "medcalc_rules('What is ... Risk by ... rules:') -> ('What is...', ['Age: <...points', 'Sex: Female...points'), ['Age:<65...points'])",
+          "analyze_input('What...VASc Score?') -> (' What...Score?', ['Age...points'], ['Age<65years', 'sexmale', 'congestiveheartfailurehistory', 'hypertensionhistory', ..., 'diabeteshistory'])"
+        ],
+        "context_after": [
+          "check_rule('Age:<...years', '<75year') -> 2",
+          "accumulate_score(0, 2) -> 0+2"
+        ]
+      },
+      "attention_summary": {
+        "total_attention_score": 0.9999999640891271,
+        "thought_attention_score": 0.9999999640891271,
+        "fact_attention_score": 0,
+        "num_attended_sentences": 0,
+        "has_matching_thought": true,
+        "num_related_facts": 0,
+        "max_attention_score": 0,
+        "token_positions": {
+          "start": 94,
+          "end": 117
+        }
+      }
+    },
+    {
+      "method_call_idx": 3,
+      "method_name": "check_rule",
+      "method_call_text": "check_rule('Age:<...years', '<75year') -> 2",
+      "top_attended_sentences": [],
+      "related_facts": [],
+      "matching_thought": {
+        "text": "check_rule('Age:<...years', '<75year') -> 2",
+        "score": 0.9999999994678157,
+        "attention_score": 0.9999999994678157,
+        "frequency": 1.0,
+        "token_start": 117,
+        "token_end": 133,
+        "type": "program_trace",
+        "line_num": 4,
+        "context_before": [
+          "analyze_input('What...VASc Score?') -> (' What...Score?', ['Age...points'], ['Age<65years', 'sexmale', 'congestiveheartfailurehistory', 'hypertensionhistory', ..., 'diabeteshistory'])",
+          "get_data('Age: ...points', ['Age::<65year']) -> 'Age:<75years'"
+        ],
+        "context_after": [
+          "accumulate_score(0, 2) -> 0+2",
+          "get_data(..., ...) ... -> 'sexfemale'"
+        ]
+      },
+      "attention_summary": {
+        "total_attention_score": 0.9999999994678157,
+        "thought_attention_score": 0.9999999994678157,
+        "fact_attention_score": 0,
+        "num_attended_sentences": 0,
+        "has_matching_thought": true,
+        "num_related_facts": 0,
+        "max_attention_score": 0,
+        "token_positions": {
+          "start": 117,
+          "end": 133
+        }
+      }
+    },
+    {
+      "method_call_idx": 4,
+      "method_name": "accumulate_score",
+      "method_call_text": "accumulate_score(0, 2) -> 0+2",
+      "top_attended_sentences": [],
+      "related_facts": [],
+      "matching_thought": {
+        "text": "accumulate_score(0, 2) -> 0+2",
+        "score": 0.9999999882100703,
+        "attention_score": 0.9999999882100703,
+        "frequency": 1.0,
+        "token_start": 134,
+        "token_end": 147,
+        "type": "program_trace",
+        "line_num": 5,
+        "context_before": [
+          "get_data('Age: ...points', ['Age::<65year']) -> 'Age:<75years'",
+          "check_rule('Age:<...years', '<75year') -> 2"
+        ],
+        "context_after": [
+          "get_data(..., ...) ... -> 'sexfemale'",
+          "check_RULE(..., 'female') ... -> 1"
+        ]
+      },
+      "attention_summary": {
+        "total_attention_score": 0.9999999882100703,
+        "thought_attention_score": 0.9999999882100703,
+        "fact_attention_score": 0,
+        "num_attended_sentences": 0,
+        "has_matching_thought": true,
+        "num_related_facts": 0,
+        "max_attention_score": 0,
+        "token_positions": {
+          "start": 134,
+          "end": 147
+        }
+      }
+    },
+    {
+      "method_call_idx": 5,
+      "method_name": "get_data",
+      "method_call_text": "get_data(..., ...) ... -> 'sexfemale'",
+      "top_attended_sentences": [],
+      "related_facts": [],
+      "matching_thought": {
+        "text": "get_data(..., ...) ... -> 'sexfemale'",
+        "score": 0.9999999893563134,
+        "attention_score": 0.9999999893563134,
+        "frequency": 1.0,
+        "token_start": 148,
+        "token_end": 160,
+        "type": "program_trace",
+        "line_num": 6,
+        "context_before": [
+          "check_rule('Age:<...years', '<75year') -> 2",
+          "accumulate_score(0, 2) -> 0+2"
+        ],
+        "context_after": [
+          "check_RULE(..., 'female') ... -> 1",
+          "accumulate_SCORE(2, 1) ... -> (2+1)"
+        ]
+      },
+      "attention_summary": {
+        "total_attention_score": 0.9999999893563134,
+        "thought_attention_score": 0.9999999893563134,
+        "fact_attention_score": 0,
+        "num_attended_sentences": 0,
+        "has_matching_thought": true,
+        "num_related_facts": 0,
+        "max_attention_score": 0,
+        "token_positions": {
+          "start": 148,
+          "end": 160
+        }
+      }
+    },
+    {
+      "method_call_idx": 6,
+      "method_name": "check_RULE",
+      "method_call_text": "check_RULE(..., 'female') ... -> 1",
+      "top_attended_sentences": [],
+      "related_facts": [],
+      "matching_thought": {
+        "text": "check_RULE(..., 'female') ... -> 1",
+        "score": 0.9999999814219289,
+        "attention_score": 0.9999999814219289,
+        "frequency": 1.0,
+        "token_start": 160,
+        "token_end": 171,
+        "type": "program_trace",
+        "line_num": 7,
+        "context_before": [
+          "accumulate_score(0, 2) -> 0+2",
+          "get_data(..., ...) ... -> 'sexfemale'"
+        ],
+        "context_after": [
+          "accumulate_SCORE(2, 1) ... -> (2+1)",
+          "..."
+        ]
+      },
+      "attention_summary": {
+        "total_attention_score": 0.9999999814219289,
+        "thought_attention_score": 0.9999999814219289,
+        "fact_attention_score": 0,
+        "num_attended_sentences": 0,
+        "has_matching_thought": true,
+        "num_related_facts": 0,
+        "max_attention_score": 0,
+        "token_positions": {
+          "start": 160,
+          "end": 171
+        }
+      }
+    },
+    {
+      "method_call_idx": 7,
+      "method_name": "accumulate_SCORE",
+      "method_call_text": "accumulate_SCORE(2, 1) ... -> (2+1)",
+      "top_attended_sentences": [],
+      "related_facts": [],
+      "matching_thought": {
+        "text": "accumulate_SCORE(2, 1) ... -> (2+1)",
+        "score": 0.9999999931880406,
+        "attention_score": 0.9999999931880406,
+        "frequency": 1.0,
+        "token_start": 172,
+        "token_end": 187,
+        "type": "program_trace",
+        "line_num": 8,
+        "context_before": [
+          "get_data(..., ...) ... -> 'sexfemale'",
+          "check_RULE(..., 'female') ... -> 1"
+        ],
+        "context_after": [
+          "...",
+          "accumulate_SCORE(..., 0) ...-> ((...)+0)"
+        ]
+      },
+      "attention_summary": {
+        "total_attention_score": 0.9999999931880406,
+        "thought_attention_score": 0.9999999931880406,
+        "fact_attention_score": 0,
+        "num_attended_sentences": 0,
+        "has_matching_thought": true,
+        "num_related_facts": 0,
+        "max_attention_score": 0,
+        "token_positions": {
+          "start": 172,
+          "end": 187
+        }
+      }
+    },
+    {
+      "method_call_idx": 8,
+      "method_name": "accumulate_SCORE",
+      "method_call_text": "accumulate_SCORE(..., 0) ...-> ((...)+0)",
+      "top_attended_sentences": [],
+      "related_facts": [],
+      "matching_thought": {
+        "text": "accumulate_SCORE(..., 0) ...-> ((...)+0)",
+        "score": 0.9999999927014721,
+        "attention_score": 0.9999999927014721,
+        "frequency": 1.0,
+        "token_start": 188,
+        "token_end": 202,
+        "type": "program_trace",
+        "line_num": 10,
+        "context_before": [
+          "accumulate_SCORE(2, 1) ... -> (2+1)",
+          "..."
+        ],
+        "context_after": [
+          "print(Final...{(...)}...) -> Final answer: 5",
+          "```"
+        ]
+      },
+      "attention_summary": {
+        "total_attention_score": 0.9999999927014721,
+        "thought_attention_score": 0.9999999927014721,
+        "fact_attention_score": 0,
+        "num_attended_sentences": 0,
+        "has_matching_thought": true,
+        "num_related_facts": 0,
+        "max_attention_score": 0,
+        "token_positions": {
+          "start": 188,
+          "end": 202
+        }
+      }
+    },
+    {
+      "method_call_idx": 9,
+      "method_name": "print",
+      "method_call_text": "print(Final...{(...)}...) -> Final answer: 5",
+      "top_attended_sentences": [],
+      "related_facts": [],
+      "matching_thought": {
+        "text": "print(Final...{(...)}...) -> Final answer: 5",
+        "score": 0.999999960466307,
+        "attention_score": 0.999999960466307,
+        "frequency": 1.0,
+        "token_start": 202,
+        "token_end": 216,
+        "type": "program_trace",
+        "line_num": 11,
+        "context_before": [
+          "...",
+          "accumulate_SCORE(..., 0) ...-> ((...)+0)"
+        ],
+        "context_after": [
+          "```"
+        ]
+      },
+      "attention_summary": {
+        "total_attention_score": 0.999999960466307,
+        "thought_attention_score": 0.999999960466307,
+        "fact_attention_score": 0,
+        "num_attended_sentences": 0,
+        "has_matching_thought": true,
+        "num_related_facts": 0,
+        "max_attention_score": 0,
+        "token_positions": {
+          "start": 202,
+          "end": 216
+        }
+      }
+    }
+  ]
+}

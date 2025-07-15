@@ -1,0 +1,162 @@
+{
+  "summary": {
+    "total_method_calls": 4,
+    "input_context_length": 3504,
+    "total_facts": 10,
+    "total_thoughts": 4
+  },
+  "method_call_analysis": [
+    {
+      "method_call_idx": 0,
+      "method_name": "function_name",
+      "method_call_text": "function_name(analyze\\_input, inputs=[('A \\_ 76\\_-year-old-woman-with-a-history-of-invadec\\_-uctual-carcinoma-and-tamoxifen-therapy-presents-to-the-emergency-department-with-synCOPE', ['age'], ['76']))] -> return\\_value",
+      "top_attended_sentences": [],
+      "related_facts": [],
+      "matching_thought": {
+        "text": "function_name(analyze\\_input, inputs=[('A \\_ 76\\_-year-old-woman-with-a-history-of-invadec\\_-uctual-carcinoma-and-tamoxifen-therapy-presents-to-the-emergency-department-with-synCOPE', ['age'], ['76']))] -> return\\_value",
+        "score": 0.9999999944467722,
+        "attention_score": 0.9999999944467722,
+        "frequency": 1.0,
+        "token_start": 45,
+        "token_end": 114,
+        "type": "program_trace",
+        "line_num": 7,
+        "context_before": [
+          "",
+          "```py"
+        ],
+        "context_after": [
+          "```.",
+          ""
+        ]
+      },
+      "attention_summary": {
+        "total_attention_score": 0.9999999944467722,
+        "thought_attention_score": 0.9999999944467722,
+        "fact_attention_score": 0,
+        "num_attended_sentences": 0,
+        "has_matching_thought": true,
+        "num_related_facts": 0,
+        "max_attention_score": 0,
+        "token_positions": {
+          "start": 45,
+          "end": 114
+        }
+      }
+    },
+    {
+      "method_call_idx": 1,
+      "method_name": "function_name",
+      "method_call_text": "function_name(get\\_data, ('CHA2ds VasC', [['female', 0]]) -> return\\",
+      "top_attended_sentences": [],
+      "related_facts": [],
+      "matching_thought": {
+        "text": "function_name(get\\_data, ('CHA2ds VasC', [['female', 0]]) -> return\\",
+        "score": 0.9999999930332233,
+        "attention_score": 0.9999999930332233,
+        "frequency": 1.0,
+        "token_start": 171,
+        "token_end": 193,
+        "type": "program_trace",
+        "line_num": 21,
+        "context_before": [
+          "",
+          "```python  "
+        ],
+        "context_after": [
+          "``` ",
+          ""
+        ]
+      },
+      "attention_summary": {
+        "total_attention_score": 0.9999999930332233,
+        "thought_attention_score": 0.9999999930332233,
+        "fact_attention_score": 0,
+        "num_attended_sentences": 0,
+        "has_matching_thought": true,
+        "num_related_facts": 0,
+        "max_attention_score": 0,
+        "token_positions": {
+          "start": 171,
+          "end": 193
+        }
+      }
+    },
+    {
+      "method_call_idx": 2,
+      "method_name": "_name",
+      "method_call_text": "function\\_name(accumulate\\_score, (0,0)) -> return\\_",
+      "top_attended_sentences": [],
+      "related_facts": [],
+      "matching_thought": {
+        "text": "function\\_name(accumulate\\_score, (0,0)) -> return\\_",
+        "score": 0.9999999859753776,
+        "attention_score": 0.9999999859753776,
+        "frequency": 1.0,
+        "token_start": 204,
+        "token_end": 221,
+        "type": "program_trace",
+        "line_num": 30,
+        "context_before": [
+          "```python",
+          ""
+        ],
+        "context_after": [
+          "",
+          "```"
+        ]
+      },
+      "attention_summary": {
+        "total_attention_score": 0.9999999859753776,
+        "thought_attention_score": 0.9999999859753776,
+        "fact_attention_score": 0,
+        "num_attended_sentences": 0,
+        "has_matching_thought": true,
+        "num_related_facts": 0,
+        "max_attention_score": 0,
+        "token_positions": {
+          "start": 204,
+          "end": 221
+        }
+      }
+    },
+    {
+      "method_call_idx": 3,
+      "method_name": "_call",
+      "method_call_text": "function\\_call(check\\_rule, ('CLA2ds Vasc C', [['yes', 1]]) -> reuturn\\_value",
+      "top_attended_sentences": [],
+      "related_facts": [],
+      "matching_thought": {
+        "text": "function\\_call(check\\_rule, ('CLA2ds Vasc C', [['yes', 1]]) -> reuturn\\_value",
+        "score": 0.9999999962155781,
+        "attention_score": 0.9999999962155781,
+        "frequency": 1.0,
+        "token_start": 231,
+        "token_end": 258,
+        "type": "program_trace",
+        "line_num": 40,
+        "context_before": [
+          "```python  ",
+          ""
+        ],
+        "context_after": [
+          "",
+          "```"
+        ]
+      },
+      "attention_summary": {
+        "total_attention_score": 0.9999999962155781,
+        "thought_attention_score": 0.9999999962155781,
+        "fact_attention_score": 0,
+        "num_attended_sentences": 0,
+        "has_matching_thought": true,
+        "num_related_facts": 0,
+        "max_attention_score": 0,
+        "token_positions": {
+          "start": 231,
+          "end": 258
+        }
+      }
+    }
+  ]
+}

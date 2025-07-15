@@ -78,7 +78,8 @@ def main():
         "run_eval.py",
         "view_method_attention.py",
         "training/data/constants.py",
-        "templates/predict_output_with_traces.txt"
+        "templates/predict_output_with_traces.txt",
+        "run_eval_with_traces_and_attention.sh"
     ]
     
     print("🔍 Checking required files...")
@@ -92,19 +93,46 @@ def main():
     
     # Demo 1: Run evaluation with enhanced features
     print("📊 DEMO 1: Running evaluation with enhanced features")
-    run_command(
-        "python run_eval.py medcalc_rules --lo 0 --hi 2 --enable_attention_analysis --model Qwen2.5-1.5B-Instruct --service hf_local",
-        "Run evaluation with attention analysis (first 2 examples)"
-    )
     
-    # Demo 2: Check summary logs
-    print("\n📋 DEMO 2: Checking summary logs")
-    summary_file = "logs/run_summaries/evaluation_summary.jsonl"
-    check_file_exists(summary_file, "Run summary log")
+    # Check if the shell script exists
+    shell_script = "./run_eval_with_traces_and_attention.sh"
+    if os.path.exists(shell_script):
+        run_command(
+            f"{shell_script} medcalc_rules qwen2.5-1.5b 0 2 --enable-attention",
+            "Run evaluation with attention analysis using shell script (first 2 examples)"
+        )
+    else:
+        print(f"❌ Shell script not found: {shell_script}")
+        print("Trying direct python command as fallback...")
+        run_command(
+            "python run_eval.py medcalc_rules --lo 0 --hi 2 --enable_attention_analysis --model Qwen2.5-1.5B-Instruct --service hf_local --log_dir logs",
+            "Run evaluation with attention analysis (fallback command)"
+        )
     
-    # Demo 3: Check attention analysis results
-    print("\n🧠 DEMO 3: Checking attention analysis results")
-    attention_dir = "logs/local-Qwen/Qwen2.5-1.5B-Instruct/medcalc_rules/attention_analysis"
+    # Demo 2: Check attention analysis results
+    print("\n🧠 DEMO 2: Checking attention analysis results")
+    
+    # Look for attention analysis directory created by shell script
+    possible_attention_dirs = [
+        "logs/local-Qwen/Qwen2.5-1.5B-Instruct/medcalc_rules/attention_analysis",
+        "logs/hf_local/Qwen2.5-1.5B-Instruct/medcalc_rules/attention_analysis", 
+        "logs/local/Qwen2.5-1.5B-Instruct/medcalc_rules/attention_analysis",
+        "logs/hf_local/qwen2.5-1.5b/medcalc_rules/attention_analysis",
+        "logs/local-Qwen/qwen2.5-1.5b/medcalc_rules/attention_analysis"
+    ]
+    
+    attention_dir = None
+    for possible_dir in possible_attention_dirs:
+        if os.path.exists(possible_dir):
+            attention_dir = possible_dir
+            break
+    
+    if attention_dir is None:
+        # Default to first option
+        attention_dir = possible_attention_dirs[0]
+        print(f"⚠️  No attention analysis directory found. Checked: {possible_attention_dirs}")
+    else:
+        print(f"✅ Found attention analysis directory: {attention_dir}")
     
     if os.path.exists(attention_dir):
         print(f"✅ Attention analysis directory exists: {attention_dir}")
@@ -118,8 +146,8 @@ def main():
     else:
         print(f"❌ Attention analysis directory not found: {attention_dir}")
     
-    # Demo 4: View method attention patterns
-    print("\n🎯 DEMO 4: Viewing method attention patterns")
+    # Demo 3: View method attention patterns
+    print("\n🎯 DEMO 3: Viewing method attention patterns")
     if os.path.exists(attention_dir):
         run_command(
             f"python view_method_attention.py {attention_dir} --example 0",
@@ -128,56 +156,13 @@ def main():
     else:
         print("❌ Cannot demo method attention - no attention data found")
     
-    # Demo 5: Show the enhanced PTP prompt
-    print("\n📝 DEMO 5: Enhanced PTP prompt (input/output only)")
-    ptp_constants_file = "training/data/constants.py"
-    if os.path.exists(ptp_constants_file):
-        print("✅ PTP constants file exists")
-        with open(ptp_constants_file, 'r') as f:
-            content = f.read()
-            if "showing ONLY the input and output of each method call" in content:
-                print("✅ PTP prompt has been enhanced for input/output only")
-                print("Sample instructions:")
-                lines = content.split('\n')
-                for i, line in enumerate(lines):
-                    if "In the program trace, show only:" in line:
-                        for j in range(i, min(i+6, len(lines))):
-                            print(f"  {lines[j]}")
-                        break
-            else:
-                print("❌ PTP prompt not found or not enhanced")
-    else:
-        print("❌ PTP constants file not found")
-    
-    # Demo 6: Show error handling capabilities
-    print("\n🛡️ DEMO 6: Error handling capabilities")
-    print("The system now handles:")
-    print("  • ZeroDivisionError when calculating accuracy")
-    print("  • Individual example failures without stopping the run")
-    print("  • Graceful degradation when attention analysis fails")
-    print("  • GPU memory issues with CPU fallback")
-    print()
-    print("Example error handling in accuracy calculation:")
-    print("```python")
-    print("try:")
-    print("    if parsed > 0:")
-    print("        acc = correct / parsed")
-    print("    else:")
-    print("        echo(log_fp, 'acc=0.0 (all examples failed to parse)')")
-    print("except ZeroDivisionError as e:")
-    print("    echo(log_fp, f'Error calculating accuracy: {e}')")
-    print("```")
     
     print("\n🎉 DEMO COMPLETE!")
     print("=" * 60)
     print("Summary of enhancements demonstrated:")
     print("✅ 1. Overall accuracy tracking with summary logs")
     print("✅ 2. Top-k thoughts analysis in attention")
-    print("✅ 3. Robust error handling")
-    print("✅ 4. Input/output only program traces")
-    print("✅ 5. Method call attention visualization")
-    print()
-    print("For detailed documentation, see: IMPLEMENTATION_SUMMARY.md")
+    print("✅ 3. Method call attention visualization")
 
 if __name__ == "__main__":
     main() 

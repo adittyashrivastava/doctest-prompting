@@ -1,0 +1,694 @@
+{
+  "example_idx": 23,
+  "input": "A 78-year-old female with a past medical history significant for breast cancer and moderate COPD presented to Emergency Department with syncope. Nine months prior to admission, she underwent left total mastectomy for invasive ductal carcinoma and was started on Tamoxifen 20 mg daily. Home medications included GB 50 mcg once daily, Salbutamol, calcium and a multi-vitamin. GB was started 3 months prior to her presentation for syncope.\nThe day prior to admission, she received an IV vitamin infusion consisting of a mixture of thiamine, folic acid, multivitamin and magnesium sulfate at a naturopath clinic. Shortly after completion of the IV infusion, she developed emesis and took 2 tablets of dimenhydrinate. The following day, she reported dizziness as she walked across the kitchen and passed out after sitting in a chair. The patient reported no palpitations, chest discomfort, nausea, warm sensation or diaphoresis prior to the syncope event. She was not witnessed to have any seizure like activity and when she regained consciousness, reported immediate awareness of surroundings with no neurological deficits, no tongue biting, bowel or urinary incontinence. There was no previous history of syncope and no family history of sudden cardiac death. Her initial blood pressure in the ambulance was 70/50 mm Hg. Hemodynamics normalized after administration of intravenous fluid and her symptoms resolved. Oxygen saturation was above 97 % and telemetry revealed normal sinus rhythm with a heart rate of 77. Precordial examination was unremarkable with regular normal heart sounds and no murmurs. In the Emergency Department, blood tests including complete blood count (CBC), serum electrolytes (potassium, calcium, magnesium), glucose, creatinine and thyroid stimulating hormone were normal. Electrocardiogram (ECG) showed a corrected QT interval using Fridericia (QTcF) and Bazett\u2019s formula (QTcB) of 603 and 631 ms respectively (Fig. ) and she was admitted to the cardiology service for further investigation of the etiology for her QT prolongation.\nPrior to starting Tamoxifen her QTcF and QTcB were 439 and 440 ms respectively (Fig. ), however no ECG was obtained after initiation of Tamoxifen and prior to starting GB. Her last dose of Tamoxifen and GB were the day of admission with both medications discontinued at presentation.\nAn echocardiogram revealed that her left ventricular ejection fraction was >60 % with no valvular or regional wall motion abnormalities. Serial electrocardiograms demonstrated corrected QTcF and QTcB respectively of 603 and 631 ms day 0, 496 and 514 ms day 1, and 446 and 455 ms on day 2 and 442 and 460 ms on day 3 (Fig. ). There were no arrhythmias seen on telemetry. Syncope was felt to be secondary to orthostatic changes and she was discharged on day 3 after admission.\n\nWhat is the patient's score of Wells' criteria for Pulmonary Embolism?\n\nCalculate Wells' Criteria for Pulmonary Embolism by summing the results of the following rules:\n    Clinical signs and symptoms of DVT: No = 0 points, Yes = +3 points\n    PE is #1 diagnosis OR equally likely: No = 0 points, Yes = +3 points\n    Heart rate > 100: No = 0 points, Yes = +1.5 points\n    Immobilization at least 3 days OR surgery in the previous 4 weeks: No = 0 points, Yes = +1.5 points\n    Previous, objectively diagnosed PE or DVT: No = 0 points, Yes = +1.5 points\n    Hemoptysis: No = 0 points, Yes = +1 point\n    Malignancy with treatment within 6 months or palliative: No = 0 points, Yes = +1 point",
+  "response": "```\nmedcalc_rules('A 74-year-old woman with a history   of invasive ductual carcinoma and tamoxifen therapy presents to the emergency department with synCOPE.')\n```\n\n**Function Call**\n\n```py\nfunction_name(analyze\\_input, inputs=[('A \\_ 76\\_-year-old-woman-with-a-history-of-invadec\\_-uctual-carcinoma-and-tamoxifen-therapy-presents-to-the-emergency-department-with-synCOPE', ['age'], ['76']))] -> return\\_value\n```.\n\n**Return Value**\n\n```\n['CHA2dsVasC', ['female', 'history', 'disease', 'chronic', 'myocardial infraction', 'hypertension', 'heart failure']]\n```\n\n---\n\n**Function Calls**\n\n```python  \nfunction_name(get\\_data, ('CHA2ds VasC', [['female', 0]]) -> return\\\n``` \n\n**Return Values**\n\n```\n\n```python\n\nfunction\\_name(accumulate\\_score, (0,0)) -> return\\_\n\n```\n\n```\n\nFunction Calls\n\n```python  \n\nfunction\\_call(check\\_rule, ('CLA2ds Vasc C', [['yes', 1]]) -> reuturn\\_value\n\n```\n\nReturn Value\n\n```\n1.  # Checking Rule Results...\n```",
+  "target": "1",
+  "retrieved_facts": [
+    {
+      "id": 1,
+      "text": "Nine months prior to admission, she underwent left total mastectomy for invasive ductal carcinoma and was started on Tamoxifen 20 mg daily",
+      "token_start": 27,
+      "token_end": 56,
+      "token_indices": [
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        39,
+        40,
+        41,
+        42,
+        43,
+        44,
+        45,
+        46,
+        47,
+        48,
+        49,
+        50,
+        51,
+        52,
+        53,
+        54,
+        55
+      ],
+      "length": 29,
+      "frequency": 0.18819374369323916,
+      "attention_score": 0.0007606055502936124
+    },
+    {
+      "id": 26,
+      "text": "Calculate Wells' Criteria for Pulmonary Embolism by summing the results of the following rules:\n    Clinical signs and symptoms of DVT: No = 0 points, Yes = +3 points\n    PE is #1 diagnosis OR equally likely: No = 0 points, Yes = +3 points\n    Heart rate > 100: No = 0 points, Yes = +1",
+      "token_start": 644,
+      "token_end": 726,
+      "token_indices": [
+        644,
+        645,
+        646,
+        647,
+        648,
+        649,
+        650,
+        651,
+        652,
+        653,
+        654,
+        655,
+        656,
+        657,
+        658,
+        659,
+        660,
+        661,
+        662,
+        663,
+        664,
+        665,
+        666,
+        667,
+        668,
+        669,
+        670,
+        671,
+        672,
+        673,
+        674,
+        675,
+        676,
+        677,
+        678,
+        679,
+        680,
+        681,
+        682,
+        683,
+        684,
+        685,
+        686,
+        687,
+        688,
+        689,
+        690,
+        691,
+        692,
+        693,
+        694,
+        695,
+        696,
+        697,
+        698,
+        699,
+        700,
+        701,
+        702,
+        703,
+        704,
+        705,
+        706,
+        707,
+        708,
+        709,
+        710,
+        711,
+        712,
+        713,
+        714,
+        715,
+        716,
+        717,
+        718,
+        719,
+        720,
+        721,
+        722,
+        723,
+        724,
+        725
+      ],
+      "length": 82,
+      "frequency": 0.239656912209889,
+      "attention_score": 0.0007566788688517581
+    },
+    {
+      "id": 17,
+      "text": "Prior to starting Tamoxifen her QTcF and QTcB were 439 and 440 ms respectively (Fig",
+      "token_start": 426,
+      "token_end": 454,
+      "token_indices": [
+        426,
+        427,
+        428,
+        429,
+        430,
+        431,
+        432,
+        433,
+        434,
+        435,
+        436,
+        437,
+        438,
+        439,
+        440,
+        441,
+        442,
+        443,
+        444,
+        445,
+        446,
+        447,
+        448,
+        449,
+        450,
+        451,
+        452,
+        453
+      ],
+      "length": 28,
+      "frequency": 0.12512613521695257,
+      "attention_score": 0.0006112796903520805
+    },
+    {
+      "id": 4,
+      "text": "The day prior to admission, she received an IV vitamin infusion consisting of a mixture of thiamine, folic acid, multivitamin and magnesium sulfate at a naturopath clinic",
+      "token_start": 92,
+      "token_end": 130,
+      "token_indices": [
+        92,
+        93,
+        94,
+        95,
+        96,
+        97,
+        98,
+        99,
+        100,
+        101,
+        102,
+        103,
+        104,
+        105,
+        106,
+        107,
+        108,
+        109,
+        110,
+        111,
+        112,
+        113,
+        114,
+        115,
+        116,
+        117,
+        118,
+        119,
+        120,
+        121,
+        122,
+        123,
+        124,
+        125,
+        126,
+        127,
+        128,
+        129
+      ],
+      "length": 38,
+      "frequency": 0.16498486377396568,
+      "attention_score": 0.0005865168358644895
+    },
+    {
+      "id": 2,
+      "text": "Home medications included GB 50 mcg once daily, Salbutamol, calcium and a multi-vitamin",
+      "token_start": 56,
+      "token_end": 79,
+      "token_indices": [
+        56,
+        57,
+        58,
+        59,
+        60,
+        61,
+        62,
+        63,
+        64,
+        65,
+        66,
+        67,
+        68,
+        69,
+        70,
+        71,
+        72,
+        73,
+        74,
+        75,
+        76,
+        77,
+        78
+      ],
+      "length": 23,
+      "frequency": 0.05146316851664985,
+      "attention_score": 0.0005510171807478665
+    },
+    {
+      "id": 3,
+      "text": "GB was started 3 months prior to her presentation for syncope",
+      "token_start": 79,
+      "token_end": 92,
+      "token_indices": [
+        79,
+        80,
+        81,
+        82,
+        83,
+        84,
+        85,
+        86,
+        87,
+        88,
+        89,
+        90,
+        91
+      ],
+      "length": 13,
+      "frequency": 0.03884964682139253,
+      "attention_score": 0.0005364666091067399
+    },
+    {
+      "id": 5,
+      "text": "Shortly after completion of the IV infusion, she developed emesis and took 2 tablets of dimenhydrinate",
+      "token_start": 130,
+      "token_end": 152,
+      "token_indices": [
+        130,
+        131,
+        132,
+        133,
+        134,
+        135,
+        136,
+        137,
+        138,
+        139,
+        140,
+        141,
+        142,
+        143,
+        144,
+        145,
+        146,
+        147,
+        148,
+        149,
+        150,
+        151
+      ],
+      "length": 22,
+      "frequency": 0.06104944500504541,
+      "attention_score": 0.000527683572460211
+    },
+    {
+      "id": 16,
+      "text": ") and she was admitted to the cardiology service for further investigation of the etiology for her QT prolongation",
+      "token_start": 404,
+      "token_end": 426,
+      "token_indices": [
+        404,
+        405,
+        406,
+        407,
+        408,
+        409,
+        410,
+        411,
+        412,
+        413,
+        414,
+        415,
+        416,
+        417,
+        418,
+        419,
+        420,
+        421,
+        422,
+        423,
+        424,
+        425
+      ],
+      "length": 22,
+      "frequency": 0.06609485368314834,
+      "attention_score": 0.0005167899743055165
+    },
+    {
+      "id": 15,
+      "text": "Electrocardiogram (ECG) showed a corrected QT interval using Fridericia (QTcF) and Bazett\u2019s formula (QTcB) of 603 and 631 ms respectively (Fig",
+      "token_start": 357,
+      "token_end": 404,
+      "token_indices": [
+        357,
+        358,
+        359,
+        360,
+        361,
+        362,
+        363,
+        364,
+        365,
+        366,
+        367,
+        368,
+        369,
+        370,
+        371,
+        372,
+        373,
+        374,
+        375,
+        376,
+        377,
+        378,
+        379,
+        380,
+        381,
+        382,
+        383,
+        384,
+        385,
+        386,
+        387,
+        388,
+        389,
+        390,
+        391,
+        392,
+        393,
+        394,
+        395,
+        396,
+        397,
+        398,
+        399,
+        400,
+        401,
+        402,
+        403
+      ],
+      "length": 47,
+      "frequency": 0.09081735620585267,
+      "attention_score": 0.00048576920180156297
+    },
+    {
+      "id": 12,
+      "text": "Oxygen saturation was above 97 % and telemetry revealed normal sinus rhythm with a heart rate of 77",
+      "token_start": 282,
+      "token_end": 305,
+      "token_indices": [
+        282,
+        283,
+        284,
+        285,
+        286,
+        287,
+        288,
+        289,
+        290,
+        291,
+        292,
+        293,
+        294,
+        295,
+        296,
+        297,
+        298,
+        299,
+        300,
+        301,
+        302,
+        303,
+        304
+      ],
+      "length": 23,
+      "frequency": 0.0615539858728557,
+      "attention_score": 0.00048447258062462776
+    }
+  ],
+  "retrieved_thoughts": [
+    {
+      "text": "function\\_call(check\\_rule, ('CLA2ds Vasc C', [['yes', 1]]) -> reuturn\\_value",
+      "score": 0.9999999962155781,
+      "attention_score": 0.9999999962155781,
+      "frequency": 1.0,
+      "token_start": 231,
+      "token_end": 258,
+      "type": "program_trace",
+      "line_num": 40,
+      "context_before": [
+        "```python  ",
+        ""
+      ],
+      "context_after": [
+        "",
+        "```"
+      ]
+    },
+    {
+      "text": "function_name(analyze\\_input, inputs=[('A \\_ 76\\_-year-old-woman-with-a-history-of-invadec\\_-uctual-carcinoma-and-tamoxifen-therapy-presents-to-the-emergency-department-with-synCOPE', ['age'], ['76']))] -> return\\_value",
+      "score": 0.9999999944467722,
+      "attention_score": 0.9999999944467722,
+      "frequency": 1.0,
+      "token_start": 45,
+      "token_end": 114,
+      "type": "program_trace",
+      "line_num": 7,
+      "context_before": [
+        "",
+        "```py"
+      ],
+      "context_after": [
+        "```.",
+        ""
+      ]
+    },
+    {
+      "text": "function_name(get\\_data, ('CHA2ds VasC', [['female', 0]]) -> return\\",
+      "score": 0.9999999930332233,
+      "attention_score": 0.9999999930332233,
+      "frequency": 1.0,
+      "token_start": 171,
+      "token_end": 193,
+      "type": "program_trace",
+      "line_num": 21,
+      "context_before": [
+        "",
+        "```python  "
+      ],
+      "context_after": [
+        "``` ",
+        ""
+      ]
+    },
+    {
+      "text": "function\\_name(accumulate\\_score, (0,0)) -> return\\_",
+      "score": 0.9999999859753776,
+      "attention_score": 0.9999999859753776,
+      "frequency": 1.0,
+      "token_start": 204,
+      "token_end": 221,
+      "type": "program_trace",
+      "line_num": 30,
+      "context_before": [
+        "```python",
+        ""
+      ],
+      "context_after": [
+        "",
+        "```"
+      ]
+    }
+  ],
+  "method_calls": [
+    {
+      "line_num": 7,
+      "call_text": "function_name(analyze\\_input, inputs=[('A \\_ 76\\_-year-old-woman-with-a-history-of-invadec\\_-uctual-carcinoma-and-tamoxifen-therapy-presents-to-the-emergency-department-with-synCOPE', ['age'], ['76']))] -> return\\_value",
+      "context_before": [
+        "",
+        "```py"
+      ],
+      "context_after": [
+        "```.",
+        ""
+      ]
+    },
+    {
+      "line_num": 21,
+      "call_text": "function_name(get\\_data, ('CHA2ds VasC', [['female', 0]]) -> return\\",
+      "context_before": [
+        "",
+        "```python  "
+      ],
+      "context_after": [
+        "``` ",
+        ""
+      ]
+    },
+    {
+      "line_num": 30,
+      "call_text": "function\\_name(accumulate\\_score, (0,0)) -> return\\_",
+      "context_before": [
+        "```python",
+        ""
+      ],
+      "context_after": [
+        "",
+        "```"
+      ]
+    },
+    {
+      "line_num": 40,
+      "call_text": "function\\_call(check\\_rule, ('CLA2ds Vasc C', [['yes', 1]]) -> reuturn\\_value",
+      "context_before": [
+        "```python  ",
+        ""
+      ],
+      "context_after": [
+        "",
+        "```"
+      ]
+    }
+  ],
+  "method_call_attention": {
+    "0": {
+      "method_name": "function_name",
+      "method_call_text": "function_name(analyze\\_input, inputs=[('A \\_ 76\\_-year-old-woman-with-a-history-of-invadec\\_-uctual-carcinoma-and-tamoxifen-therapy-presents-to-the-emergency-department-with-synCOPE', ['age'], ['76']))] -> return\\_value",
+      "matching_thought": {
+        "text": "function_name(analyze\\_input, inputs=[('A \\_ 76\\_-year-old-woman-with-a-history-of-invadec\\_-uctual-carcinoma-and-tamoxifen-therapy-presents-to-the-emergency-department-with-synCOPE', ['age'], ['76']))] -> return\\_value",
+        "score": 0.9999999944467722,
+        "attention_score": 0.9999999944467722,
+        "frequency": 1.0,
+        "token_start": 45,
+        "token_end": 114,
+        "type": "program_trace",
+        "line_num": 7,
+        "context_before": [
+          "",
+          "```py"
+        ],
+        "context_after": [
+          "```.",
+          ""
+        ]
+      },
+      "related_facts": [],
+      "thought_attention_score": 0.9999999944467722,
+      "fact_attention_score": 0,
+      "total_attention_score": 0.9999999944467722,
+      "token_positions": {
+        "start": 45,
+        "end": 114
+      }
+    },
+    "1": {
+      "method_name": "function_name",
+      "method_call_text": "function_name(get\\_data, ('CHA2ds VasC', [['female', 0]]) -> return\\",
+      "matching_thought": {
+        "text": "function_name(get\\_data, ('CHA2ds VasC', [['female', 0]]) -> return\\",
+        "score": 0.9999999930332233,
+        "attention_score": 0.9999999930332233,
+        "frequency": 1.0,
+        "token_start": 171,
+        "token_end": 193,
+        "type": "program_trace",
+        "line_num": 21,
+        "context_before": [
+          "",
+          "```python  "
+        ],
+        "context_after": [
+          "``` ",
+          ""
+        ]
+      },
+      "related_facts": [],
+      "thought_attention_score": 0.9999999930332233,
+      "fact_attention_score": 0,
+      "total_attention_score": 0.9999999930332233,
+      "token_positions": {
+        "start": 171,
+        "end": 193
+      }
+    },
+    "2": {
+      "method_name": "_name",
+      "method_call_text": "function\\_name(accumulate\\_score, (0,0)) -> return\\_",
+      "matching_thought": {
+        "text": "function\\_name(accumulate\\_score, (0,0)) -> return\\_",
+        "score": 0.9999999859753776,
+        "attention_score": 0.9999999859753776,
+        "frequency": 1.0,
+        "token_start": 204,
+        "token_end": 221,
+        "type": "program_trace",
+        "line_num": 30,
+        "context_before": [
+          "```python",
+          ""
+        ],
+        "context_after": [
+          "",
+          "```"
+        ]
+      },
+      "related_facts": [],
+      "thought_attention_score": 0.9999999859753776,
+      "fact_attention_score": 0,
+      "total_attention_score": 0.9999999859753776,
+      "token_positions": {
+        "start": 204,
+        "end": 221
+      }
+    },
+    "3": {
+      "method_name": "_call",
+      "method_call_text": "function\\_call(check\\_rule, ('CLA2ds Vasc C', [['yes', 1]]) -> reuturn\\_value",
+      "matching_thought": {
+        "text": "function\\_call(check\\_rule, ('CLA2ds Vasc C', [['yes', 1]]) -> reuturn\\_value",
+        "score": 0.9999999962155781,
+        "attention_score": 0.9999999962155781,
+        "frequency": 1.0,
+        "token_start": 231,
+        "token_end": 258,
+        "type": "program_trace",
+        "line_num": 40,
+        "context_before": [
+          "```python  ",
+          ""
+        ],
+        "context_after": [
+          "",
+          "```"
+        ]
+      },
+      "related_facts": [],
+      "thought_attention_score": 0.9999999962155781,
+      "fact_attention_score": 0,
+      "total_attention_score": 0.9999999962155781,
+      "token_positions": {
+        "start": 231,
+        "end": 258
+      }
+    }
+  },
+  "num_facts": 10,
+  "num_thoughts": 4,
+  "analysis_timestamp": "2025-07-15T05:20:17.855596"
+}

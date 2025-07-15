@@ -219,6 +219,7 @@ def main():
         model,
         torch_dtype=torch.float32,
         device_map="auto",
+        offload_buffers=True  # Fix OOM issue for large models
     )
     pipeline = transformers.pipeline(
         "text-generation",

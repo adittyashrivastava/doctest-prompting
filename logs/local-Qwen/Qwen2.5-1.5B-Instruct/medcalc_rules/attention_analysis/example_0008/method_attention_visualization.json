@@ -1,0 +1,47 @@
+{
+  "summary": {
+    "total_method_calls": 1,
+    "input_context_length": 5075,
+    "total_facts": 10,
+    "total_thoughts": 1
+  },
+  "method_call_analysis": [
+    {
+      "method_call_idx": 0,
+      "method_name": "medcalc_rules",
+      "method_call_text": "medcalc_rules(INPUT1) -> result",
+      "top_attended_sentences": [],
+      "related_facts": [],
+      "matching_thought": {
+        "text": "medcalc_rules(INPUT1) -> result",
+        "score": 0.7058372039880071,
+        "attention_score": 0.7058372039880071,
+        "frequency": 1.0,
+        "token_start": 2,
+        "token_end": 10,
+        "type": "program_trace",
+        "line_num": 1,
+        "context_before": [
+          "```"
+        ],
+        "context_after": [
+          "```.",
+          ""
+        ]
+      },
+      "attention_summary": {
+        "total_attention_score": 0.7058372039880071,
+        "thought_attention_score": 0.7058372039880071,
+        "fact_attention_score": 0,
+        "num_attended_sentences": 0,
+        "has_matching_thought": true,
+        "num_related_facts": 0,
+        "max_attention_score": 0,
+        "token_positions": {
+          "start": 2,
+          "end": 10
+        }
+      }
+    }
+  ]
+}

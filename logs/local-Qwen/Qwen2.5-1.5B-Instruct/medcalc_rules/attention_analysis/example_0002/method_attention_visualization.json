@@ -1,0 +1,9 @@
+{
+  "summary": {
+    "total_method_calls": 0,
+    "input_context_length": 4746,
+    "total_facts": 10,
+    "total_thoughts": 0
+  },
+  "method_call_analysis": []
+}
