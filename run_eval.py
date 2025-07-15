@@ -587,24 +587,40 @@ def main(args=None):
                         if attention_analysis_dir:
                             # Load and display summary of attention results
                             try:
-                                results_file = os.path.join(attention_analysis_dir, "top_facts.json")
+                                results_file = os.path.join(attention_analysis_dir, "comprehensive_analysis.json")
                                 if os.path.exists(results_file):
                                     with open(results_file, 'r') as f:
                                         results = json.load(f)
                                     
                                     num_facts = len(results.get('retrieved_facts', []))
-                                    echo(log_fp, f"✅ Attention analysis complete: {num_facts} facts extracted")
+                                    num_thoughts = len(results.get('retrieved_thoughts', []))
+                                    num_methods = len(results.get('method_calls', []))
                                     
-                                    # Show top 3 attention scores
+                                    echo(log_fp, f"✅ Attention analysis complete:")
+                                    echo(log_fp, f"   📊 Facts extracted: {num_facts}")
+                                    echo(log_fp, f"   🧠 Thoughts extracted: {num_thoughts}")
+                                    echo(log_fp, f"   🎯 Method calls found: {num_methods}")
+                                    
+                                    # Show top 3 attention scores from facts
                                     facts = results.get('retrieved_facts', [])[:3]
                                     if facts:
-                                        echo(log_fp, f"🔍 Top attention scores:")
+                                        echo(log_fp, f"🔍 Top attention scores (facts):")
                                         for i, fact in enumerate(facts, 1):
-                                            score = fact.get('attention_score', 0)
+                                            score = fact.get('attention_score', fact.get('score', 0))
                                             text_preview = fact.get('text', 'No text')[:60] + "..."
                                             echo(log_fp, f"   {i}. Score: {score:.8f} - {text_preview}")
-                                    else:
-                                        echo(log_fp, f"⚠️  No attention facts extracted")
+                                    
+                                    # Show top 3 attention scores from thoughts
+                                    thoughts = results.get('retrieved_thoughts', [])[:3]
+                                    if thoughts:
+                                        echo(log_fp, f"🔍 Top attention scores (thoughts):")
+                                        for i, thought in enumerate(thoughts, 1):
+                                            score = thought.get('attention_score', thought.get('score', 0))
+                                            text_preview = thought.get('text', 'No text')[:60] + "..."
+                                            echo(log_fp, f"   {i}. Score: {score:.8f} - {text_preview}")
+                                    
+                                    if not facts and not thoughts:
+                                        echo(log_fp, f"⚠️  No attention facts or thoughts extracted")
                                 else:
                                     echo(log_fp, f"⚠️  Attention results file not found: {results_file}")
                             except Exception as e:
