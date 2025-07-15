@@ -1,7 +1,7 @@
 {
   "example_idx": 8,
   "input_preview": "A 64-year-old Caucasian female presented with dizziness, pre-syncope, and progressive decline in functional capacity, with New York Heart Association (NYHA) class III symptoms. Her past medical histor...",
-  "response_preview": "```\nFunction Name: medcalcscore\nArguments: (\"CHA2DS\u2082-VASC Score\") -> Return Value: 2\n````\n\n``` \nFunction Name : medcalc_rules  \nArguments : \"A 63-year-old White woman with a history\" -> Return_Value :...",
+  "response_preview": "To predict the output, let's break down the execution step-by-step:\n\n### Step 1: Analyze Input Data\nThe first piece of input data provided is a long paragraph about a patient presenting with various s...",
   "target": "5",
   "retrieved_facts": [
     {
@@ -33,8 +33,8 @@
         101
       ],
       "length": 21,
-      "frequency": 0.02474864655839134,
-      "attention_score": 0.0004676399774371273
+      "frequency": 0.024069198946972545,
+      "attention_score": 0.00045343332626336164
     },
     {
       "id": 10,
@@ -58,8 +58,8 @@
         368
       ],
       "length": 14,
-      "frequency": 0.016627996906419182,
-      "attention_score": 0.0004641061327830806
+      "frequency": 0.016171493042497178,
+      "attention_score": 0.00045234290674057905
     },
     {
       "id": 7,
@@ -90,8 +90,8 @@
         227
       ],
       "length": 21,
-      "frequency": 0.027068832173240527,
-      "attention_score": 0.00043877726106308505
+      "frequency": 0.026325686348251224,
+      "attention_score": 0.00042772568751955144
     },
     {
       "id": 5,
@@ -125,8 +125,8 @@
         177
       ],
       "length": 24,
-      "frequency": 0.02668213457076566,
-      "attention_score": 0.0004227032036749309
+      "frequency": 0.025949605114704778,
+      "attention_score": 0.00041372728146906585
     },
     {
       "id": 6,
@@ -165,13 +165,13 @@
         206
       ],
       "length": 29,
-      "frequency": 0.04215003866976025,
-      "attention_score": 0.00042264364093404087
+      "frequency": 0.040992854456562616,
+      "attention_score": 0.0004122256993714697
     }
   ],
   "num_facts": 5,
   "optimization_info": {
-    "sequence_length": 571,
+    "sequence_length": 644,
     "max_tokens_used": 1024,
     "prompt_compacted": true,
     "layers_extracted": 7,

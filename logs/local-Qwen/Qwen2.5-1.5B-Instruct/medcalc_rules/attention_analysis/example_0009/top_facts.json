@@ -1,7 +1,7 @@
 {
   "example_idx": 9,
   "input_preview": "A 43-year-old male presented with palpitations that started three hours prior to presentation. He had a similar episode three years ago at which time he was diagnosed with AF with RVR. During that epi...",
-  "response_preview": "```\nmedcalc_rules('A 42-year-old man with a known history of atrial flutter (AF) with rapid atrial escape rhythm (RVR)')\n-> TRACE: medcalcrules called with argument 'A  44-year-old  man with  a known ...",
+  "response_preview": "Here is the simulated execution trace for the provided input:\n\n```plaintext\n>>> medcalcrules('A 41-year-old man was brought to the emergency department due to palpitations lasting three hours. These p...",
   "target": "0",
   "retrieved_facts": [
     {
@@ -31,8 +31,8 @@
         36
       ],
       "length": 19,
-      "frequency": 0.040842648323301804,
-      "attention_score": 0.0008777509684763618
+      "frequency": 0.044642857142857144,
+      "attention_score": 0.0009749580210918554
     },
     {
       "id": 5,
@@ -57,8 +57,8 @@
         115
       ],
       "length": 15,
-      "frequency": 0.03955288048151333,
-      "attention_score": 0.0007032773952928399
+      "frequency": 0.043233082706766915,
+      "attention_score": 0.0007765334011299048
     },
     {
       "id": 2,
@@ -91,8 +91,8 @@
         59
       ],
       "length": 23,
-      "frequency": 0.037833190025795355,
-      "attention_score": 0.000653515761889611
+      "frequency": 0.044172932330827065,
+      "attention_score": 0.0007284402950498035
     },
     {
       "id": 13,
@@ -122,8 +122,8 @@
         307
       ],
       "length": 20,
-      "frequency": 0.03697334479793637,
-      "attention_score": 0.0005389962527744094
+      "frequency": 0.04088345864661654,
+      "attention_score": 0.0005902767266853239
     },
     {
       "id": 6,
@@ -145,13 +145,13 @@
         127
       ],
       "length": 12,
-      "frequency": 0.013757523645743766,
-      "attention_score": 0.0005112203992381026
+      "frequency": 0.015037593984962405,
+      "attention_score": 0.0005688326035559347
     }
   ],
   "num_facts": 5,
   "optimization_info": {
-    "sequence_length": 781,
+    "sequence_length": 583,
     "max_tokens_used": 1024,
     "prompt_compacted": true,
     "layers_extracted": 7,

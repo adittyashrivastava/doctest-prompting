@@ -1,0 +1,15 @@
+{
+  "example_idx": 0,
+  "input_preview": "We present an 85-year-old male with a past medical history of obesity, type two diabetes, atrial fibrillation, diastolic heart failure, chronic kidney disease (CKD) stage three, and coronary artery di...",
+  "response_preview": "To predict the output, let's first identify the key parts that need to be filled in:\n\n1. **Analyze Input Function**: This function needs to parse the input string and extract the specific question, ru...",
+  "target": "6",
+  "retrieved_facts": [],
+  "num_facts": 0,
+  "optimization_info": {
+    "sequence_length": 1024,
+    "max_tokens_used": 1024,
+    "prompt_compacted": true,
+    "layers_extracted": 7,
+    "memory_strategy": "layer_selective_extraction"
+  }
+}

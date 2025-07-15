@@ -1,7 +1,7 @@
 {
   "example_idx": 0,
   "input_preview": "We present an 85-year-old male with a past medical history of obesity, type two diabetes, atrial fibrillation, diastolic heart failure, chronic kidney disease (CKD) stage three, and coronary artery di...",
-  "response_preview": "Let's go through the entire process step-by-step:\n\n### Step 1: Call `medcalc_rules` with the first example (`INPUT1`)\n```python\n\n# Call medcalc with INPUT1\ntrace('Calling medcalc...')\nresult1 = medcal...",
+  "response_preview": "```\nFUNCTION CALL: medcalcrules('We present...') -> None\nTRACE: calling medcalc\\_rules called with argument: We present...\nTRACE: analyzing input...\nTRACE : calling analyze\\_input with inputs ['We pre...",
   "target": "6",
   "retrieved_facts": [
     {
@@ -39,8 +39,8 @@
         139
       ],
       "length": 27,
-      "frequency": 0.0314192849404117,
-      "attention_score": 0.0005312234422177317
+      "frequency": 0.030666196686640817,
+      "attention_score": 0.0005210153120751468
     },
     {
       "id": 5,
@@ -98,8 +98,8 @@
         201
       ],
       "length": 48,
-      "frequency": 0.04983748645720477,
-      "attention_score": 0.0004732102540368461
+      "frequency": 0.048642932675361295,
+      "attention_score": 0.0004630994257854608
     },
     {
       "id": 1,
@@ -155,8 +155,8 @@
         91
       ],
       "length": 46,
-      "frequency": 0.05200433369447454,
-      "attention_score": 0.00046726656720712126
+      "frequency": 0.05075784279168136,
+      "attention_score": 0.0004601841075845758
     },
     {
       "id": 6,
@@ -208,8 +208,8 @@
         243
       ],
       "length": 42,
-      "frequency": 0.05128205128205128,
-      "attention_score": 0.00045352822254595467
+      "frequency": 0.050052872752908,
+      "attention_score": 0.0004463926283396573
     },
     {
       "id": 2,
@@ -240,13 +240,13 @@
         112
       ],
       "length": 21,
-      "frequency": 0.018779342723004695,
-      "attention_score": 0.00044824354840717137
+      "frequency": 0.018329221008107157,
+      "attention_score": 0.00044165941432270717
     }
   ],
   "num_facts": 5,
   "optimization_info": {
-    "sequence_length": 516,
+    "sequence_length": 584,
     "max_tokens_used": 1024,
     "prompt_compacted": true,
     "layers_extracted": 7,

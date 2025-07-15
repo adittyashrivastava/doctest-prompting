@@ -1,7 +1,7 @@
 {
   "example_idx": 7,
   "input_preview": "A 62-year-old right-handed male with a longstanding history of diabetes mellitus and hypertension presented with sudden-onset left-sided body weakness as well as a loss of feeling over the left side o...",
-  "response_preview": "### Full Simulation Trace\n\n#### Step-by-step Execution:\n\n**Initial Call to `medcalc_rules`**\n```python\n\n>>> medcalcrules('A 67-year-old Hispanic woman with a history consistent with an ischemic stroke...",
+  "response_preview": "```\nFunction Name: medcalcrules\nArguments: (\"A 63-year-old left-handed male presenting with sudden onset left-sided weakness.\")\nReturn Value: None\nTraceback:\n    >>> medcalcules(A  6 3-year old left h...",
   "target": "4",
   "retrieved_facts": [
     {
@@ -25,8 +25,8 @@
         54
       ],
       "length": 13,
-      "frequency": 0.04568788501026694,
-      "attention_score": 0.0009525738222259022
+      "frequency": 0.03866203301476977,
+      "attention_score": 0.000813237132122213
     },
     {
       "id": 16,
@@ -65,8 +65,8 @@
         320
       ],
       "length": 29,
-      "frequency": 0.04260780287474333,
-      "attention_score": 0.0007018105117404115
+      "frequency": 0.035621198957428324,
+      "attention_score": 0.0006049908588881417
     },
     {
       "id": 6,
@@ -94,8 +94,8 @@
         135
       ],
       "length": 18,
-      "frequency": 0.027720739219712527,
-      "attention_score": 0.0006477054674078132
+      "frequency": 0.023457862728062554,
+      "attention_score": 0.0005538652004137007
     },
     {
       "id": 2,
@@ -118,8 +118,8 @@
         67
       ],
       "length": 13,
-      "frequency": 0.016940451745379878,
-      "attention_score": 0.0006381542966569033
+      "frequency": 0.014335360556038228,
+      "attention_score": 0.0005454550685727253
     },
     {
       "id": 4,
@@ -149,13 +149,13 @@
         105
       ],
       "length": 20,
-      "frequency": 0.033880903490759756,
-      "attention_score": 0.0006047031514662244
+      "frequency": 0.028670721112076455,
+      "attention_score": 0.0005145037655778547
     }
   ],
   "num_facts": 5,
   "optimization_info": {
-    "sequence_length": 807,
+    "sequence_length": 1024,
     "max_tokens_used": 1024,
     "prompt_compacted": true,
     "layers_extracted": 7,

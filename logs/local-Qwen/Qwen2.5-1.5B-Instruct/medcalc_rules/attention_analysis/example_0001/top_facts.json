@@ -1,7 +1,7 @@
 {
   "example_idx": 1,
   "input_preview": "Fifty-one-year-old Caucasian female was admitted to our hospital with complaints of fever and chills for three days and low back pain for two days. Past medical history included recent spinal abscess ...",
-  "response_preview": "```\nFUNCTION_NAME(analyze_inputs) -> TRACE: calling analyze_input...\nFUNCTION_NAME(input=\"Fifty-two-year-old African American male presented with sudden onset of chest pain, dyspnea, and nausea. Histo...",
+  "response_preview": "Here is the simulated execution trace for the `medcalc_rules` function:\n\n```\nTRACE: calling medcalc Rules Function...\nFUNCTION_CALL: medCalcRules() -> None\nFUNCTION_CALLS: analyzeInput(input='Fifty on...",
   "target": "4.5",
   "retrieved_facts": [
     {
@@ -94,8 +94,8 @@
         587
       ],
       "length": 82,
-      "frequency": 0.1067675493905002,
-      "attention_score": 0.0006947304508839571
+      "frequency": 0.07548256986459234,
+      "attention_score": 0.0005138751573214014
     },
     {
       "id": 1,
@@ -131,26 +131,8 @@
         54
       ],
       "length": 26,
-      "frequency": 0.050021017234131986,
-      "attention_score": 0.0005716716940735621
-    },
-    {
-      "id": 3,
-      "text": "On physical examination, patient appeared sick",
-      "token_start": 73,
-      "token_end": 80,
-      "token_indices": [
-        73,
-        74,
-        75,
-        76,
-        77,
-        78,
-        79
-      ],
-      "length": 7,
-      "frequency": 0.009247583018074821,
-      "attention_score": 0.0005480111926306525
+      "frequency": 0.04119850187265917,
+      "attention_score": 0.0005024177141694575
     },
     {
       "id": 17,
@@ -172,27 +154,46 @@
         350
       ],
       "length": 12,
-      "frequency": 0.03614964270701976,
-      "attention_score": 0.0005219220840813779
+      "frequency": 0.027369634111207145,
+      "attention_score": 0.0004566700975698534
     },
     {
-      "id": 5,
-      "text": "No skin lesions; neck was supple",
-      "token_start": 108,
-      "token_end": 116,
+      "id": 3,
+      "text": "On physical examination, patient appeared sick",
+      "token_start": 73,
+      "token_end": 80,
       "token_indices": [
-        108,
-        109,
-        110,
-        111,
-        112,
-        113,
-        114,
-        115
+        73,
+        74,
+        75,
+        76,
+        77,
+        78,
+        79
       ],
-      "length": 8,
-      "frequency": 0.01807482135350988,
-      "attention_score": 0.0004973115144067052
+      "length": 7,
+      "frequency": 0.006914433880726016,
+      "attention_score": 0.00043827703272742504
+    },
+    {
+      "id": 20,
+      "text": "Her echo examination 8 months ago was normal",
+      "token_start": 365,
+      "token_end": 374,
+      "token_indices": [
+        365,
+        366,
+        367,
+        368,
+        369,
+        370,
+        371,
+        372,
+        373
+      ],
+      "length": 9,
+      "frequency": 0.014693171996542784,
+      "attention_score": 0.0004119455705065498
     }
   ],
   "num_facts": 5,

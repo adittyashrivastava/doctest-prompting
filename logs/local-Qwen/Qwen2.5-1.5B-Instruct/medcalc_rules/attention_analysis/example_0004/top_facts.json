@@ -1,7 +1,7 @@
 {
   "example_idx": 4,
   "input_preview": "A 30-year-old Chinese female, G3P2002 at 26 weeks and 2 days gestation, presented to the Emergency Department complaining of shortness of breath and a dry cough that started one week prior. She had no...",
-  "response_preview": "Here is the simulated execution trace for the `medcalc_rules` function:\n\n```plaintext\n>>> medcalcrules('A 3 0-year old Chinese female', 'G3P3003 at 5 weeks and six days gestational age, presented with...",
+  "response_preview": "### Execution Trace:\n\n#### Function Calls & Outputs\n\n1. **medcalc_rules()**\n   ```python\n   >>> medcalc_calculations.medcalc_rules(INPUT1)\n   ```\n\n   *Arguments passed to `medcalc_calculator.medcalc_c...",
   "target": "1",
   "retrieved_facts": [
     {
@@ -20,8 +20,8 @@
         506
       ],
       "length": 8,
-      "frequency": 0.013921723141581297,
-      "attention_score": 0.0005594850873622354
+      "frequency": 0.012296983758700695,
+      "attention_score": 0.000496623428895841
     },
     {
       "id": 1,
@@ -46,8 +46,8 @@
         62
       ],
       "length": 15,
-      "frequency": 0.02232729183083793,
-      "attention_score": 0.00046340961605927664
+      "frequency": 0.019721577726218097,
+      "attention_score": 0.00040682824105952887
     },
     {
       "id": 2,
@@ -70,8 +70,8 @@
         75
       ],
       "length": 13,
-      "frequency": 0.008930916732335172,
-      "attention_score": 0.00044342134684049816
+      "frequency": 0.00788863109048724,
+      "attention_score": 0.0003884264945904806
     },
     {
       "id": 16,
@@ -128,42 +128,34 @@
         376
       ],
       "length": 47,
-      "frequency": 0.06750722353559233,
-      "attention_score": 0.00043342775282065527
+      "frequency": 0.05962877030162413,
+      "attention_score": 0.00038501579004207847
     },
     {
-      "id": 3,
-      "text": "She appeared critically ill, with vitals as follows: febrile to 39",
-      "token_start": 76,
-      "token_end": 94,
+      "id": 5,
+      "text": "Pertinent laboratory findings included WBC 7",
+      "token_start": 155,
+      "token_end": 165,
       "token_indices": [
-        76,
-        77,
-        78,
-        79,
-        80,
-        81,
-        82,
-        83,
-        84,
-        85,
-        86,
-        87,
-        88,
-        89,
-        90,
-        91,
-        92,
-        93
+        155,
+        156,
+        157,
+        158,
+        159,
+        160,
+        161,
+        162,
+        163,
+        164
       ],
-      "length": 18,
-      "frequency": 0.014184397163120567,
-      "attention_score": 0.0004048447171779204
+      "length": 10,
+      "frequency": 0.00788863109048724,
+      "attention_score": 0.00035747978211643977
     }
   ],
   "num_facts": 5,
   "optimization_info": {
-    "sequence_length": 698,
+    "sequence_length": 1024,
     "max_tokens_used": 1024,
     "prompt_compacted": true,
     "layers_extracted": 7,

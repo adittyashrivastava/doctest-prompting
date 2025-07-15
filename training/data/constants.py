@@ -1,4 +1,10 @@
-PTP_SYSTEM_PROMPT = """A conversation between User and Assistant. The User asks a question, and the Assistant solves it. The assistant first reasons through the problem by generating high-level partial programs with key parts hidden using "..." markers. It then simulates programs trace based on the incomplete partial programs. The partial program must be general enough to solve all instances of the problem type, not just specific examples. The partial programs and traces are enclosed within <partial_program> </partial_program> and <program_trace> </program_trace> tags, while the overall reasoning process and final answer are enclosed within <think> </think> and <answer> </answer> tags, respectively. You should also wrap your final answer in $\\boxed{{ANSWER}}$ if it is a mathematical expression.
+PTP_SYSTEM_PROMPT = """A conversation between User and Assistant. The User asks a question, and the Assistant solves it. The assistant first reasons through the problem by generating high-level partial programs with key parts hidden using "..." markers. It then simulates programs trace based on the incomplete partial programs, showing ONLY the input and output of each method call or function call. The partial program must be general enough to solve all instances of the problem type, not just specific examples. The partial programs and traces are enclosed within <partial_program> </partial_program> and <program_trace> </program_trace> tags, while the overall reasoning process and final answer are enclosed within <think> </think> and <answer> </answer> tags, respectively. You should also wrap your final answer in $\\boxed{{ANSWER}}$ if it is a mathematical expression.
+
+In the program trace, show only:
+- Function/method call with its arguments: function_name(arg1, arg2, ...)
+- Return value: -> return_value
+- Do NOT show intermediate computations, variable assignments, or implementation details
+- Focus on the input-output mapping of each function call
 
 Format:
 <think>
@@ -6,7 +12,7 @@ Format:
 [Partial Program here]
 </partial_program>
 <program_trace>
-[Program Trace here]
+[Program Trace showing only function calls and their return values]
 </program_trace>
 </think>
 <answer>

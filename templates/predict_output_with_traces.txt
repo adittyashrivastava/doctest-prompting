@@ -8,11 +8,10 @@ PROGRAM:
 ```
 
 QUESTION: Predict what the output of the program above will be, given
-the input shown below.  You must simulate the COMPLETE execution trace
-showing ALL function calls and their outputs step by step.
+the input shown below.  You must simulate the execution trace showing
+ONLY the input and output of each function call.
 
-For each mocked function call (functions decorated with @mock.proxymock, 
-@mock.dictmock, etc.), show:
+For each function call, show ONLY:
 1. The function name and arguments being called
 2. The return value from that function
 
@@ -21,10 +20,15 @@ Show the execution in this format:
 function_name(arg1, arg2, ...) -> return_value
 ```
 
-Then show any print statements or final outputs.
+Do NOT show:
+- Intermediate computations or variable assignments
+- Implementation details or step-by-step calculations
+- Internal processing steps
 
-Respond with the FULL simulation trace including all intermediate steps,
-function calls, and outputs. Do NOT skip any function calls or intermediate results.
+Focus ONLY on the input-output mapping of each function call.
+Then show any final outputs or print statements.
+
+Respond with the streamlined trace showing only function calls and their return values.
 
 ```
 >>> {task_name}({input_str})

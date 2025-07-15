@@ -1,7 +1,7 @@
 {
   "example_idx": 5,
   "input_preview": "An 85-year-old man presented to our institution complaining of recurrent fever and a mitral regurgitation murmur. He has a past history significant for atrial fibrillation being treated with apixaban ...",
-  "response_preview": "Let's go through the simulation step-by-step:\n\n### Initial Execution Trace\n\n#### Function Calls:\n\n1. `medcalc_rules(\"An 96-year-old woman presented to the clinic with complaints consistent with conges...",
+  "response_preview": "```\nFunction Name: medcalcrules  \nArguments: An 89-year-old woman who presents to the emergency room with fever and fatigue. She has a long history of atrial flutter, which has been controlled with wa...",
   "target": "3",
   "retrieved_facts": [
     {
@@ -26,8 +26,24 @@
         483
       ],
       "length": 14,
-      "frequency": 0.02388535031847134,
-      "attention_score": 0.0005911434682513177
+      "frequency": 0.0345821325648415,
+      "attention_score": 0.000750343742537755
+    },
+    {
+      "id": 4,
+      "text": "No vegetations were seen",
+      "token_start": 237,
+      "token_end": 242,
+      "token_indices": [
+        237,
+        238,
+        239,
+        240,
+        241
+      ],
+      "length": 5,
+      "frequency": 0.014985590778097982,
+      "attention_score": 0.0006139192658344578
     },
     {
       "id": 1,
@@ -126,63 +142,8 @@
         112
       ],
       "length": 89,
-      "frequency": 0.1305732484076433,
-      "attention_score": 0.0004806615412402926
-    },
-    {
-      "id": 4,
-      "text": "No vegetations were seen",
-      "token_start": 237,
-      "token_end": 242,
-      "token_indices": [
-        237,
-        238,
-        239,
-        240,
-        241
-      ],
-      "length": 5,
-      "frequency": 0.010350318471337579,
-      "attention_score": 0.00045023553739225586
-    },
-    {
-      "id": 6,
-      "text": "His cardiac history is notable for atrial fibrillation diagnosed 10 years ago which was treated with atenolol and warfarin",
-      "token_start": 270,
-      "token_end": 298,
-      "token_indices": [
-        270,
-        271,
-        272,
-        273,
-        274,
-        275,
-        276,
-        277,
-        278,
-        279,
-        280,
-        281,
-        282,
-        283,
-        284,
-        285,
-        286,
-        287,
-        288,
-        289,
-        290,
-        291,
-        292,
-        293,
-        294,
-        295,
-        296,
-        297
-      ],
-      "length": 28,
-      "frequency": 0.037420382165605094,
-      "attention_score": 0.00044997402957765685
+      "frequency": 0.1371757925072046,
+      "attention_score": 0.0006112804058119769
     },
     {
       "id": 2,
@@ -282,13 +243,52 @@
         202
       ],
       "length": 90,
-      "frequency": 0.11106687898089172,
-      "attention_score": 0.0004260023254192658
+      "frequency": 0.15907780979827088,
+      "attention_score": 0.0005860889692432354
+    },
+    {
+      "id": 6,
+      "text": "His cardiac history is notable for atrial fibrillation diagnosed 10 years ago which was treated with atenolol and warfarin",
+      "token_start": 270,
+      "token_end": 298,
+      "token_indices": [
+        270,
+        271,
+        272,
+        273,
+        274,
+        275,
+        276,
+        277,
+        278,
+        279,
+        280,
+        281,
+        282,
+        283,
+        284,
+        285,
+        286,
+        287,
+        288,
+        289,
+        290,
+        291,
+        292,
+        293,
+        294,
+        295,
+        296,
+        297
+      ],
+      "length": 28,
+      "frequency": 0.051296829971181554,
+      "attention_score": 0.0005828530411631879
     }
   ],
   "num_facts": 5,
   "optimization_info": {
-    "sequence_length": 1024,
+    "sequence_length": 618,
     "max_tokens_used": 1024,
     "prompt_compacted": true,
     "layers_extracted": 7,
