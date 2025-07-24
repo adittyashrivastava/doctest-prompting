@@ -1,0 +1,8 @@
+# Memory optimization dependencies
+bitsandbytes>=0.41.0  # For 8-bit and 4-bit quantization
+accelerate>=0.20.0    # For better model loading and device mapping
+transformers>=4.35.0  # Ensure compatibility with quantization features
+
+# GPU memory monitoring (optional)
+nvidia-ml-py3         # For GPU memory monitoring
+psutil               # For system memory monitoring 

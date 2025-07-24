@@ -128,26 +128,68 @@ def llm_with_model(prompt, service='groq', model=None):
       # Determine if this is a large model for special handling
       is_large_model = '7B' in model or '13B' in model or '70B' in model
       
-      # Use GPU with float32 for optimal stability and speed
+      # Memory optimization strategy based on model size and available memory
       if torch.cuda.is_available():
-        print(f"🔧 Using CUDA + float32 for model {model} (optimal stability)")
-        torch_dtype = torch.float32
-        device_map = "auto"
+        print(f"🔧 Using CUDA with memory optimizations for model {model}")
+        
+        # Check if bitsandbytes is available for quantization
+        try:
+          import bitsandbytes as bnb
+          use_quantization = True
+          print("✅ bitsandbytes available - using 8-bit quantization")
+        except ImportError:
+          use_quantization = False
+          print("⚠️  bitsandbytes not available - falling back to float16")
+        
+        if use_quantization and is_large_model:
+          # Use 8-bit quantization for large models (significant memory savings)
+          print(f"🎯 Loading {model} with 8-bit quantization (75% memory reduction)")
+          model_obj = AutoModelForCausalLM.from_pretrained(
+            model,
+            load_in_8bit=True,
+            device_map="auto",
+            low_cpu_mem_usage=True,
+            # Configure for attention extraction
+            output_attentions=False,  # We'll enable this during inference
+            attn_implementation="eager"  # Force eager attention for better extraction
+          )
+        elif use_quantization:
+          # For smaller models, use 4-bit quantization for even better memory efficiency
+          print(f"🎯 Loading {model} with 4-bit quantization (better for smaller models)")
+          model_obj = AutoModelForCausalLM.from_pretrained(
+            model,
+            load_in_4bit=True,
+            device_map="auto",
+            low_cpu_mem_usage=True,
+            # Configure for attention extraction
+            output_attentions=False,  # We'll enable this during inference
+            attn_implementation="eager"  # Force eager attention for better extraction
+          )
+        else:
+          # Fallback to float16 if quantization is not available
+          print(f"🎯 Loading {model} with float16 (50% memory reduction)")
+          model_obj = AutoModelForCausalLM.from_pretrained(
+            model,
+            torch_dtype=torch.float16,
+            device_map="auto",
+            low_cpu_mem_usage=True,
+            offload_buffers=True,  # Fix OOM issue for large models
+            # Configure for attention extraction
+            output_attentions=False,  # We'll enable this during inference
+            attn_implementation="eager"  # Force eager attention for better extraction
+          )
       else:
         print(f"🔧 Using CPU + float32 for model {model}")
-        torch_dtype = torch.float32
-        device_map = None
-      
-      model_obj = AutoModelForCausalLM.from_pretrained(
-        model,
-        torch_dtype=torch_dtype,
-        device_map=device_map,
-        low_cpu_mem_usage=True,
-        offload_buffers=True,  # Fix OOM issue for large models
-        # Configure for attention extraction
-        output_attentions=False,  # We'll enable this during inference
-        attn_implementation="eager"  # Force eager attention for better extraction
-      )
+        model_obj = AutoModelForCausalLM.from_pretrained(
+          model,
+          torch_dtype=torch.float32,
+          device_map=None,
+          low_cpu_mem_usage=True,
+          offload_buffers=True,  # Fix OOM issue for large models
+          # Configure for attention extraction
+          output_attentions=False,  # We'll enable this during inference
+          attn_implementation="eager"  # Force eager attention for better extraction
+        )
       
       # Ensure model is in eval mode for consistent attention patterns
       model_obj.eval()
@@ -155,6 +197,13 @@ def llm_with_model(prompt, service='groq', model=None):
       print(f'Model {model} loaded successfully for attention analysis')
       print(f'Model device: {next(model_obj.parameters()).device}')
       print(f'Model dtype: {next(model_obj.parameters()).dtype}')
+      
+      # Clear any cached memory after model loading (optional - can disable for performance)
+      if torch.cuda.is_available() and os.environ.get('DISABLE_CUDA_CACHE_CLEAR', '').lower() != 'true':
+        torch.cuda.empty_cache()
+        print(f"🧹 Cleared CUDA cache after model loading")
+      elif torch.cuda.is_available():
+        print(f"⚡ Skipping CUDA cache clear (DISABLE_CUDA_CACHE_CLEAR=true)")
       
       # Format prompt using chat template if available
       messages = [{"role": "user", "content": prompt}]
@@ -347,15 +396,69 @@ def llm(prompt, service='groq', model=None):
       
       print(f'Loading local model {model}...')
       
-      # Load tokenizer and model
+      # Load tokenizer and model with memory optimizations
       tokenizer = AutoTokenizer.from_pretrained(model)
-      model_obj = AutoModelForCausalLM.from_pretrained(
-        model,
-        torch_dtype=torch.float16 if torch.cuda.is_available() else torch.float32,
-        device_map="auto" if torch.cuda.is_available() else None,
-        low_cpu_mem_usage=True,
-        offload_buffers=True  # Fix OOM issue for large models
-      )
+      
+      # Determine if this is a large model for special handling
+      is_large_model = '7B' in model or '13B' in model or '70B' in model
+      
+      # Memory optimization strategy
+      if torch.cuda.is_available():
+        print(f"🔧 Using CUDA with memory optimizations for model {model}")
+        
+        # Check if bitsandbytes is available for quantization
+        try:
+          import bitsandbytes as bnb
+          use_quantization = True
+          print("✅ bitsandbytes available - using quantization")
+        except ImportError:
+          use_quantization = False
+          print("⚠️  bitsandbytes not available - falling back to float16")
+        
+        if use_quantization and is_large_model:
+          # Use 8-bit quantization for large models
+          print(f"🎯 Loading {model} with 8-bit quantization (75% memory reduction)")
+          model_obj = AutoModelForCausalLM.from_pretrained(
+            model,
+            load_in_8bit=True,
+            device_map="auto",
+            low_cpu_mem_usage=True
+          )
+        elif use_quantization:
+          # Use 4-bit quantization for smaller models  
+          print(f"🎯 Loading {model} with 4-bit quantization")
+          model_obj = AutoModelForCausalLM.from_pretrained(
+            model,
+            load_in_4bit=True,
+            device_map="auto",
+            low_cpu_mem_usage=True
+          )
+        else:
+          # Fallback to float16
+          print(f"🎯 Loading {model} with float16 (50% memory reduction)")
+          model_obj = AutoModelForCausalLM.from_pretrained(
+            model,
+            torch_dtype=torch.float16,
+            device_map="auto",
+            low_cpu_mem_usage=True,
+            offload_buffers=True  # Fix OOM issue for large models
+          )
+      else:
+        print(f"🔧 Using CPU + float32 for model {model}")
+        model_obj = AutoModelForCausalLM.from_pretrained(
+          model,
+          torch_dtype=torch.float32,
+          device_map=None,
+          low_cpu_mem_usage=True,
+          offload_buffers=True  # Fix OOM issue for large models
+        )
+      
+      # Clear cache after loading (optional - can disable for performance)
+      if torch.cuda.is_available() and os.environ.get('DISABLE_CUDA_CACHE_CLEAR', '').lower() != 'true':
+        torch.cuda.empty_cache()
+        print(f"🧹 Cleared CUDA cache after model loading")
+      elif torch.cuda.is_available():
+        print(f"⚡ Skipping CUDA cache clear (DISABLE_CUDA_CACHE_CLEAR=true)")
       
       # Format prompt using chat template if available
       messages = [{"role": "user", "content": prompt}]
@@ -391,6 +494,7 @@ def llm(prompt, service='groq', model=None):
       del model_obj
       if torch.cuda.is_available():
         torch.cuda.empty_cache()
+        print(f"🧹 Cleared CUDA cache after inference")
       
       return response.strip()
       
