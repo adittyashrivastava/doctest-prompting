@@ -1,0 +1,24 @@
+{
+  "reward_model": {
+    "fact_relevance_weight": 0.4,
+    "attention_quality_weight": 0.3,
+    "calculation_accuracy_weight": 0.3,
+    "layer_fraction": 0.25,
+    "top_k": 10,
+    "max_facts": 10,
+    "frequency_threshold": 0.99
+  },
+  "training": {
+    "learning_rate": 1e-05,
+    "batch_size": 4,
+    "mini_batch_size": 1,
+    "n_epochs": 4,
+    "gamma": 0.99,
+    "gae_lambda": 0.95,
+    "clip_range": 0.2,
+    "ent_coef": 0.01,
+    "vf_coef": 0.5,
+    "max_grad_norm": 0.5,
+    "num_episodes": 100
+  }
+}
