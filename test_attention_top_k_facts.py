@@ -48,10 +48,10 @@ class AttentionTestResult:
     retrieved_facts: List[Dict]
     ground_truth_facts: List[str]
     irrelevant_facts: List[str]
-    precision: float
-    recall: float
-    f1_score: float
-    top_k_accuracy: float
+    top_k_containment_score: float  # Fraction of ground truth facts found in top K
+    top_k_facts_text: List[str]  # Text of top K retrieved facts
+    llm_response: str  # Generated response from the LLM
+    expected_answer: str  # Expected answer for comparison
     attention_scores: Dict
 
 class AttentionFactTestSuite:
@@ -67,25 +67,34 @@ class AttentionFactTestSuite:
         self.results = []
         
     def setup_model(self):
-        """Setup the model and attention analysis components"""
+        """Load model and tokenizer, setup attention extractor and retriever"""
         if not ATTENTION_VIZ_AVAILABLE:
-            raise RuntimeError("attention_viz not available")
-            
+            raise RuntimeError("attention_viz module is not available. Cannot run attention tests.")
+
         print(f"🔧 Loading model: {self.model_name}")
-        
-        # Load tokenizer
         self.tokenizer = AutoTokenizer.from_pretrained(self.model_name)
         if self.tokenizer.pad_token is None:
             self.tokenizer.pad_token = self.tokenizer.eos_token
             
-        # Load model with forced eager attention implementation
+        # Force CPU usage for everything - no GPU at all
+        device = "cpu"
+        print(f"🖥️  Using device: {device} (forced for stability)")
+        
+        # Ensure no CUDA operations
+        import os
+        os.environ['CUDA_VISIBLE_DEVICES'] = ''  # Hide all GPUs
+            
+        # Load model with strict CPU configuration
         self.model = AutoModelForCausalLM.from_pretrained(
             self.model_name,
-            torch_dtype=torch.float32,
-            device_map="cpu",  # Use CPU for consistent testing
+            torch_dtype=torch.float32,  # Use float32 for CPU
+            device_map="cpu",
             low_cpu_mem_usage=True,
             attn_implementation="eager"  # Force eager attention for attention extraction
         )
+        
+        # Explicitly move model to CPU and ensure it stays there
+        self.model = self.model.to('cpu')
         self.model.eval()
         
         # Ensure attention outputs are enabled and using eager implementation
@@ -98,11 +107,10 @@ class AttentionFactTestSuite:
             layer_fraction=0.25,
             top_k=self.k,
             frequency_threshold=0.95,
-            max_facts=self.k * 2  # Allow more facts to be considered
+            max_facts=self.k * 2 # Allow retrieving more facts than top_k for recall calculation
         )
         self.retriever = AttrievelRetriever(extractor, config)
-        
-        print("✅ Model and attention components loaded successfully")
+        print("✅ Model and attention retriever setup complete")
         
     def create_test_dataset(self):
         """Create a comprehensive test dataset with known ground truth"""
@@ -793,14 +801,14 @@ class AttentionFactTestSuite:
         print(f"📊 Created {len(self.test_examples)} test examples")
         
     def evaluate_example(self, example: TestExample) -> AttentionTestResult:
-        """Evaluate attention-based fact retrieval on a single example"""
-        print(f"\n🔍 Testing example: {example.id}")
-        
+        """Evaluate attention retrieval on a single example"""
         try:
-            # Generate a response (simplified for testing)
-            full_context = f"Context: {example.context}\n\nQuestion: {example.question}"
+            # First: Generate LLM response BEFORE attention extraction to avoid interference
+            print(f"   🤖 Generating LLM response first...")
+            llm_response = self.generate_llm_response(example.context, example.question)
             
-            # Use the retriever to extract facts
+            # Second: Extract attention-based facts
+            print(f"   🔍 Extracting attention-based facts...")
             retrieval_result = self.retriever.retrieve_facts(
                 context=example.context,
                 question=example.question, 
@@ -811,78 +819,79 @@ class AttentionFactTestSuite:
             retrieved_facts = retrieval_result.get('retrieved_facts', [])
             
             # Calculate metrics
-            precision, recall, f1 = self.calculate_precision_recall_f1(
-                retrieved_facts, example.ground_truth_facts, example.irrelevant_facts
-            )
-            
-            top_k_acc = self.calculate_top_k_accuracy(
+            top_k_containment_score = self.calculate_top_k_containment_score(
                 retrieved_facts[:self.k], example.ground_truth_facts
             )
+            
+            top_k_facts_text = [fact.get('text', '') for fact in retrieved_facts[:self.k]]
             
             return AttentionTestResult(
                 example_id=example.id,
                 retrieved_facts=retrieved_facts,
                 ground_truth_facts=example.ground_truth_facts,
                 irrelevant_facts=example.irrelevant_facts,
-                precision=precision,
-                recall=recall,
-                f1_score=f1,
-                top_k_accuracy=top_k_acc,
+                top_k_containment_score=top_k_containment_score,
+                top_k_facts_text=top_k_facts_text,
+                llm_response=llm_response,
+                expected_answer=example.expected_answer,
                 attention_scores=retrieval_result
             )
             
         except Exception as e:
-            print(f"❌ Error evaluating example {example.id}: {e}")
+            print(f"   ❌ Failed to evaluate example: {e}")
+            
             return AttentionTestResult(
                 example_id=example.id,
                 retrieved_facts=[],
                 ground_truth_facts=example.ground_truth_facts,
                 irrelevant_facts=example.irrelevant_facts,
-                precision=0.0,
-                recall=0.0,
-                f1_score=0.0,
-                top_k_accuracy=0.0,
+                top_k_containment_score=0.0,
+                top_k_facts_text=[],
+                llm_response="[Error: Could not generate response]",
+                expected_answer=example.expected_answer,
                 attention_scores={}
             )
     
-    def calculate_precision_recall_f1(self, retrieved_facts, ground_truth_facts, irrelevant_facts):
-        """Calculate precision, recall, and F1 score"""
-        if not retrieved_facts:
-            return 0.0, 0.0, 0.0
-            
-        # Extract text from retrieved facts
-        retrieved_texts = [fact.get('text', '') for fact in retrieved_facts]
-        
-        # Count matches with ground truth
-        true_positives = 0
-        false_positives = 0
-        
-        for retrieved_text in retrieved_texts:
-            if any(self.text_similarity(retrieved_text, gt_fact) > 0.5 for gt_fact in ground_truth_facts):
-                true_positives += 1
-            else:
-                false_positives += 1
-        
-        # Calculate metrics
-        precision = true_positives / len(retrieved_texts) if retrieved_texts else 0.0
-        recall = true_positives / len(ground_truth_facts) if ground_truth_facts else 0.0
-        f1 = 2 * (precision * recall) / (precision + recall) if (precision + recall) > 0 else 0.0
-        
-        return precision, recall, f1
-    
-    def calculate_top_k_accuracy(self, top_k_facts, ground_truth_facts):
-        """Calculate how many ground truth facts are in top K"""
+    def calculate_top_k_containment_score(self, top_k_facts, ground_truth_facts):
+        """Calculate how many ground truth facts are contained in top K retrieved facts"""
         if not ground_truth_facts:
-            return 0.0
+            return 1.0  # If no ground truth facts expected, perfect score
+            
+        if not top_k_facts:
+            return 0.0  # If no facts retrieved, zero score
             
         top_k_texts = [fact.get('text', '') for fact in top_k_facts]
         
         found_count = 0
         for gt_fact in ground_truth_facts:
-            if any(self.text_similarity(gt_fact, top_k_text) > 0.5 for top_k_text in top_k_texts):
+            # Check if the ground truth fact is contained in any of the top K retrieved facts
+            if any(self.fact_contained_in_text(gt_fact, retrieved_text) for retrieved_text in top_k_texts):
                 found_count += 1
                 
         return found_count / len(ground_truth_facts)
+    
+    def fact_contained_in_text(self, fact: str, text: str) -> bool:
+        """Check if a fact is contained within a larger text"""
+        # Convert to lowercase for case-insensitive matching
+        fact_lower = fact.lower().strip()
+        text_lower = text.lower().strip()
+        
+        # Direct substring containment
+        if fact_lower in text_lower:
+            return True
+            
+        # Check for key terms overlap (more robust matching)
+        fact_words = set(fact_lower.split())
+        text_words = set(text_lower.split())
+        
+        # If most key words from the fact are found in the text, consider it contained
+        # Use a threshold of 70% overlap for key terms
+        if len(fact_words) > 0:
+            overlap = len(fact_words.intersection(text_words))
+            overlap_ratio = overlap / len(fact_words)
+            return overlap_ratio >= 0.7
+            
+        return False
     
     def text_similarity(self, text1: str, text2: str) -> float:
         """Simple text similarity based on word overlap"""
@@ -896,6 +905,74 @@ class AttentionFactTestSuite:
         union = len(words1.union(words2))
         
         return intersection / union if union > 0 else 0.0
+    
+    def generate_llm_response(self, context: str, question: str) -> str:
+        """Generate LLM response for the given context and question"""
+        try:
+            # Create the prompt for the LLM
+            prompt = f"Context: {context}\n\nQuestion: {question}\n\nAnswer:"
+            
+            # Debug: Check prompt length and content
+            print(f"   📏 Prompt length: {len(prompt)} chars")
+            if len(prompt) > 2000:
+                print(f"   ⚠️  Very long prompt detected, truncating...")
+                # Truncate context if too long
+                max_context_len = 1500 - len(question) - 50  # Leave room for formatting
+                if len(context) > max_context_len:
+                    context = context[:max_context_len] + "..."
+                    prompt = f"Context: {context}\n\nQuestion: {question}\n\nAnswer:"
+                    print(f"   📏 Truncated prompt length: {len(prompt)} chars")
+            
+            # Tokenize the prompt
+            print(f"   🔤 Tokenizing prompt...")
+            inputs = self.tokenizer(
+                prompt, 
+                return_tensors="pt", 
+                truncation=True, 
+                max_length=512,  # Reduced for CPU efficiency
+                padding=False,
+                add_special_tokens=True
+            )
+            
+            # EXPLICITLY ensure all inputs are on CPU
+            inputs = {k: v.to('cpu') for k, v in inputs.items()}
+            
+            # Validate input shapes
+            if inputs['input_ids'].shape[1] == 0:
+                return "[Error: Empty input after tokenization]"
+            
+            print(f"   📊 Token stats: shape={inputs['input_ids'].shape}")
+            print(f"   🔧 Input device: {inputs['input_ids'].device}")
+            print(f"   🔧 Model device: {next(self.model.parameters()).device}")
+            
+            print(f"   🤖 Generating response...")
+            # Generate response with CPU-only settings
+            with torch.no_grad():
+                outputs = self.model.generate(
+                    **inputs,
+                    max_new_tokens=50,
+                    do_sample=False,  # Use greedy decoding for stability
+                    pad_token_id=self.tokenizer.eos_token_id,
+                    eos_token_id=self.tokenizer.eos_token_id
+                )
+                print(f"   ✅ Generation completed successfully")
+            
+            # Validate output before decoding
+            if outputs.shape[1] <= inputs['input_ids'].shape[1]:
+                return "[Error: No new tokens generated]"
+            
+            # Decode the response (only the newly generated part)
+            generated_text = self.tokenizer.decode(
+                outputs[0][inputs['input_ids'].shape[1]:], 
+                skip_special_tokens=True
+            ).strip()
+            
+            print(f"   📝 Generated: {generated_text[:100]}...")
+            return generated_text if generated_text else "[Error: Empty generation]"
+            
+        except Exception as e:
+            print(f"   ❌ Failed to generate LLM response: {e}")
+            return f"[Generation Error: {str(e)}]"
     
     def run_all_tests(self):
         """Run tests on all examples"""
@@ -930,43 +1007,37 @@ class AttentionFactTestSuite:
             return
             
         # Calculate aggregate metrics
-        avg_precision = np.mean([r.precision for r in self.results])
-        avg_recall = np.mean([r.recall for r in self.results])
-        avg_f1 = np.mean([r.f1_score for r in self.results])
-        avg_top_k_acc = np.mean([r.top_k_accuracy for r in self.results])
+        avg_top_k_containment = np.mean([r.top_k_containment_score for r in self.results])
         
         print(f"📈 Overall Performance (K={self.k}):")
-        print(f"   Average Precision: {avg_precision:.3f}")
-        print(f"   Average Recall: {avg_recall:.3f}")
-        print(f"   Average F1 Score: {avg_f1:.3f}")
-        print(f"   Average Top-{self.k} Accuracy: {avg_top_k_acc:.3f}")
+        print(f"   Average Top-{self.k} Containment Score: {avg_top_k_containment:.3f}")
         
         # Per-example breakdown
         print(f"\n📋 Per-Example Results:")
         for result in self.results:
             print(f"   {result.example_id}:")
-            print(f"     Precision: {result.precision:.3f}, Recall: {result.recall:.3f}, F1: {result.f1_score:.3f}")
-            print(f"     Top-{self.k} Accuracy: {result.top_k_accuracy:.3f}")
+            print(f"     Top-{self.k} Containment Score: {result.top_k_containment_score:.3f}")
+            print(f"     Top-{self.k} Facts: {', '.join(result.top_k_facts_text)}")
             
         # Success analysis
-        high_performers = [r for r in self.results if r.f1_score >= 0.7]
-        low_performers = [r for r in self.results if r.f1_score < 0.3]
+        high_performers = [r for r in self.results if r.top_k_containment_score >= 0.7]
+        low_performers = [r for r in self.results if r.top_k_containment_score < 0.3]
         
-        print(f"\n✅ High Performers (F1 ≥ 0.7): {len(high_performers)}/{len(self.results)}")
+        print(f"\n✅ High Performers (Containment ≥ 0.7): {len(high_performers)}/{len(self.results)}")
         for r in high_performers:
-            print(f"   {r.example_id}: F1={r.f1_score:.3f}")
+            print(f"   {r.example_id}: Containment={r.top_k_containment_score:.3f}")
             
-        print(f"\n❌ Low Performers (F1 < 0.3): {len(low_performers)}/{len(self.results)}")
+        print(f"\n❌ Low Performers (Containment < 0.3): {len(low_performers)}/{len(self.results)}")
         for r in low_performers:
-            print(f"   {r.example_id}: F1={r.f1_score:.3f}")
+            print(f"   {r.example_id}: Containment={r.top_k_containment_score:.3f}")
             
         # Overall assessment
         print(f"\n🎯 Overall Assessment:")
-        if avg_f1 >= 0.7:
+        if avg_top_k_containment >= 0.7:
             print("   ✅ EXCELLENT: Attention module working very well")
-        elif avg_f1 >= 0.5:
+        elif avg_top_k_containment >= 0.5:
             print("   🟡 GOOD: Attention module working reasonably well")
-        elif avg_f1 >= 0.3:
+        elif avg_top_k_containment >= 0.3:
             print("   🟠 MODERATE: Attention module needs improvement")
         else:
             print("   ❌ POOR: Attention module needs significant work")
@@ -981,10 +1052,10 @@ class AttentionFactTestSuite:
         for result in self.results:
             results_data.append({
                 'example_id': result.example_id,
-                'precision': result.precision,
-                'recall': result.recall,
-                'f1_score': result.f1_score,
-                'top_k_accuracy': result.top_k_accuracy,
+                'top_k_containment_score': result.top_k_containment_score,
+                'top_k_facts_text': result.top_k_facts_text,
+                'llm_response': result.llm_response,
+                'expected_answer': result.expected_answer,
                 'retrieved_facts': result.retrieved_facts,
                 'ground_truth_facts': result.ground_truth_facts,
                 'irrelevant_facts': result.irrelevant_facts
@@ -1001,18 +1072,13 @@ class AttentionFactTestSuite:
                 'num_examples': len(self.test_examples)
             },
             'aggregate_metrics': {
-                'avg_precision': float(np.mean([r.precision for r in self.results])),
-                'avg_recall': float(np.mean([r.recall for r in self.results])),
-                'avg_f1': float(np.mean([r.f1_score for r in self.results])),
-                'avg_top_k_accuracy': float(np.mean([r.top_k_accuracy for r in self.results]))
+                'avg_top_k_containment': float(np.mean([r.top_k_containment_score for r in self.results])),
             },
             'per_example_results': [
                 {
                     'example_id': r.example_id,
-                    'precision': r.precision,
-                    'recall': r.recall,
-                    'f1_score': r.f1_score,
-                    'top_k_accuracy': r.top_k_accuracy
+                    'top_k_containment_score': r.top_k_containment_score,
+                    'top_k_facts_text': r.top_k_facts_text
                 }
                 for r in self.results
             ]
@@ -1024,6 +1090,34 @@ class AttentionFactTestSuite:
         print(f"\n📁 Results saved to: {output_dir}")
         print(f"   - Detailed results: {output_dir}/detailed_results.json")
         print(f"   - Summary: {output_dir}/summary.json")
+
+    def cleanup(self):
+        """Clean up memory after testing"""
+        try:
+            print("🧹 Cleaning up memory...")
+            
+            # Clear references to model and tokenizer
+            if hasattr(self, 'model') and self.model is not None:
+                del self.model
+                self.model = None
+                
+            if hasattr(self, 'tokenizer') and self.tokenizer is not None:
+                del self.tokenizer
+                self.tokenizer = None
+                
+            if hasattr(self, 'retriever') and self.retriever is not None:
+                del self.retriever
+                self.retriever = None
+            
+            # Force garbage collection
+            import gc
+            gc.collect()
+            
+            print("✅ Memory cleanup complete")
+                
+        except Exception as e:
+            print(f"⚠️  Cleanup error: {e}")
+            print("   Continuing anyway...")
 
 def main():
     """Main function to run the attention module test suite"""

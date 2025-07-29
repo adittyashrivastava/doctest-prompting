@@ -6,13 +6,28 @@ Runner script for General English Attention Module Testing
 import sys
 import os
 
+# Set CUDA debugging for better error reporting
+os.environ['CUDA_LAUNCH_BLOCKING'] = '1'
+os.environ['TORCH_USE_CUDA_DSA'] = '1'  # Enable device-side assertions for detailed error info
+
 # Add current directory to path
 sys.path.append('.')
+
+import torch  # Add torch import for CUDA operations
 
 def main():
     """Main function to run general English attention test"""
     print("🚀 Starting General English Attention Module Test")
     print("=" * 60)
+    
+    # Force CPU-only execution
+    import os
+    os.environ['CUDA_VISIBLE_DEVICES'] = ''  # Hide all GPUs from PyTorch
+    
+    # Check available resources
+    import torch
+    print(f"🖥️  Using CPU for stable execution (GPU hidden)")
+    print(f"💾 Available CPU cores: {torch.get_num_threads()}")
     
     # Import the test module
     try:
@@ -33,35 +48,56 @@ def main():
         test_suite.setup_model()
         test_suite.create_test_dataset()
         
-        # Run a subset of tests first (first 8 examples - about half)
-        print(f"🔍 Running tests on first 8 examples...")
-        original_examples = test_suite.test_examples
-        test_suite.test_examples = test_suite.test_examples[:8]
+        # Run ALL examples (all 15)
+        print(f"🔍 Running tests on ALL {len(test_suite.test_examples)} examples...")
+        # No subsetting - use all examples
         
         # Run the tests
         test_suite.results = []
-        for example in test_suite.test_examples:
-            print(f"\n📝 Testing: {example.id} ({example.domain}) - {example.description}")
-            result = test_suite.evaluate_example(example)
-            test_suite.results.append(result)
+        for i, example in enumerate(test_suite.test_examples):
+            try:
+                print(f"\n📝 Testing: {example.id} ({example.domain}) - {example.description}")
+                result = test_suite.evaluate_example(example)
+                test_suite.results.append(result)
+                
+                # Print immediate results
+                print(f"   Top-{test_suite.k} Containment Score: {result.top_k_containment_score:.3f}")
+                print(f"   Retrieved Facts: {result.top_k_facts_text}")
+                print(f"   🤖 LLM Response: {result.llm_response}")
+                print(f"   ✅ Expected: {result.expected_answer}")
+                
+            except Exception as example_error:
+                print(f"   ❌ Failed to evaluate example {example.id}: {example_error}")
+                print("   Continuing with next example...")
+                continue
             
-            # Print immediate results
-            print(f"   Precision: {result.precision:.3f}")
-            print(f"   Recall: {result.recall:.3f}")
-            print(f"   F1 Score: {result.f1_score:.3f}")
-            print(f"   Top-{test_suite.k} Accuracy: {result.top_k_accuracy:.3f}")
+        if not test_suite.results:
+            print("❌ No examples were successfully evaluated!")
+            return 1
             
         # Generate summary
         test_suite.generate_summary()
         test_suite.save_results()
         
         print("\n🎉 General English test completed successfully!")
+        
+        # Cleanup GPU memory
+        test_suite.cleanup()
+        
         return 0
         
     except Exception as e:
         print(f"\n❌ Test failed: {e}")
         import traceback
         traceback.print_exc()
+        
+        # Try cleanup even on failure
+        try:
+            if 'test_suite' in locals():
+                test_suite.cleanup()
+        except:
+            pass
+            
         return 1
 
 if __name__ == "__main__":

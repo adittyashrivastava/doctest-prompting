@@ -44,43 +44,40 @@ class GeneralEnglishResultsAnalyzer:
         # Overall metrics
         agg_metrics = self.summary_data['aggregate_metrics']
         print(f"📊 Overall Performance:")
-        print(f"   • Average Precision: {agg_metrics['avg_precision']:.3f}")
-        print(f"   • Average Recall: {agg_metrics['avg_recall']:.3f}")  
-        print(f"   • Average F1 Score: {agg_metrics['avg_f1']:.3f}")
-        print(f"   • Average Top-K Accuracy: {agg_metrics['avg_top_k_accuracy']:.3f}")
+        print(f"   • Average Top-K Containment Score: {agg_metrics['avg_top_k_containment']:.3f}")
         
         # Performance by domain
         print(f"\n📋 Performance by Domain:")
         domain_breakdown = self.summary_data.get('domain_breakdown', {})
         for domain, metrics in sorted(domain_breakdown.items()):
             print(f"   • {domain.title()} ({metrics['count']} examples):")
-            print(f"     F1: {metrics['avg_f1']:.3f}, Precision: {metrics['avg_precision']:.3f}, Recall: {metrics['avg_recall']:.3f}")
+            print(f"     Containment Score: {metrics['avg_top_k_containment']:.3f}")
         
         # Performance categorization
-        f1_scores = [r['f1_score'] for r in self.summary_data['per_example_results']]
-        excellent = sum(1 for f1 in f1_scores if f1 >= 0.8)
-        good = sum(1 for f1 in f1_scores if 0.6 <= f1 < 0.8)
-        moderate = sum(1 for f1 in f1_scores if 0.4 <= f1 < 0.6)
-        poor = sum(1 for f1 in f1_scores if f1 < 0.4)
-        total = len(f1_scores)
+        containment_scores = [r['top_k_containment_score'] for r in self.summary_data['per_example_results']]
+        excellent = sum(1 for score in containment_scores if score >= 0.8)
+        good = sum(1 for score in containment_scores if 0.6 <= score < 0.8)
+        moderate = sum(1 for score in containment_scores if 0.4 <= score < 0.6)
+        poor = sum(1 for score in containment_scores if score < 0.4)
+        total = len(containment_scores)
         
         print(f"\n📈 Performance Distribution:")
-        print(f"   • Excellent (F1 ≥ 0.8): {excellent}/{total} ({excellent/total*100:.1f}%)")
-        print(f"   • Good (0.6 ≤ F1 < 0.8): {good}/{total} ({good/total*100:.1f}%)")
-        print(f"   • Moderate (0.4 ≤ F1 < 0.6): {moderate}/{total} ({moderate/total*100:.1f}%)")
-        print(f"   • Poor (F1 < 0.4): {poor}/{total} ({poor/total*100:.1f}%)")
+        print(f"   • Excellent (Containment ≥ 0.8): {excellent}/{total} ({excellent/total*100:.1f}%)")
+        print(f"   • Good (0.6 ≤ Containment < 0.8): {good}/{total} ({good/total*100:.1f}%)")
+        print(f"   • Moderate (0.4 ≤ Containment < 0.6): {moderate}/{total} ({moderate/total*100:.1f}%)")
+        print(f"   • Poor (Containment < 0.4): {poor}/{total} ({poor/total*100:.1f}%)")
         
         # Best and worst performers by domain
         sorted_results = sorted(self.summary_data['per_example_results'], 
-                              key=lambda x: x['f1_score'], reverse=True)
+                              key=lambda x: x['top_k_containment_score'], reverse=True)
         
         print(f"\n🏆 Best Performers:")
         for i, result in enumerate(sorted_results[:5]):
-            print(f"   {i+1}. {result['example_id']} ({result['domain']}): F1={result['f1_score']:.3f}")
+            print(f"   {i+1}. {result['example_id']} ({result['domain']}): Containment={result['top_k_containment_score']:.3f}")
             
         print(f"\n⚠️  Worst Performers:")
         for i, result in enumerate(sorted_results[-5:]):
-            print(f"   {i+1}. {result['example_id']} ({result['domain']}): F1={result['f1_score']:.3f}")
+            print(f"   {i+1}. {result['example_id']} ({result['domain']}): Containment={result['top_k_containment_score']:.3f}")
         
         # Domain-specific analysis
         self.analyze_domain_patterns()
@@ -99,56 +96,62 @@ class GeneralEnglishResultsAnalyzer:
         # Find domains where attention works well vs poorly
         domain_performance = {}
         for domain, results in domain_results.items():
-            avg_f1 = np.mean([r['f1_score'] for r in results])
-            avg_precision = np.mean([r['precision'] for r in results])
-            avg_recall = np.mean([r['recall'] for r in results])
+            avg_containment = np.mean([r['top_k_containment_score'] for r in results])
             domain_performance[domain] = {
-                'f1': avg_f1,
-                'precision': avg_precision,
-                'recall': avg_recall,
+                'containment': avg_containment,
                 'count': len(results)
             }
         
-        # Sort by F1 performance
-        sorted_domains = sorted(domain_performance.items(), key=lambda x: x[1]['f1'], reverse=True)
+        # Sort by containment performance
+        sorted_domains = sorted(domain_performance.items(), key=lambda x: x[1]['containment'], reverse=True)
         
         print(f"   🟢 Best Performing Domains:")
         for domain, perf in sorted_domains[:3]:
-            print(f"     • {domain.title()}: F1={perf['f1']:.3f} (P={perf['precision']:.3f}, R={perf['recall']:.3f})")
+            print(f"     • {domain.title()}: Containment={perf['containment']:.3f}")
             
         print(f"   🔴 Challenging Domains:")
         for domain, perf in sorted_domains[-3:]:
-            print(f"     • {domain.title()}: F1={perf['f1']:.3f} (P={perf['precision']:.3f}, R={perf['recall']:.3f})")
+            print(f"     • {domain.title()}: Containment={perf['containment']:.3f}")
     
     def analyze_attention_patterns(self):
         """Analyze what types of facts the attention module captures well"""
         print(f"\n🧠 Attention Pattern Analysis:")
         
-        # Analyze which types of questions work well
-        high_performers = [r for r in self.detailed_data if r['f1_score'] >= 0.7]
-        low_performers = [r for r in self.detailed_data if r['f1_score'] < 0.3]
+        # Analyze high and low performers with LLM responses
+        high_performers = [r for r in self.detailed_data if r['top_k_containment_score'] >= 0.7]
+        low_performers = [r for r in self.detailed_data if r['top_k_containment_score'] < 0.3]
         
         print(f"   ✅ High-performing examples ({len(high_performers)}):")
-        for result in high_performers[:3]:
-            print(f"     • {result['example_id']} ({result['domain']}): {result['description']}")
+        for result in high_performers[:2]:
+            print(f"     • {result['example_id']} ({result['domain']}): Containment={result['top_k_containment_score']:.3f}")
+            print(f"       Retrieved: {result['top_k_facts_text']}")
+            if 'llm_response' in result:
+                print(f"       🤖 LLM Response: {result['llm_response']}")
+                print(f"       ✅ Expected: {result.get('expected_answer', 'N/A')}")
             
         print(f"   ❌ Low-performing examples ({len(low_performers)}):")
-        for result in low_performers[:3]:
-            print(f"     • {result['example_id']} ({result['domain']}): {result['description']}")
+        for result in low_performers[:2]:
+            print(f"     • {result['example_id']} ({result['domain']}): Containment={result['top_k_containment_score']:.3f}")
+            print(f"       Expected Facts: {result['ground_truth_facts']}")
+            print(f"       Retrieved: {result['top_k_facts_text']}")
+            if 'llm_response' in result:
+                print(f"       🤖 LLM Response: {result['llm_response']}")
+                print(f"       ✅ Expected: {result.get('expected_answer', 'N/A')}")
         
-        # Analyze precision vs recall patterns
-        high_precision = [r for r in self.detailed_data if r['precision'] >= 0.8]
-        high_recall = [r for r in self.detailed_data if r['recall'] >= 0.8]
+        # Analyze containment score distribution
+        avg_containment = np.mean([r['top_k_containment_score'] for r in self.detailed_data])
         
-        print(f"\n   🎯 High Precision Examples ({len(high_precision)}): Attention is selective")
-        print(f"   🔍 High Recall Examples ({len(high_recall)}): Attention captures most relevant facts")
+        print(f"\n   📊 Overall Analysis:")
+        print(f"   • Average containment score: {avg_containment:.3f}")
         
-        if len(high_precision) > len(high_recall):
-            print("   → Model tends to be conservative (high precision, lower recall)")
-        elif len(high_recall) > len(high_precision):
-            print("   → Model tends to be inclusive (high recall, lower precision)")
+        if avg_containment >= 0.7:
+            print("   → Attention module is working very well at identifying relevant facts")
+        elif avg_containment >= 0.5:
+            print("   → Attention module captures most relevant facts but has room for improvement")
+        elif avg_containment >= 0.3:
+            print("   → Attention module struggles to identify relevant facts consistently")
         else:
-            print("   → Model shows balanced precision/recall trade-off")
+            print("   → Attention module needs significant improvement in fact identification")
     
     def generate_recommendations(self):
         """Generate recommendations for improving attention on general English text"""
@@ -158,30 +161,25 @@ class GeneralEnglishResultsAnalyzer:
         if not self.summary_data:
             return
             
-        avg_f1 = self.summary_data['aggregate_metrics']['avg_f1']
-        avg_precision = self.summary_data['aggregate_metrics']['avg_precision']
-        avg_recall = self.summary_data['aggregate_metrics']['avg_recall']
+        avg_containment = self.summary_data['aggregate_metrics']['avg_top_k_containment']
         
         # Overall assessment
-        if avg_f1 >= 0.7:
+        if avg_containment >= 0.7:
             print("🎉 EXCELLENT: Your attention module works very well on general English text!")
             print("   Recommendations:")
             print("   • Test on more complex reasoning tasks")
             print("   • Evaluate on longer documents")
             print("   • Try multi-hop reasoning questions")
             
-        elif avg_f1 >= 0.5:
+        elif avg_containment >= 0.5:
             print("✅ GOOD: Your attention module shows solid performance on general English text.")
             print("   Areas for improvement:")
-            if avg_precision < avg_recall:
-                print("   • Focus on reducing false positives - attention may be too broad")
-                print("   • Increase frequency_threshold to be more selective")
-            else:
-                print("   • Focus on improving recall - attention may be too narrow")
-                print("   • Lower frequency_threshold to capture more relevant facts")
+            print("   • Fine-tune attention parameters to capture more relevant facts")
+            print("   • Consider adjusting layer_fraction to include more layers")
+            print("   • Increase max_facts parameter for broader coverage")
             print("   • Consider domain-specific fine-tuning for weaker domains")
             
-        elif avg_f1 >= 0.3:
+        elif avg_containment >= 0.3:
             print("🟡 MODERATE: Your attention module needs improvement for general English text.")
             print("   Key issues to address:")
             print("   • Review attention extraction methodology")
@@ -201,9 +199,9 @@ class GeneralEnglishResultsAnalyzer:
         if hasattr(self, 'summary_data') and 'domain_breakdown' in self.summary_data:
             domain_breakdown = self.summary_data['domain_breakdown']
             weak_domains = [domain for domain, metrics in domain_breakdown.items() 
-                          if metrics['avg_f1'] < 0.4]
+                          if metrics['avg_top_k_containment'] < 0.4]
             strong_domains = [domain for domain, metrics in domain_breakdown.items() 
-                            if metrics['avg_f1'] >= 0.7]
+                            if metrics['avg_top_k_containment'] >= 0.7]
             
             if weak_domains:
                 print(f"\n🎯 Domain-Specific Recommendations:")
