@@ -914,10 +914,10 @@ class AttentionFactTestSuite:
             
             # Debug: Check prompt length and content
             print(f"   📏 Prompt length: {len(prompt)} chars")
-            if len(prompt) > 2000:
+            if len(prompt) > 4000:  # Increased from 2000
                 print(f"   ⚠️  Very long prompt detected, truncating...")
-                # Truncate context if too long
-                max_context_len = 1500 - len(question) - 50  # Leave room for formatting
+                # Truncate context if too long - but more generous
+                max_context_len = 3500 - len(question) - 50  # More generous limit
                 if len(context) > max_context_len:
                     context = context[:max_context_len] + "..."
                     prompt = f"Context: {context}\n\nQuestion: {question}\n\nAnswer:"
@@ -929,7 +929,7 @@ class AttentionFactTestSuite:
                 prompt, 
                 return_tensors="pt", 
                 truncation=True, 
-                max_length=512,  # Reduced for CPU efficiency
+                max_length=1024,  # Increased from 512 for longer contexts
                 padding=False,
                 add_special_tokens=True
             )
@@ -946,11 +946,11 @@ class AttentionFactTestSuite:
             print(f"   🔧 Model device: {next(self.model.parameters()).device}")
             
             print(f"   🤖 Generating response...")
-            # Generate response with CPU-only settings
+            # Generate response with CPU-only settings - longer responses
             with torch.no_grad():
                 outputs = self.model.generate(
                     **inputs,
-                    max_new_tokens=50,
+                    max_new_tokens=300,  # Increased to 300 for detailed responses
                     do_sample=False,  # Use greedy decoding for stability
                     pad_token_id=self.tokenizer.eos_token_id,
                     eos_token_id=self.tokenizer.eos_token_id
