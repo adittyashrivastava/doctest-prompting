@@ -972,38 +972,41 @@ class AttentionFactTestSuite:
     def generate_llm_response(self, context: str, question: str) -> str:
         """Generate LLM response for the given context and question"""
         try:
-            # Create the prompt for the LLM with a demonstration example
-            demonstration_context = (
-                "Patient Information:\n"
-                "- Name: John Smith\n"
-                "- Age: 45 years\n"
-                "- Weight: 80 kg\n"
-                "- Height: 1.75 m\n"
-                "- Blood pressure: 120/80 mmHg\n"
-                "- Heart rate: 72 bpm\n"
-                "- Temperature: 37°C\n"
-                "- Diabetic: No\n"
-                "- Smoker: No\n"
-                "BMI Formula: BMI = weight(kg) / height(m)²"
-            )
-            demonstration_question = "Calculate the BMI for this patient."
-            demonstration_answer = "26.12"
+#             # Create the prompt for the LLM with a demonstration example
+#             demonstration_context = (
+#                 "Patient Information:\n"
+#                 "- Name: John Smith\n"
+#                 "- Age: 45 years\n"
+#                 "- Weight: 80 kg\n"
+#                 "- Height: 1.75 m\n"
+#                 "- Blood pressure: 120/80 mmHg\n"
+#                 "- Heart rate: 72 bpm\n"
+#                 "- Temperature: 37°C\n"
+#                 "- Diabetic: No\n"
+#                 "- Smoker: No\n"
+#                 "BMI Formula: BMI = weight(kg) / height(m)²"
+#             )
+#             demonstration_question = "Calculate the BMI for this patient."
+#             demonstration_answer = "26.12"
             
-            prompt = f"""You are an expert at processing medical data. Here's an example of how to answer questions based on medical context:
+#             prompt = f"""You are an expert at processing medical data. Here's an example of how to answer questions based on medical context:
 
-Context: {demonstration_context}
+# Context: {demonstration_context}
 
-Question: {demonstration_question}
+# Question: {demonstration_question}
 
-Answer: {demonstration_answer}
+# Answer: {demonstration_answer}
 
-Now answer this question based on the context. Just answer the question, do not include any other text.
+# Now answer this question based on the context. Just answer the question, do not include any other text.
 
-Context: {context}
+# Context: {context}
 
-Question: {question}
+# Question: {question}
 
-Answer:"""
+# Answer:"""
+
+            # Create the prompt for the LLM
+            prompt = f"Context: {context}\n\nQuestion: {question}\n\nAnswer:"
             
             
             # Apply chat template to the prompt
