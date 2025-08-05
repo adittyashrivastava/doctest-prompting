@@ -15,19 +15,28 @@ sys.path.append('.')
 
 import torch  # Add torch import for CUDA operations
 
+# Take command line arguments
+import argparse
+
+parser = argparse.ArgumentParser(description='Run attention test')
+parser.add_argument('--examples', type=int, default=10, help='Number of examples to run')
+args = parser.parse_args()
+
 def main():
     """Main function to run a basic attention test"""
     print("🚀 Starting Attention Module Test")
     print("=" * 50)
     
-    # Force CPU-only execution
-    import os
-    os.environ['CUDA_VISIBLE_DEVICES'] = ''  # Hide all GPUs from PyTorch
-    
     # Check available resources
     import torch
-    print(f"🖥️  Using CPU for stable execution (GPU hidden)")
-    print(f"💾 Available CPU cores: {torch.get_num_threads()}")
+    if torch.cuda.is_available():
+        print(f"🚀 GPU acceleration available")
+        print(f"🖥️  GPU device: {torch.cuda.get_device_name()}")
+        print(f"💾 GPU memory: {torch.cuda.get_device_properties(0).total_memory / 1e9:.1f} GB")
+        print(f"🔧 Using GPU with memory optimizations")
+    else:
+        print(f"🖥️  Using CPU execution")
+        print(f"💾 Available CPU cores: {torch.get_num_threads()}")
     
     # Import the test module
     try:
@@ -48,12 +57,10 @@ def main():
         test_suite.setup_model()
         test_suite.create_test_dataset()
         
-        # Run tests on examples
-        #print(f"🔍 Running tests on all {len(test_suite.test_examples)} examples...")
+        # Run tests on examples specified by the user
         original_examples = test_suite.test_examples
-        # Note: User commented out subset selection to run all examples
-        print(f"🔍 Running tests on 10 examples...")
-        test_suite.test_examples = test_suite.test_examples[:10]
+        print(f"🔍 Running tests on {args.examples} examples...")
+        test_suite.test_examples = test_suite.test_examples[:args.examples]
         
         # Run the tests
         test_suite.results = []

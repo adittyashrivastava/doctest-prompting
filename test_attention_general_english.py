@@ -67,7 +67,7 @@ class GeneralEnglishAttentionTestSuite:
         self.results = []
         
     def setup_model(self):
-        """Load model and tokenizer, setup attention extractor and retriever"""
+        """Load model and tokenizer with GPU optimization, setup attention extractor and retriever"""
         if not ATTENTION_VIZ_AVAILABLE:
             raise RuntimeError("attention_viz module is not available. Cannot run attention tests.")
 
@@ -76,26 +76,85 @@ class GeneralEnglishAttentionTestSuite:
         if self.tokenizer.pad_token is None:
             self.tokenizer.pad_token = self.tokenizer.eos_token
             
-        # Force CPU usage for everything - no GPU at all
-        device = "cpu"
-        print(f"🖥️  Using device: {device} (forced for stability)")
+        # Determine if this is a large model for special handling
+        is_large_model = '7B' in self.model_name or '13B' in self.model_name or '70B' in self.model_name
         
-        # Ensure no CUDA operations
-        import os
-        os.environ['CUDA_VISIBLE_DEVICES'] = ''  # Hide all GPUs
+        # Memory optimization strategy based on model size and available memory
+        if torch.cuda.is_available():
+            print(f"🔧 Using CUDA with memory optimizations for model {self.model_name}")
             
-        # Load model with strict CPU configuration
-        self.model = AutoModelForCausalLM.from_pretrained(
-            self.model_name,
-            torch_dtype=torch.float32,  # Use float32 for CPU
-            device_map="cpu",
-            low_cpu_mem_usage=True,
-            attn_implementation="eager"  # Force eager attention for attention extraction
-        )
+            # Check if bitsandbytes is available for quantization
+            try:
+                import bitsandbytes as bnb
+                use_quantization = True
+                print("✅ bitsandbytes available - using quantization for memory efficiency")
+            except ImportError:
+                use_quantization = False
+                print("⚠️  bitsandbytes not available - falling back to float16")
+            
+            if use_quantization and is_large_model:
+                # Use 8-bit quantization for large models (significant memory savings)
+                print(f"🎯 Loading {self.model_name} with 8-bit quantization (75% memory reduction)")
+                self.model = AutoModelForCausalLM.from_pretrained(
+                    self.model_name,
+                    load_in_8bit=True,
+                    device_map="auto",
+                    low_cpu_mem_usage=True,
+                    # Configure for attention extraction
+                    output_attentions=False,  # We'll enable this during inference
+                    attn_implementation="eager"  # Force eager attention for better extraction
+                )
+            elif use_quantization:
+                # For smaller models, use 4-bit quantization for even better memory efficiency
+                print(f"🎯 Loading {self.model_name} with 4-bit quantization (better for smaller models)")
+                self.model = AutoModelForCausalLM.from_pretrained(
+                    self.model_name,
+                    load_in_4bit=True,
+                    device_map="auto",
+                    low_cpu_mem_usage=True,
+                    # Configure for attention extraction
+                    output_attentions=False,  # We'll enable this during inference
+                    attn_implementation="eager"  # Force eager attention for better extraction
+                )
+            else:
+                # Fallback to float16 if quantization is not available
+                print(f"🎯 Loading {self.model_name} with float16 (50% memory reduction)")
+                self.model = AutoModelForCausalLM.from_pretrained(
+                    self.model_name,
+                    torch_dtype=torch.float16,
+                    device_map="auto",
+                    low_cpu_mem_usage=True,
+                    offload_buffers=True,  # Fix OOM issue for large models
+                    # Configure for attention extraction
+                    output_attentions=False,  # We'll enable this during inference
+                    attn_implementation="eager"  # Force eager attention for better extraction
+                )
+        else:
+            print(f"🔧 Using CPU + float32 for model {self.model_name}")
+            self.model = AutoModelForCausalLM.from_pretrained(
+                self.model_name,
+                torch_dtype=torch.float32,
+                device_map=None,
+                low_cpu_mem_usage=True,
+                offload_buffers=True,  # Fix OOM issue for large models
+                # Configure for attention extraction
+                output_attentions=False,  # We'll enable this during inference
+                attn_implementation="eager"  # Force eager attention for better extraction
+            )
         
-        # Explicitly move model to CPU and ensure it stays there
-        self.model = self.model.to('cpu')
+        # Ensure model is in eval mode for consistent attention patterns
         self.model.eval()
+        
+        print(f'Model {self.model_name} loaded successfully for attention analysis')
+        print(f'Model device: {next(self.model.parameters()).device}')
+        print(f'Model dtype: {next(self.model.parameters()).dtype}')
+        
+        # Clear any cached memory after model loading (optional - can disable for performance)
+        if torch.cuda.is_available() and os.environ.get('DISABLE_CUDA_CACHE_CLEAR', '').lower() != 'true':
+            torch.cuda.empty_cache()
+            print(f"🧹 Cleared CUDA cache after model loading")
+        elif torch.cuda.is_available():
+            print(f"⚡ Skipping CUDA cache clear (DISABLE_CUDA_CACHE_CLEAR=true)")
         
         # Ensure attention outputs are enabled and using eager implementation
         self.model.config.output_attentions = True
@@ -763,7 +822,7 @@ class GeneralEnglishAttentionTestSuite:
         """Generate LLM response for the given context and question"""
         try:
             # Create the prompt for the LLM
-            prompt = f"Context: {context}\n\nQuestion: {question}\n\nAnswer:"
+            prompt = f"\n\nYou are an expert at understanding paragraphs about various topics. You are given a context and a question. You need to answer the question based on the context. Keep your answer concise and to the point. Do not exceed one sentence and do not exceed 15 words. Context: {context}\n\nQuestion: {question}\n\nAnswer:"
             
             # Debug: Check prompt length and content
             print(f"   📏 Prompt length: {len(prompt)} chars")
@@ -787,8 +846,9 @@ class GeneralEnglishAttentionTestSuite:
                 add_special_tokens=True
             )
             
-            # EXPLICITLY ensure all inputs are on CPU
-            inputs = {k: v.to('cpu') for k, v in inputs.items()}
+            # Move inputs to same device as model
+            device = next(self.model.parameters()).device
+            inputs = {k: v.to(device) for k, v in inputs.items()}
             
             # Validate input shapes
             if inputs['input_ids'].shape[1] == 0:
@@ -796,10 +856,10 @@ class GeneralEnglishAttentionTestSuite:
             
             print(f"   📊 Token stats: shape={inputs['input_ids'].shape}")
             print(f"   🔧 Input device: {inputs['input_ids'].device}")
-            print(f"   🔧 Model device: {next(self.model.parameters()).device}")
+            print(f"   🔧 Model device: {device}")
             
             print(f"   🤖 Generating response...")
-            # Generate response with CPU-only settings - longer responses
+            # Generate response with optimized settings for GPU/CPU
             with torch.no_grad():
                 outputs = self.model.generate(
                     **inputs,
