@@ -4,7 +4,7 @@
 # This avoids the numpy version conflict
 
 # Initialize conda
-source /home/ashriva3/miniconda3/etc/profile.d/conda.sh
+source /home/hrangara/miniconda3/etc/profile.d/conda.sh
 
 echo "🚀 Setting up separate environments for vLLM and verl..."
 
@@ -21,7 +21,7 @@ pip install configargparse nltk
 
 # Install attention_viz in vLLM environment
 echo "📦 Installing attention_viz in vLLM environment..."
-cd /home/ashriva3/codebase/attention_viz
+cd /home/hrangara/MedCalc/MedCalc-Bench/attention_viz
 pip install -e .
 
 echo "✅ vLLM environment ready!"
@@ -32,6 +32,7 @@ conda create -n verl-env python=3.10 -y
 
 echo "📦 Installing verl dependencies..."
 conda activate verl-env
+echo "📦 Activated verl environment"
 pip install "numpy<2.0.0"
 pip install verl
 pip install torch transformers accelerate
@@ -40,7 +41,7 @@ pip install configargparse nltk
 
 # Install attention_viz in verl environment
 echo "📦 Installing attention_viz in verl environment..."
-cd /home/ashriva3/codebase/attention_viz
+cd /home/hrangara/MedCalc/MedCalc-Bench/attention_viz
 pip install -e .
 
 echo "✅ verl environment ready!"
@@ -60,7 +61,7 @@ print('✅ attention_viz working in vLLM env')
 "
 
 echo "Testing verl environment:"
-conda activate verl-env
+conda activate ex
 python -c "
 import verl
 print('✅ verl working')

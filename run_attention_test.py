@@ -49,10 +49,11 @@ def main():
         test_suite.create_test_dataset()
         
         # Run tests on examples
-        print(f"🔍 Running tests on all {len(test_suite.test_examples)} examples...")
+        #print(f"🔍 Running tests on all {len(test_suite.test_examples)} examples...")
         original_examples = test_suite.test_examples
         # Note: User commented out subset selection to run all examples
-        # test_suite.test_examples = test_suite.test_examples[:5]
+        print(f"🔍 Running tests on 10 examples...")
+        test_suite.test_examples = test_suite.test_examples[:10]
         
         # Run the tests
         test_suite.results = []
