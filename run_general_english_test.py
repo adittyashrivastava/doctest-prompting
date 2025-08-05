@@ -15,6 +15,15 @@ sys.path.append('.')
 
 import torch  # Add torch import for CUDA operations
 
+# Take command line arguments
+# Also take the number of examples to run
+import argparse
+
+parser = argparse.ArgumentParser(description='Run general English attention test')
+parser.add_argument('--mem_efficient', action='store_true', help='Enable quantization for memory efficiency (may affect performance)')
+parser.add_argument('--examples', type=int, default=10, help='Number of examples to run')
+args = parser.parse_args()
+
 def main():
     """Main function to run general English attention test"""
     print("🚀 Starting General English Attention Module Test")
@@ -26,7 +35,10 @@ def main():
         print(f"🚀 GPU acceleration available")
         print(f"🖥️  GPU device: {torch.cuda.get_device_name()}")
         print(f"💾 GPU memory: {torch.cuda.get_device_properties(0).total_memory / 1e9:.1f} GB")
-        print(f"🔧 Using GPU with memory optimizations")
+        if args.mem_efficient:
+            print(f"🔧 Using GPU with quantization (memory efficient, may affect performance)")
+        else:
+            print(f"🔧 Using GPU without quantization (optimal performance)")
     else:
         print(f"🖥️  Using CPU execution")
         print(f"💾 Available CPU cores: {torch.get_num_threads()}")
@@ -42,7 +54,8 @@ def main():
     # Create test suite
     test_suite = GeneralEnglishAttentionTestSuite(
         model_name="Qwen/Qwen2.5-7B-Instruct",
-        k=3  # Start with top 3 facts for faster testing
+        k=3,  # Start with top 3 facts for faster testing
+        use_quantization=args.mem_efficient
     )
     
     try:
@@ -51,8 +64,8 @@ def main():
         test_suite.create_test_dataset()
         
         # Run ALL examples (all 15)
-        print(f"🔍 Running tests on ALL {len(test_suite.test_examples)} examples...")
-        # No subsetting - use all examples
+        print(f"🔍 Running tests on {args.examples} examples...")
+        test_suite.test_examples = test_suite.test_examples[:args.examples]
         
         # Run the tests
         test_suite.results = []

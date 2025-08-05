@@ -20,6 +20,7 @@ import argparse
 
 parser = argparse.ArgumentParser(description='Run attention test')
 parser.add_argument('--examples', type=int, default=10, help='Number of examples to run')
+parser.add_argument('--mem_efficient', action='store_true', help='Enable quantization for memory efficiency (may affect performance)')
 args = parser.parse_args()
 
 def main():
@@ -33,7 +34,10 @@ def main():
         print(f"🚀 GPU acceleration available")
         print(f"🖥️  GPU device: {torch.cuda.get_device_name()}")
         print(f"💾 GPU memory: {torch.cuda.get_device_properties(0).total_memory / 1e9:.1f} GB")
-        print(f"🔧 Using GPU with memory optimizations")
+        if args.mem_efficient:
+            print(f"🔧 Using GPU with quantization (memory efficient, may affect performance)")
+        else:
+            print(f"🔧 Using GPU without quantization (optimal performance)")
     else:
         print(f"🖥️  Using CPU execution")
         print(f"💾 Available CPU cores: {torch.get_num_threads()}")
@@ -49,7 +53,8 @@ def main():
     # Create test suite with simplified parameters
     test_suite = AttentionFactTestSuite(
         model_name="Qwen/Qwen2.5-7B-Instruct",
-        k=3  # Start with top 3 facts for faster testing
+        k=3,  # Start with top 3 facts for faster testing
+        use_quantization=args.mem_efficient
     )
     
     try:

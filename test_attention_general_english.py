@@ -57,9 +57,10 @@ class AttentionTestResult:
 class GeneralEnglishAttentionTestSuite:
     """Test suite for evaluating attention-based fact retrieval on general English text"""
     
-    def __init__(self, model_name: str = "Qwen/Qwen2.5-7B-Instruct", k: int = 5):
+    def __init__(self, model_name: str = "Qwen/Qwen2.5-7B-Instruct", k: int = 5, use_quantization: bool = False):
         self.model_name = model_name
         self.k = k
+        self.use_quantization = use_quantization
         self.model = None
         self.tokenizer = None
         self.retriever = None
@@ -81,18 +82,21 @@ class GeneralEnglishAttentionTestSuite:
         
         # Memory optimization strategy based on model size and available memory
         if torch.cuda.is_available():
-            print(f"🔧 Using CUDA with memory optimizations for model {self.model_name}")
+            print(f"🔧 Using CUDA for model {self.model_name}")
             
-            # Check if bitsandbytes is available for quantization
-            try:
-                import bitsandbytes as bnb
-                use_quantization = True
-                print("✅ bitsandbytes available - using quantization for memory efficiency")
-            except ImportError:
-                use_quantization = False
-                print("⚠️  bitsandbytes not available - falling back to float16")
+            # Check if bitsandbytes is available for quantization (only if requested)
+            quantization_available = False
+            if self.use_quantization:
+                try:
+                    import bitsandbytes as bnb
+                    quantization_available = True
+                    print("✅ bitsandbytes available - using quantization for memory efficiency")
+                except ImportError:
+                    print("⚠️  bitsandbytes not available - falling back to float16")
+            else:
+                print("🎯 Quantization disabled for optimal performance")
             
-            if use_quantization and is_large_model:
+            if self.use_quantization and quantization_available and is_large_model:
                 # Use 8-bit quantization for large models (significant memory savings)
                 print(f"🎯 Loading {self.model_name} with 8-bit quantization (75% memory reduction)")
                 self.model = AutoModelForCausalLM.from_pretrained(
@@ -104,7 +108,7 @@ class GeneralEnglishAttentionTestSuite:
                     output_attentions=False,  # We'll enable this during inference
                     attn_implementation="eager"  # Force eager attention for better extraction
                 )
-            elif use_quantization:
+            elif self.use_quantization and quantization_available:
                 # For smaller models, use 4-bit quantization for even better memory efficiency
                 print(f"🎯 Loading {self.model_name} with 4-bit quantization (better for smaller models)")
                 self.model = AutoModelForCausalLM.from_pretrained(
@@ -117,11 +121,11 @@ class GeneralEnglishAttentionTestSuite:
                     attn_implementation="eager"  # Force eager attention for better extraction
                 )
             else:
-                # Fallback to float16 if quantization is not available
-                print(f"🎯 Loading {self.model_name} with float16 (50% memory reduction)")
+                # No quantization - use float32 for optimal performance and precision
+                print(f"🎯 Loading {self.model_name} with float32 (no quantization for optimal performance)")
                 self.model = AutoModelForCausalLM.from_pretrained(
                     self.model_name,
-                    torch_dtype=torch.float16,
+                    torch_dtype=torch.float32,
                     device_map="auto",
                     low_cpu_mem_usage=True,
                     offload_buffers=True,  # Fix OOM issue for large models
@@ -821,24 +825,52 @@ class GeneralEnglishAttentionTestSuite:
     def generate_llm_response(self, context: str, question: str) -> str:
         """Generate LLM response for the given context and question"""
         try:
-            # Create the prompt for the LLM
-            prompt = f"\n\nYou are an expert at understanding paragraphs about various topics. You are given a context and a question. You need to answer the question based on the context. Keep your answer concise and to the point. Do not exceed one sentence and do not exceed 15 words. Context: {context}\n\nQuestion: {question}\n\nAnswer:"
+            # Create the prompt for the LLM with a demonstration example
+            demonstration_context = (
+                "Technology News Update:\n"
+                "Apple announced its latest iPhone 15 Pro at the annual September event yesterday. "
+                "The new device features a titanium frame, improved camera system with 48MP main sensor, "
+                "and the new A17 Pro chip built on 3nm technology. The phone will be available in four colors: "
+                "Natural Titanium, Blue Titanium, White Titanium, and Black Titanium. "
+                "Pricing starts at $999 for the 128GB model, with 256GB and 512GB options also available."
+            )
+            demonstration_question = "What material is used for the iPhone 15 Pro frame?"
+            demonstration_answer = "titanium"
             
-            # Debug: Check prompt length and content
-            print(f"   📏 Prompt length: {len(prompt)} chars")
-            if len(prompt) > 4000:  # Increased from 2000
-                print(f"   ⚠️  Very long prompt detected, truncating...")
-                # Truncate context if too long - but more generous
-                max_context_len = 3500 - len(question) - 50  # More generous limit
-                if len(context) > max_context_len:
-                    context = context[:max_context_len] + "..."
-                    prompt = f"Context: {context}\n\nQuestion: {question}\n\nAnswer:"
-                    print(f"   📏 Truncated prompt length: {len(prompt)} chars")
+            prompt = f"""Here's an example of how to answer questions based on context:
+
+Context: {demonstration_context}
+
+Question: {demonstration_question}
+
+Answer: {demonstration_answer}
+
+Now answer this question. Just answer the question, do not include any other text.
+
+Context: {context}
+
+Question: {question}
+
+Answer:"""
             
-            # Tokenize the prompt
-            print(f"   🔤 Tokenizing prompt...")
+            # Apply chat template to the prompt
+            print(f"   🔤 Applying chat template and tokenizing...")
+            messages = [{"role": "user", "content": prompt}]
+            try:
+                formatted_prompt = self.tokenizer.apply_chat_template(
+                    messages, 
+                    tokenize=False, 
+                    add_generation_prompt=True
+                )
+            except Exception as e:
+                print(f"   ⚠️ Chat template failed ({e}), using fallback format")
+                # Fallback format for models without chat template
+                formatted_prompt = f"<|im_start|>user\n{prompt}<|im_end|>\n<|im_start|>assistant\n"
+            
+            print(f"   📝 Formatted prompt preview: {formatted_prompt[:200]}...")
+            
             inputs = self.tokenizer(
-                prompt, 
+                formatted_prompt, 
                 return_tensors="pt", 
                 truncation=True, 
                 max_length=1024,  # Increased from 512 for longer contexts
@@ -880,7 +912,7 @@ class GeneralEnglishAttentionTestSuite:
                 skip_special_tokens=True
             ).strip()
             
-            print(f"   📝 Generated: {generated_text[:100]}...")
+            print(f"   📝 Generated: {generated_text}")
             return generated_text if generated_text else "[Error: Empty generation]"
             
         except Exception as e:
